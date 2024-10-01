@@ -1,56 +1,41 @@
 public class Customer {
-    protected int customerID;
+    protected int id;
     protected String name;
     protected String contactInfo;
     protected String address;
-    protected String receiverAddress;
 
     // Customer Constructor
-    public Customer(int customerID, String name, String contactInfo, String address, String receiverAddress) {
-        this.customerID = customerID;
+    public Customer(int id, String name, String contactInfo, String address) {
+        this.id = id;
         this.name = name;
         this.contactInfo = contactInfo;
         this.address = address;
-        this.receiverAddress = receiverAddress;
     }
 
     // Getters
     public int getCustomerID() {
-        return customerID;
+        return this.id;
     }
 
     public String getName() {
-        return name;
+        return this.name;
     }
 
     public String getContactInfo() {
-        return contactInfo;
+        return this.contactInfo;
     }
 
     public String getAddress() {
-        return address;
+        return this.address;
     }
 
-    public String getRecieverAddress() {
-        return receiverAddress;
-    }
-
-    // Customer Details
-    public void displayCustomerDetails() {
-        System.out.println("=========================================");
-        System.out.println("Customer ID: " + getCustomerID());
-        System.out.println("Customer Name: " + getName());
-        System.out.println("Customer Contact Info: " + getContactInfo());
-        System.out.println("Customer Address: " + getAddress());
-        System.out.println("Receiver Address: " + getRecieverAddress());
-        System.out.println("=========================================");
-    }
-
-    // Update Customer Details
-    public void updateCustomerDetails(String name, String contactInfo, String address, String receiverAddress) {
-        this.name = name;
-        this.contactInfo = contactInfo;
-        this.address = address;
-        this.receiverAddress = receiverAddress;
+    @Override
+    public String toString() {
+        return String.format("ID: %d\nName: %s\nContact Number: %s\nAddress: %s\n", 
+        this.id, 
+        this.name, 
+        this.contactInfo, 
+        this.address
+        );
     }
 }

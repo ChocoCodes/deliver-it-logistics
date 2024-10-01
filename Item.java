@@ -1,9 +1,9 @@
 public class Item {
-    protected String name;
-    protected float weight;
-    protected float dimensionHeight;
-    protected float dimensionWidth;
-    protected float dimensionDepth;
+    private String name;
+    private float weight;
+    private float dimensionHeight;
+    private float dimensionWidth;
+    private float dimensionDepth;
 
     public Item(String name, float weight, float dimensionHeight, float dimensionWidth, float dimensionDepth) {
         this.name = name;
@@ -14,30 +14,33 @@ public class Item {
     }
 
     public String getName() {
-        return name;
+        return this.name;
     }
 
     public float getWeight() {
-        return weight;
+        return this.weight;
     }
 
     public float getDimensionHeight() {
-        return dimensionHeight;
+        return this.dimensionHeight;
     }
 
     public float getDimensionWidth() {
-        return dimensionWidth;
+        return this.dimensionWidth;
     }
 
     public float getDimensionDepth() {
-        return dimensionDepth;
+        return this.dimensionDepth;
     }
 
-    public void displayItemInfo() {
-        System.out.println("Item name: " + getName());
-        System.out.println("Item weight: " + getWeight());
-        System.out.println("Height: " + getDimensionHeight());
-        System.out.println("Width: " + getDimensionWidth());
-        System.out.println("Depth: " + getDimensionDepth());
+    @Override
+    public String toString() {
+        return String.format("Name: %s\n, Weight: %.2f\n, Dimensions: %.2fx%.2fx%.2f",
+            getName(),
+            getWeight(),
+            getDimensionHeight(),
+            getDimensionWidth(),
+            getDimensionDepth()
+        );
     }
 }

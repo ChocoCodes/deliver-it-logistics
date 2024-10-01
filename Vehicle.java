@@ -3,37 +3,40 @@ public class Vehicle {
     protected String type;
     protected String licensePlate;
     protected String driver;
-    protected double capacity;
+    protected double capacityKG;
     protected boolean isAvailable;
 
     // Vehicle Constructor
-    public Vehicle(int vehicleID, String type, String licensePlate, String driver, double capacity, boolean isAvailable) {
-        this.vehicleID = vehicleID;
-        this.type = type;
-        this.licensePlate = licensePlate;
+    public Vehicle(int vehicleID, String type, String licensePlate, String driver, double capacityKG, boolean isAvailable) {
+        this(vehicleID, type, licensePlate);
         this.driver = driver;
-        this.capacity = capacity;
+        this.capacityKG = capacityKG;
         this.isAvailable = isAvailable;
     }
 
+    public Vehicle(int vehicleID, String type, String licensePlate) {
+        this.vehicleID = vehicleID;
+        this.type = type;
+        this.licensePlate = licensePlate;
+    }
     // Getters
     public String getType() {
-        return type;
+        return this.type;
     }
     public boolean isAvailable() {
-        return isAvailable;
+        return this.isAvailable;
     }
     public double getCapacity() {
-        return capacity;
+        return this.capacityKG;
     }
     public int getVehicleID() {
-        return vehicleID;
+        return this.vehicleID;
     }
     public String getLicensePlate() {
-        return licensePlate;
+        return this.licensePlate;
     }
     public String getDriver() {
-        return driver;
+        return this.driver;
     }
 
     // Setters
@@ -44,15 +47,15 @@ public class Vehicle {
         this.driver = driver;
     }
 
-    // Display Information
-    public void displayVehicleInformation() {
-        System.out.println("=========================================");
-        System.out.println("Vehicle ID: " + getVehicleID());
-        System.out.println("Vehicle Type: " + getType());
-        System.out.println("License Plate: " + getLicensePlate());
-        System.out.println("Vehicle Driver: " + getDriver());
-        System.out.printf("Capacity: %.2f\n", getCapacity());
-        System.out.println("Available: " + isAvailable());
-        System.out.println("=========================================");
+    // Display Info for Vehicles only
+    @Override
+    public String toString() {
+        return String.format("ID: %d\nType: %s\nLicense Plate: %s\nCapacity: %.2f\nAvailability: %b", 
+        getVehicleID(), 
+        getType(), 
+        getLicensePlate(), 
+        getCapacity(),
+        isAvailable()
+        );
     }
 }
