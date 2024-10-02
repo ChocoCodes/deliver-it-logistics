@@ -1,8 +1,8 @@
 public class Customer {
-    protected int id;
-    protected String name;
-    protected String contactInfo;
-    protected String address;
+    private int id;
+    private String name;
+    private String contactInfo;
+    private String address;
 
     // Customer Constructor
     public Customer(int id, String name, String contactInfo, String address) {
