@@ -72,8 +72,8 @@ public class Vehicle {
         if (getAvailableCapacity() < capacityKG && getCurrentPackageCount() < maxPackageCount) {
             for (int i = 0; i < packages.length; i++) {
                 if (packages[i] == null) { 
-                    packages[i] = pkg;
                     if (!(currentCapacityKG + pkg.getWeight() > capacityKG)) {
+                        packages[i] = pkg;
                         currentCapacityKG += pkg.getWeight();
                         currentPackageCount++;
                         return true;
