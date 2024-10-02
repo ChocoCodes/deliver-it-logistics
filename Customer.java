@@ -13,29 +13,22 @@ public class Customer {
     }
 
     // Getters
-    public int getCustomerID() {
-        return this.id;
-    }
+    public int getCustomerID() { return this.id; }
+    public String getName() { return this.name; }
+    public String getContactInfo() { return this.contactInfo; }
+    public String getAddress() { return this.address; }
 
-    public String getName() {
-        return this.name;
-    }
-
-    public String getContactInfo() {
-        return this.contactInfo;
-    }
-
-    public String getAddress() {
-        return this.address;
-    }
+    public void setName(String name) { this.name = name; }
+    public void setContactInfo(String contactInfo) { this.contactInfo = contactInfo; }
+    public void setAddress(String address) { this.address = address; }
 
     @Override
     public String toString() {
         return String.format("ID: %d\nName: %s\nContact Number: %s\nAddress: %s\n", 
-        this.id, 
-        this.name, 
-        this.contactInfo, 
-        this.address
+        getCustomerID(), 
+        getName(), 
+        getContactInfo(), 
+        getAddress()
         );
     }
 }

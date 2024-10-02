@@ -20,32 +20,16 @@ public class Vehicle {
         this.licensePlate = licensePlate;
     }
     // Getters
-    public String getType() {
-        return this.type;
-    }
-    public boolean isAvailable() {
-        return this.isAvailable;
-    }
-    public double getCapacity() {
-        return this.capacityKG;
-    }
-    public int getVehicleID() {
-        return this.vehicleID;
-    }
-    public String getLicensePlate() {
-        return this.licensePlate;
-    }
-    public String getDriver() {
-        return this.driver;
-    }
+    public String getType() { return this.type; }
+    public boolean isAvailable() { return this.isAvailable; }
+    public double getCapacity() { return this.capacityKG; }
+    public int getVehicleID() { return this.vehicleID; }
+    public String getLicensePlate() { return this.licensePlate; }
+    public String getDriver() { return this.driver; }
 
     // Setters
-    public void setAvailability(boolean isAvailable) {
-        this.isAvailable = isAvailable;
-    }
-    public void setDriver(String driver) {
-        this.driver = driver;
-    }
+    public void setAvailability(boolean isAvailable) { this.isAvailable = isAvailable; }
+    public void setDriver(String driver) { this.driver = driver; }
 
     // Display Info for Vehicles only
     @Override

@@ -1,46 +1,32 @@
 public class Item {
     private String name;
     private float weight;
-    private float dimensionHeight;
-    private float dimensionWidth;
-    private float dimensionDepth;
+    private float height;
+    private float width;
+    private float length;
 
-    public Item(String name, float weight, float dimensionHeight, float dimensionWidth, float dimensionDepth) {
+    public Item(String name, float weight, float height, float width, float length) {
         this.name = name;
         this.weight = weight;
-        this.dimensionHeight = dimensionHeight;
-        this.dimensionWidth = dimensionWidth;
-        this.dimensionDepth = dimensionDepth;
+        this.height = height;
+        this.width = width;
+        this.length = length;
     }
 
-    public String getName() {
-        return this.name;
-    }
-
-    public float getWeight() {
-        return this.weight;
-    }
-
-    public float getDimensionHeight() {
-        return this.dimensionHeight;
-    }
-
-    public float getDimensionWidth() {
-        return this.dimensionWidth;
-    }
-
-    public float getDimensionDepth() {
-        return this.dimensionDepth;
-    }
+    public String getName() { return this.name; }
+    public float getWeight() { return this.weight; }
+    public float getHeight() { return this.height; }
+    public float getLength() { return this.width; }
+    public float getWidth() { return this.length; }
 
     @Override
     public String toString() {
         return String.format("Name: %s\n, Weight: %.2f\n, Dimensions: %.2fx%.2fx%.2f",
             getName(),
             getWeight(),
-            getDimensionHeight(),
-            getDimensionWidth(),
-            getDimensionDepth()
+            getHeight(),
+            getWidth(),
+            getLength()
         );
     }
 }
