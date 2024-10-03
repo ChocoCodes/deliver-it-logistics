@@ -84,7 +84,7 @@ public class Logistics {
         boolean valid = true;
 
         System.out.printf("Welcome, %s!\n", customer.getName());
-        System.out.println("[S]end Package\n[E]dit Information\n[T]rack Package");
+        System.out.println("[S]end Package\n[E]dit Information\n[T]rack Package\n[Q]uit");
         do {
             do {
                 in = getInput("Enter Option").toUpperCase();
@@ -100,6 +100,8 @@ public class Logistics {
                 case 'T':
                 System.out.println("In progress.");
                 break;
+                case 'Q':
+                return;
                 default:
                 valid = false;
                 break;
@@ -111,7 +113,7 @@ public class Logistics {
         String in;
         boolean valid = true;
         System.out.println("Edit Customer Information");
-        System.out.println("[1] Name\n[2] Contact Info\n[3] Address");
+        System.out.println("[1] Name\n[2] Contact Info\n[3] Address\n[4] Quit");
 
         do {
             do {
@@ -139,7 +141,6 @@ public class Logistics {
             }
         } while(!valid);
     }
-
 }
 
 
@@ -196,7 +197,7 @@ class CSVParser {
 
     public void overwrite(String file, String[][] data) {
         boolean saved = false;
-        try (PrintWriter fout = new PrintWriter(new FileWriter(getFilePath()))) {
+        try (PrintWriter fout = new PrintWriter(new FileWriter(file))) {
             fout.printf("%s,%s,%s,%s\n", CUSTOMER_HEADER[0], CUSTOMER_HEADER[1], CUSTOMER_HEADER[2], CUSTOMER_HEADER[3]);
             for(String[] datum: data) {
                 fout.printf("%s,%s,%s,%s\n", 
@@ -276,11 +277,12 @@ class CSVParser {
     public void updateCustomerCSV(int id, String newAttribute, int columnIndex) {
         String[][] csvData = loadCSVData(getFilePath());
         for (int i = 0; i < csvData.length; i++) {
-            if (Integer.parseInt(csvData[i][0]) == id) { // Assuming name is in the first column
-                csvData[i][columnIndex] = newAttribute; // Update the specific attribute
+            if (Integer.parseInt(csvData[i][0]) == id) {
+                csvData[i][columnIndex] = newAttribute;
                 break;
             }
         }
-        overwrite(getFilePath(), csvData); // Method to write back to the CSV
+        // Rewrite Customer CSV
+        overwrite(getFilePath(), csvData); 
     }
 }
