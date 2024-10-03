@@ -74,9 +74,9 @@ public class Vehicle {
         if (getAvailableCapacity() < capacityKG && getCurrentPackageCount() < maxPackageCount) {
             for (int i = 0; i < packages.length; i++) {
                 if (packages[i] == null) { 
-                    if (!(currentCapacityKG + pkg.getWeight() > capacityKG)) {
+                    if (!(currentCapacityKG + pkg.getTotalItemWeight(pkg.getContents()) > capacityKG)) {
                         packages[i] = pkg;
-                        currentCapacityKG += pkg.getWeight();
+                        currentCapacityKG += pkg.getTotalItemWeight(pkg.getContents());
                         currentPackageCount++;
                         return true;
                     } else {
@@ -92,7 +92,7 @@ public class Vehicle {
     public boolean removePackage(Package pkg) {
         for (int i = 0; i < packages.length; i++) {
             if (packages[i] != null && packages[i].equals(pkg)) {
-                currentCapacityKG -= pkg.getWeight();
+                currentCapacityKG -= pkg.getTotalItemWeight(pkg.getContents());
                 currentPackageCount--;
                 packages[i] = null;
                 return true;
@@ -112,9 +112,9 @@ class Motorcycle extends Vehicle {
     // Ensure that the motorcycle can only receive one package at <= 80KG 
     @Override
     public boolean addPackage(Package pkg) {
-        if (getCurrentPackageCount() == 0 && pkg.getWeight() <= 80) {
+        if (getCurrentPackageCount() == 0 && pkg.getTotalItemWeight(pkg.getContents()) <= 80) {
             packages[0] = pkg;
-            currentCapacityKG += pkg.getWeight();
+            currentCapacityKG += pkg.getTotalItemWeight(pkg.getContents());
             currentPackageCount++;
             return true;
         }

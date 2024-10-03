@@ -29,9 +29,9 @@ public class Package {
     public void setDate(Date packageCreated) { this.packageCreated = packageCreated; }
     public void setContents(Item[] contents) { this.contents = contents; }
     public void setReceiver(String receiverAddress) { this.receiverAddress = receiverAddress; }
-    // Calculate the Dimensional Weight of a package in in^3/lbs.
+    // Calculate the Dimensional Weight of a package in cm^3/kg.
     public double setDimensionalWeight() {
-        return (getDimensions().getLength() * getDimensions().getWidth() * getDimensions().getHeight()) / 166;
+        return (getDimensions().getLength() * getDimensions().getWidth() * getDimensions().getHeight()) / 5000;
     }
     // Sum all item weights - different from the package's dimensional weight
     public double getTotalItemWeight(Item[] contents) { 
@@ -84,7 +84,7 @@ class Item {
     }
 }
 
-// All measurements in inches
+// All measurements in centimeters for accurate calculations later
 class Dimension {
     private double height;
     private double width;
