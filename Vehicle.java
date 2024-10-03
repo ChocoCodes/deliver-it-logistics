@@ -64,6 +64,8 @@ public class Vehicle {
         );
     }
 
+    
+
     public double getAvailableCapacity() {
         return capacityKG - currentCapacityKG;
     }
