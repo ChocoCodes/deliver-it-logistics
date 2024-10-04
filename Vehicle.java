@@ -19,10 +19,6 @@ public class Vehicle {
         this.driver = driver;
         this.capacityKG = capacityKG;
         this.isAvailable = isAvailable;
-        this.currentCapacityKG = 0;               
-        this.currentPackageCount = 0;             
-        this.maxPackageCount = maxPackageCount;   
-        this.packages = new Package[maxPackageCount];  
     }
 
     public Vehicle(int vehicleID, String type, String licensePlate) {
