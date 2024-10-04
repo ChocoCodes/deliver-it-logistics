@@ -70,10 +70,10 @@ public class Logistics {
         System.out.println("Program Terminated.");
     }
     
-    private boolean checkInput(String input) { return input.length() == 0 || input == null; }
+    public boolean checkInput(String input) { return input.length() == 0 || input == null; }
 
 
-    private String getInput(String prompt) {
+    public String getInput(String prompt) {
         boolean exceptionOccured = false; 
         String input = "";
         do {
@@ -85,13 +85,13 @@ public class Logistics {
         return input;
     }
 
-    private boolean checkInt(String input) {
+    public boolean checkInt(String input) {
         try {
             return parser.toInt(input) > 0;
         } catch (NumberFormatException e) { return false; }
     }
 
-    private boolean checkDouble(String input) {
+    public boolean checkDouble(String input) {
         try {
             return parser.toDouble(input) > 0.0;
         } catch (NumberFormatException e) { return false; }
@@ -175,7 +175,7 @@ public class Logistics {
         } while(!valid);
     }
 
-    private Item[] getCustomerItems() {
+    public Item[] getCustomerItems() {
         ArrayList<Item> currentItems = new ArrayList<>();
         boolean isDone = false;
         String name, weightStr, lenStr, widStr, heiStr;
