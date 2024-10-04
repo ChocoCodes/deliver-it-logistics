@@ -8,8 +8,8 @@ public class Package {
     private Item[] contents;
     private String receiverAddress;
 
-    public Package(Item[] contents, String receiverAddress) {
-        // this.id = id;
+    public Package(int id, Item[] contents, String receiverAddress) {
+        this.id = id;
         this.packageCreated = new Date();
         this.contents = contents;
         this.receiverAddress = receiverAddress;
@@ -29,11 +29,12 @@ public class Package {
     public void setDate(Date packageCreated) { this.packageCreated = packageCreated; }
     public void setContents(Item[] contents) { this.contents = contents; }
     public void setReceiver(String receiverAddress) { this.receiverAddress = receiverAddress; }
+
     // Calculate the Dimensional Weight of a package in cm^3/kg.
     public double setDimensionalWeight() {
         return (getDimensions().getLength() * getDimensions().getWidth() * getDimensions().getHeight()) / 5000;
     }
-    // Sum all item weights - different from the package's dimensional weight
+    // Sum all item weights in KG - different from the package's dimensional weight
     public double getTotalItemWeight(Item[] contents) { 
         double weight = 0.0;
         for(Item item : contents) { weight += item.getWeight(); }
@@ -59,12 +60,12 @@ public class Package {
 
 class Item {
     private String name;
-    private double weight;
+    private double weight; // in kilograms
     private Dimension dimension;
 
     public Item(String name, double weight, Dimension dimension) {
         this.name = name;
-        this.weight = weight;
+        this.weight = toKilograms(weight);
         this.dimension = dimension;
     }
 
@@ -81,6 +82,10 @@ class Item {
             getDimensions().getWidth(),
             getDimensions().getHeight()
         );
+    }
+
+    public double toKilograms(double grams) {
+        return grams / 1000.0;
     }
 }
 

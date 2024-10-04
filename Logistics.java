@@ -49,6 +49,7 @@ public class Logistics {
     
     private boolean checkInput(String input) { return input.length() == 0 || input == null; }
 
+
     private String getInput(String prompt) {
         boolean exceptionOccured = false; 
         String input = "";
@@ -61,10 +62,15 @@ public class Logistics {
         return input;
     }
 
-    private boolean checkNumerics(String input) {
+    private boolean checkInt(String input) {
         try {
-            Integer.parseInt(input);
-            return true;
+            return parser.toInt(input) > 0;
+        } catch (NumberFormatException e) { return false; }
+    }
+
+    private boolean checkDouble(String input) {
+        try {
+            return parser.toDouble(input) > 0.0;
         } catch (NumberFormatException e) { return false; }
     }
 
@@ -72,8 +78,7 @@ public class Logistics {
         System.out.println();
         String contact = getInput("Enter Contact No.");
         String address = getInput("Enter Address");
-        int id = parser.getLatestID() + 1;
-        Customer newCustomer = new Customer(id, name, contact, address);
+        Customer newCustomer = new Customer(parser.getLatestID() + 1, name, contact, address);
         parser.saveCustomerEntry(newCustomer);
         return newCustomer;
     }
@@ -92,19 +97,22 @@ public class Logistics {
             op = in.charAt(0);
             switch(op) {
                 case 'S':
-                System.out.println("Send Package in Progress");
-                break;
+                    parser.setFilePath("CSVFiles/packages.csv");
+                    Item[] items = getCustomerItems();
+                    String receiver = getInput("Enter Receiver Address");
+                    Package pkg = new Package(parser.getLatestID() + 1, items, receiver);
+                    break;
                 case 'E':   
-                editCustomerInfo(customer);
-                break;
+                    editCustomerInfo(customer);
+                    break;
                 case 'T':
-                System.out.println("In progress.");
-                break;
+                    System.out.println("In progress.");
+                    break;
                 case 'Q':
-                return;
+                    return;
                 default:
-                valid = false;
-                break;
+                    valid = false;
+                    break;
             }
         } while(!valid);
     }
@@ -113,13 +121,13 @@ public class Logistics {
         String in;
         boolean valid = true;
         System.out.println("Edit Customer Information");
-        System.out.println("[1] Name\n[2] Contact Info\n[3] Address\n[4] Quit");
+        System.out.println("[1] Name\n[2] Contact Info\n[3] Address\n[4] Back");
 
         do {
             do {
                 in = getInput("Enter Option");
-            } while (!checkNumerics(in));
-            switch(Integer.parseInt(in)) {
+            } while (!checkInt(in));
+            switch(parser.toInt(in)) {
                 case 1:
                     String newName = getInput("Enter New Name");
                     customer.setName(newName);
@@ -135,11 +143,44 @@ public class Logistics {
                     customer.setAddress(newAddr);
                     parser.updateCustomerCSV(customer.getCustomerID(), newAddr, 3);                    
                     break;
+                case 4:
+                    return;
                 default:
                     valid = false;
                     break;
             }
         } while(!valid);
+    }
+
+    private Item[] getCustomerItems() {
+        ArrayList<Item> currentItems = new ArrayList<>();
+        boolean isDone = false;
+        String name, weightStr, lenStr, widStr, heiStr;
+        while(!isDone) {
+            name = getInput("Enter Item Name");
+            do {
+                weightStr = getInput("Enter Weight(grams)");
+            } while(!checkDouble(weightStr));
+            do {
+                lenStr = getInput("Enter Length(cm)");
+            } while(!checkDouble(lenStr));
+            do {
+                widStr = getInput("Enter Weight(cm)");
+            } while(!checkDouble(widStr));
+            do {
+                heiStr = getInput("Enter Weight(cm)");
+            } while(!checkDouble(heiStr));
+
+            Dimension dim = new Dimension(parser.toDouble(lenStr), parser.toDouble(widStr), parser.toDouble(heiStr));
+            currentItems.add(new Item(name, parser.toDouble(weightStr), dim));
+            // For revision if loophole is found
+            String continuePrompt = getInput("Add more items? [Y/N]").toUpperCase();
+            if(continuePrompt.equals("N")) {
+                isDone = true;
+                break;
+            }
+        }
+        return currentItems.toArray(new Item[0]);
     }
 }
 
@@ -151,6 +192,8 @@ class CSVParser {
     public CSVParser() { file = ""; }
     public void setFilePath(String file) { this.file = file; }
     public String getFilePath() { return this.file; }
+    public int toInt(String in) { return Integer.parseInt(in); }
+    public double toDouble(String in) { return Double.parseDouble(in); }
 
     public int getColumnCounts(String file) {
         int counts = -1;
@@ -215,7 +258,7 @@ class CSVParser {
         Customer[] customers = new Customer[raw.length];
         for (int i = 0; i < raw.length; i++) {
             customers[i] = new Customer(
-                Integer.parseInt(raw[i][0]),
+                toInt(raw[i][0]),
                 raw[i][1],
                 raw[i][2],
                 raw[i][3]
@@ -226,7 +269,7 @@ class CSVParser {
 
     public Customer toCustomer(String[][] raw, int idx) { 
         return new Customer(
-            Integer.parseInt(raw[idx][0]), 
+            toInt(raw[idx][0]), 
             raw[idx][1], 
             raw[idx][2], 
             raw[idx][3]
@@ -237,7 +280,7 @@ class CSVParser {
         Vehicle[] vehicles = new Vehicle[raw.length];
         for (int i = 0; i < raw.length; i++) {
             vehicles[i] = new Vehicle(
-                Integer.parseInt(raw[i][0]),
+                toInt(raw[i][0]),
                 raw[i][1],
                 raw[i][2],
                 raw[i][3],
@@ -250,7 +293,7 @@ class CSVParser {
 
     public Vehicle toVehicle(String[][] raw, int idx) { 
         return new Vehicle(
-            Integer.parseInt(raw[idx][0]), 
+            toInt(raw[idx][0]), 
             raw[idx][1], 
             raw[idx][2], 
             raw[idx][3],
@@ -271,13 +314,13 @@ class CSVParser {
 
     public int getLatestID() {
         String[][] rawCSV = loadCSVData(getFilePath());
-        return Integer.parseInt(rawCSV[rawCSV.length - 1][0]);
+        return rawCSV.length == 0 ? 0 : toInt(rawCSV[rawCSV.length - 1][0]);
     }
 
     public void updateCustomerCSV(int id, String newAttribute, int columnIndex) {
         String[][] csvData = loadCSVData(getFilePath());
         for (int i = 0; i < csvData.length; i++) {
-            if (Integer.parseInt(csvData[i][0]) == id) {
+            if (toInt(csvData[i][0]) == id) {
                 csvData[i][columnIndex] = newAttribute;
                 break;
             }
