@@ -2,23 +2,23 @@ import java.util.Date;
 
 public class Package {
     private int id;
+    private String receiverAddress;
+    private Date packageCreated;
     private double dimensionalWeight;
     private Dimension dimension;
-    private Date packageCreated;
     private Item[] contents;
-    private String receiverAddress;
 
     public Package(int id, Item[] contents, String receiverAddress) {
         this.id = id;
         this.packageCreated = new Date();
         this.contents = contents;
         this.receiverAddress = receiverAddress;
-        this.dimension = setDimensions();
-        this.dimensionalWeight = setDimensionalWeight();
+        this.dimension = calculateDimensions();
+        this.dimensionalWeight = calculateDimensionalWeight();
     }
     
     public int getId() { return this.id; }
-    public double getDimensionWeight() { return this.dimensionalWeight; }
+    public double getDimensionalWeight() { return this.dimensionalWeight; }
     public Date getDate() { return this.packageCreated; }
     public Item[] getContents() { return this.contents; }
     public String getreceiverAddress() { return this.receiverAddress; }
@@ -30,95 +30,71 @@ public class Package {
     public void setContents(Item[] contents) { this.contents = contents; }
     public void setReceiver(String receiverAddress) { this.receiverAddress = receiverAddress; }
 
-    // Calculate the Dimensional Weight of a package in cm^3/kg.
-    public double setDimensionalWeight() {
-        return (getDimensions().getLength() * getDimensions().getWidth() * getDimensions().getHeight()) / 5000;
+    // Return a String data for CSV Format used in parsing
+    public String[] toCSVFormat(int customerID) { 
+        Dimension dim = getDimensions();
+        return new String[] {
+            String.valueOf(getId()), 
+            String.valueOf(customerID),
+            getreceiverAddress(), 
+            String.valueOf(getDimensionalWeight()), 
+            String.valueOf(dim.getLength()), 
+            String.valueOf(dim.getWidth()), 
+            String.valueOf(dim.getHeight())
+        }; 
     }
-    
+    // Calculate the Dimensional Weight of a package in cm^3/kg.
+    public double calculateDimensionalWeight() {
+        double boxVolume = calculateBoxVolume();
+        return boxVolume / 5000;
+    }
+    // Get which weight is bigger as basis for calculating costs: fairly priced for the space they occupy.
+    // assumed weight - total item weight only, dimensional weight - amount of space a package takes up relative to its actual weight
+    public double getPricingBasis() {
+        double assumedWeight = getTotalItemWeight(getContents());
+        return Math.max(assumedWeight, getDimensionalWeight());
+    }
+    // Get volume length of the max dimensions of the package
+    public double calculateBoxVolume() {
+        Dimension dim = getDimensions();
+        return dim.getLength() * dim.getWidth() * dim.getHeight();
+    }
     // Sum all item weights in KG - different from the package's dimensional weight
     public double getTotalItemWeight(Item[] contents) { 
         double weight = 0.0;
         for(Item item : contents) { weight += item.getWeight(); }
         return weight;
     }
-
-    public Dimension setDimensions() {
-        double lengthTmp = 0.0, widthTmp = 0.0, heightTmp = 0.0;
+    public Dimension calculateDimensions() {
+        double maxLength = 0.0, maxWidth = 0.0, maxHeight = 0.0;
         for (Item item : getContents()) {
-            lengthTmp = Math.max(lengthTmp, item.getDimensions().getLength());
-            widthTmp = Math.max(widthTmp, item.getDimensions().getWidth());
-            heightTmp = Math.max(heightTmp, item.getDimensions().getHeight());
+            Dimension dim = item.getDimensions();
+            maxLength = Math.max(maxLength, dim.getLength());
+            maxWidth = Math.max(maxWidth, dim.getWidth());
+            maxHeight = Math.max(maxHeight, dim.getHeight());
         }
-        return new Dimension(lengthTmp, widthTmp, heightTmp);
+        return new Dimension(maxLength, maxWidth, maxHeight);
     }
-
-    public void displayPackageContents() {
-        for(int i = 0; i < contents.length; i++) {
-            System.out.println(contents.toString());
-        }
-    }
-}
-
-class Item {
-    private String name;
-    private double weight; // in kilograms
-    private Dimension dimension;
-
-    public Item(String name, double weight, Dimension dimension) {
-        this.name = name;
-        this.weight = toKilograms(weight);
-        this.dimension = dimension;
-    }
-
-    public String getName() { return this.name; }
-    public double getWeight() { return this.weight; }
-    public Dimension getDimensions() { return this.dimension; }
 
     @Override
     public String toString() {
-        return String.format("Name: %s\nWeight: %.2f\nDimensions: %.2fx%.2fx%.2f",
-            getName(),
-            getWeight(),
-            getDimensions().getLength(),
-            getDimensions().getWidth(),
-            getDimensions().getHeight()
+        Dimension dim = getDimensions();
+        return String.format(
+            "Package ID: %d\nDimensions: %dx%dx%d cm.\nItem Counts: %d\nReceiver Address: %s\n",
+            getId(),
+            (int) Math.round(dim.getLength()),
+            (int) Math.round(dim.getWidth()),
+            (int) Math.round(dim.getHeight()),
+            itemCounts(),
+            getreceiverAddress()
         );
     }
 
-    public double toKilograms(double grams) {
-        return grams / 1000.0;
+    public void displayPackageContents() {
+        System.out.println("| name | weight(kg) | dimensions(cm) |");
+        for(int i = 0; i < contents.length; i++) {
+            System.out.println(contents[i].toString());
+        }
     }
 }
 
-// All measurements in centimeters for accurate calculations later
-class Dimension {
-    private double height;
-    private double width;
-    private double length;
-
-    public Dimension(double height, double width, double length) {
-        this.height = height;
-        this.width = width;
-        this.length = length;
-    }
-
-    public double getLength() { return this.length; }
-    public double getWidth() { return this.width; }
-    public double getHeight() { return this.height; }
-
-    public void setLength(double length) { this.length = length; }
-    public void setWidth(double width) { this.width = width; }
-    public void setHeight(double height) { this.height = height; }
-}
-
-class Shipment {
-    private Warehouse dropOff; 
-    private String destination;
-    private Vehicle vehicle;
-    private double shippingCost;
-    private boolean confirmed;
-    private Package pkg;
-    private String status;
-    private Date shipmentTakeOffDate;
-    private Date estimatedDeliveryDate; 
-}

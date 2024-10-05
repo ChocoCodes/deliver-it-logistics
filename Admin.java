@@ -26,6 +26,7 @@ public class Admin extends Employee {
 
     @Override
     public void showMenu() {
-        
+        super.showMenu(); // Invoke superclass implementation
+        // Add admin-specific implementation
     }
 }

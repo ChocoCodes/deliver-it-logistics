@@ -31,4 +31,13 @@ public class Customer {
         getAddress()
         );
     }
+
+    public String[] toCSVFormat() {
+        return new String[] {
+            String.valueOf(getCustomerID()),
+            getName(),
+            getContactInfo(),
+            getAddress()
+        };
+    }
 }

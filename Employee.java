@@ -4,14 +4,16 @@ public class Employee {
     protected String name;
     protected String username;
     protected String password;
-    protected Logistics logistics = new Logistics();
-    protected CSVParser parser = new CSVParser();
+    protected Logistics logistics;
+    protected CSVParser parser;
 
     // Constructor
     public Employee(String name, String username, String password) {
         this.name = name;
         this.username = username;
         this.password = password;
+        this.logistics = new Logistics();
+        this.parser = new CSVParser();
     }
 
     public String getUsername() {
@@ -48,7 +50,7 @@ public class Employee {
     public void processShipment() {
         // Display available packages for shipment
         System.out.println("Available Packages for Shipment:");
-        //TODO Need Method to read packages from csv file and return packages[]
+        // TODO Need Method to read packages from csv file and return packages[]
 
         Package[] packages = new Package[5]; // Place Holder
 
