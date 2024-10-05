@@ -34,6 +34,7 @@ public class Package {
     public double setDimensionalWeight() {
         return (getDimensions().getLength() * getDimensions().getWidth() * getDimensions().getHeight()) / 5000;
     }
+    
     // Sum all item weights in KG - different from the package's dimensional weight
     public double getTotalItemWeight(Item[] contents) { 
         double weight = 0.0;
@@ -108,5 +109,16 @@ class Dimension {
     public void setLength(double length) { this.length = length; }
     public void setWidth(double width) { this.width = width; }
     public void setHeight(double height) { this.height = height; }
+}
 
+class Shipment {
+    private Warehouse dropOff; 
+    private String destination;
+    private Vehicle vehicle;
+    private double shippingCost;
+    private boolean confirmed;
+    private Package pkg;
+    private String status;
+    private Date shipmentTakeOffDate;
+    private Date estimatedDeliveryDate; 
 }

@@ -83,10 +83,9 @@ public class Employee {
     }
 
     public void sortPackage() {
-        // TODO Display Warehouses (Read Warehouse CSV)
-        
-        // TODO Ask employee ID warehouse to sort get the info from warehouse csv and Return Warehouse
-        // TODO Based on the warehouse ID  read the package csv and return pkg and fill warehouse.packages[] that has matching ID
+        // TODO: Display Warehouses (Read Warehouse CSV)
+        // TODO: Ask employee ID warehouse to sort get the info from warehouse csv and Return Warehouse
+        // TODO: Based on the warehouse ID  read the package csv and return pkg and fill warehouse.packages[] that has matching ID
         
     Warehouse selectedWarehouse = new Warehouse(0, name, 1000, 5); // Placeholder for now
 
@@ -116,7 +115,7 @@ public class Employee {
         System.out.println("Sorting Package ID: " + pkg.getId());
         System.out.println("Contents: " + pkg.getContents().length + " item(s), Receiver Address: " + pkg.getreceiverAddress());
 
-        // TODO Apply Sorting Logic
+        // TODO: Apply Sorting Logic
 
         System.out.println("Package ID " + pkg.getId() + " has been sorted successfully.");
     } else {

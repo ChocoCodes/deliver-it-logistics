@@ -124,6 +124,9 @@ public class Logistics {
                     Item[] items = getCustomerItems();
                     String receiver = getInput("Enter Receiver Address");
                     Package pkg = new Package(parser.getLatestID() + 1, items, receiver);
+                    // TODO: Save Package to CSV
+                    // TODO: Save Items to CSV
+                    
                     break;
                 case 'E':   
                     editCustomerInfo(customer);
