@@ -39,6 +39,29 @@ public class Logistics {
             case 2:
                 // Admin/Employee Module
                 System.out.println("Admin/Employee Module in progress");
+
+                String username = args[0];
+                String password = args[1];
+
+                // Username and Passwords
+                final String adminUsername = "admin";
+                final String adminPassword = "admin123";
+                final String employeeUsername = "employee";
+                final String employeePassword = "employee123";
+
+                // Predefined Credentials for Admin and Employee
+                Admin admin = new Admin("Admin", adminUsername, adminPassword);
+                Employee employee = new Employee("Employee", employeeUsername, employeePassword);
+
+                if (username.equals(admin.getUsername()) && admin.login(password)) {
+                    System.out.println("Welcome Admin");
+                    admin.showMenu();
+                } else if (username.equals(employee.getUsername()) && employee.login(password)) {
+                    System.out.println("Welcome Employee!");
+                    employee.showMenu();
+                } else {
+                    System.out.println("Invalid username or password. Please try again.");
+                }
                 break;
             default:
                 System.out.println("Invalid args length!\nUSAGE: javac -cp out Logistics OR javac -cp out Logistics {arg1} {arg2}");
@@ -47,10 +70,10 @@ public class Logistics {
         System.out.println("Program Terminated.");
     }
     
-    private boolean checkInput(String input) { return input.length() == 0 || input == null; }
+    public boolean checkInput(String input) { return input.length() == 0 || input == null; }
 
 
-    private String getInput(String prompt) {
+    public String getInput(String prompt) {
         boolean exceptionOccured = false; 
         String input = "";
         do {
@@ -62,13 +85,13 @@ public class Logistics {
         return input;
     }
 
-    private boolean checkInt(String input) {
+    public boolean checkInt(String input) {
         try {
             return parser.toInt(input) > 0;
         } catch (NumberFormatException e) { return false; }
     }
 
-    private boolean checkDouble(String input) {
+    public boolean checkDouble(String input) {
         try {
             return parser.toDouble(input) > 0.0;
         } catch (NumberFormatException e) { return false; }
@@ -152,7 +175,7 @@ public class Logistics {
         } while(!valid);
     }
 
-    private Item[] getCustomerItems() {
+    public Item[] getCustomerItems() {
         ArrayList<Item> currentItems = new ArrayList<>();
         boolean isDone = false;
         String name, weightStr, lenStr, widStr, heiStr;
