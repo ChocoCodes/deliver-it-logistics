@@ -37,7 +37,7 @@ public class Logistics {
                 manager.showCustomerMenu(currentCustomer);
                 break;
             case 3:
-                // Admin/Employee Module
+                // Admin/Employee Module REVISE
                 System.out.println("Admin/Employee Module in progress");
 
                 String username = args[0], password = args[1], holderName = args[2];
@@ -270,7 +270,7 @@ class CSVParser {
         return data.toArray(new String[0][0]);
     }
     
-    // Save an entity's attributes to the CSV File
+    // Individual Entity - Save an entity's attributes to the CSV File
     public void saveEntry(String[] data) {
         boolean saved = false;
         try (PrintWriter fout = new PrintWriter(new FileWriter(getFilePath(), true))) {
@@ -281,7 +281,7 @@ class CSVParser {
         System.out.println(saved ? "Successfully saved new data." : "An error occured while saving new data.");
     }
 
-    // Write all the current contents of the CSV after updating selected fields
+    // Bulk Writing - Write all the current contents of the CSV after updating selected fields
     public void writeToCSV(String[][] data, String[] header, boolean append) {
         boolean saved = false;
         try (PrintWriter fout = new PrintWriter(new FileWriter(file, append))) {

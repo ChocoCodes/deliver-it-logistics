@@ -25,7 +25,7 @@ public class Employee {
         return this.password.equals(inputPassword);
     }
 
-    // Basic functionalities for employees
+    // Basic functionalities for employees REMOVE
     public void encodeOrder() {
         String customerName = logistics.getInput("Enter Customer Name");
         Customer customer = parser.searchCustomerName(customerName);
@@ -49,10 +49,10 @@ public class Employee {
 
     public void processShipment() {
         // Display available packages for shipment
+        // Get Shipment CSV: a. If status is pending set to confirmed - rewrite to CSV
         System.out.println("Available Packages for Shipment:");
-        // TODO Need Method to read packages from csv file and return packages[]
-
-        Package[] packages = new Package[5]; // Place Holder
+        // TODO: Method to read Shipment from csv file and return Shipment array
+        Shipment[] packages = new Package[5]; // Place Holder
 
         for (Package pkg : packages) {
             System.out.println(pkg.toString());

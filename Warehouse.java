@@ -5,8 +5,8 @@ public class Warehouse {
     private int currentPackageCount;
     private int maxVehicleCount;
     private int currentVehicleCount;
-    private Package[] packages;
-    private Vehicle[] vehicles;
+    private Package[] packages; // pkgID in csv
+    private Vehicle[] vehicles; // vID in csv
 
     // Warehouse Constructor
     public Warehouse(int wareHouseID, String location, int maxPackageCount, int maxVehicleCount) {

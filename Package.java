@@ -65,6 +65,8 @@ public class Package {
         for(Item item : contents) { weight += item.getWeight(); }
         return weight;
     }
+    // getBoxCatPrice()
+    // Max l,w,h of an item is assumed to be the dimensions of the package
     public Dimension calculateDimensions() {
         double maxLength = 0.0, maxWidth = 0.0, maxHeight = 0.0;
         for (Item item : getContents()) {
