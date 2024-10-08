@@ -229,6 +229,8 @@ class CSVParser {
     private final String[] CUSTOMER_H = {"id", "name", "contactInfo", "address"};
     private final String[] PACKAGE_H = {"cID", "pkgID", "receiverAddress", "created", "dimensionalWeight_kg", "length_cm", "width_cm", "height_cm"};
     private final String[] ITEMS_H = {"pkgID", "name", "weight_kg", "length_cm", "width_cm", "height_cm"};
+    private final String[] VEHICLES_H = {"vID", "type", "licensePlate", "driver", "capacity", "availability"};
+    private final String[] WAREHOUSE_H = {"wId", "location", "package_capacity", "vehicle_capacity"};
 
     public CSVParser() { 
         file = ""; 
@@ -239,6 +241,8 @@ class CSVParser {
     public String[] getCustomerHeader() { return this.CUSTOMER_H; }
     public String[] getPackageHeader() { return this.PACKAGE_H; }
     public String[] getItemHeader() { return this.ITEMS_H; }
+    public String[] getVehicleHeader() { return this.VEHICLES_H; }
+    public String[] getWarehouseHeader() { return this.WAREHOUSE_H; }
     public int toInt(String in) { return Integer.parseInt(in); }
     public double toDouble(String in) { return Double.parseDouble(in); }
 
