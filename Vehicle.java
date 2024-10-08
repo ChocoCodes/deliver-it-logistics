@@ -60,7 +60,16 @@ public class Vehicle {
         );
     }
 
-    
+    public String[] toCSVFormat() {
+        return new String[]{
+                String.valueOf(vehicleID),
+                type,
+                licensePlate,
+                driver,
+                String.valueOf(capacityKG),
+                String.valueOf(isAvailable)
+        };
+    }
 
     public double getAvailableCapacity() {
         return capacityKG - currentCapacityKG;
