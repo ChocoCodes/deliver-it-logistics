@@ -77,7 +77,7 @@ public class FrontlineEmployee extends Employee {
             shipments[selectedShipmentIndex].setConfirmed(true);
             
             // Update the CSV with the confirmed shipment status
-            csvParser.updateShipmentCSV(shipments[selectedShipmentIndex].getShipmentID(), "Confirmed", 6); // TODO change to actual col value
+            csvParser.updateShipmentCSV(shipments[selectedShipmentIndex].getShipmentID(), shipments[selectedShipmentIndex].getConfirmed(), 6); // TODO change to actual col value
             System.out.println("Shipment confirmed successfully.");
         } else {
             System.out.println("Shipment confirmation canceled.");
