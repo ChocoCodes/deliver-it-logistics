@@ -98,4 +98,13 @@ public class Warehouse {
             getCurrentVehicleCount()
         );
     }
+
+    public String[] toCSVFormat() {
+        return new String[]{
+                String.valueOf(getWarehouseID()),
+                location,
+                String.valueOf(getmaxPackageCount()),
+                String.valueOf(getmaxVehicleCount())
+        };
+    }
 }
