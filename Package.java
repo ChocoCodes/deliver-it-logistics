@@ -16,7 +16,7 @@ public class Package {
         this.dimension = calculateDimensions();
         this.dimensionalWeight = calculateDimensionalWeight();
     }
-    
+    // Getters
     public int getId() { return this.id; }
     public double getDimensionalWeight() { return this.dimensionalWeight; }
     public Date getDate() { return this.packageCreated; }
@@ -24,7 +24,7 @@ public class Package {
     public String getreceiverAddress() { return this.receiverAddress; }
     public int itemCounts() { return getContents().length; }
     public Dimension getDimensions() { return this.dimension; }
-
+    // Setters
     public void setId(int id) { this.id = id; }
     public void setDate(Date packageCreated) { this.packageCreated = packageCreated; }
     public void setContents(Item[] contents) { this.contents = contents; }
@@ -45,19 +45,29 @@ public class Package {
     }
     // Calculate the Dimensional Weight of a package in cm^3/kg.
     public double calculateDimensionalWeight() {
-        double boxVolume = calculateBoxVolume();
+        double boxVolume = calcBoxVolume();
         return boxVolume / 5000;
     }
-    // Get which weight is bigger as basis for calculating costs: fairly priced for the space they occupy.
-    // assumed weight - total item weight only, dimensional weight - amount of space a package takes up relative to its actual weight
+    /* Get which weight is bigger as basis for calculating costs: fairly priced for the space they occupy.
+    * actual - total item weight only; large/heavy parcels
+    * dimensional - amount of space a package takes up relative to its actual weight; large but light (bulky but don’t weigh much)
+    */ 
     public double getPricingBasis() {
-        double assumedWeight = getTotalItemWeight(getContents());
-        return Math.max(assumedWeight, getDimensionalWeight());
+        double actual = getTotalItemWeight(getContents());
+        return Math.max(actual, getDimensionalWeight());
     }
     // Get volume length of the max dimensions of the package
-    public double calculateBoxVolume() {
+    public double calcBoxVolume() {
         Dimension dim = getDimensions();
         return dim.getLength() * dim.getWidth() * dim.getHeight();
+    }
+    // Calculate box category based on getPricingBasis()
+    // 0.0 fee for invalid inputs, 200 fee for small, 300 fee for medium, 500 fee for large, 700 fee for exceeding size
+    public double calcBoxFee(double weight) {
+        if (weight <= 0.0) return 0.0; // invalid weight
+        return (weight <= 2.0) ? 200.00 : // small packages
+               (weight <= 5.0) ? 300.00 : // medium packages
+               (weight <= 10.0) ? 500.00 : 700.00; // large and packages exceeding 10.0 kgs
     }
     // Sum all item weights in KG - different from the package's dimensional weight
     public double getTotalItemWeight(Item[] contents) { 
@@ -65,7 +75,6 @@ public class Package {
         for(Item item : contents) { weight += item.getWeight(); }
         return weight;
     }
-    // getBoxCatPrice()
     // Max l,w,h of an item is assumed to be the dimensions of the package
     public Dimension calculateDimensions() {
         double maxLength = 0.0, maxWidth = 0.0, maxHeight = 0.0;

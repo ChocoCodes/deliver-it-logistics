@@ -1,8 +1,9 @@
 import java.util.Date;
+import java.util.Random;
+import java.util.Calendar;
 
 public class Shipment {
-    private int shipmentID; //NEEDED for Referencing
-    private int currPkgLoc;
+    private int id;
     private String destination; // receiver address alr avail - constructor
     private Vehicle vehicle; // assign by e/a
     private int vehicleID;  // NEW: FK to reference Vehicle ID
@@ -11,33 +12,45 @@ public class Shipment {
     private Package pkg; // alr finish by the time shipment obj is instantiated - constructor
     private int pkgID; // Not sure if needed pero insurance 
     private String status; // control by e/a default - Pending
-    private Date shipmentTakeOffDate; // assign after the vehicle left the main warehouse
-    private Date estimatedDeliveryDate; // create algo acdg to warehouse location - random algo max 7 days
+    private Date shipTakeOff; // assign after the vehicle left the main warehouse
+    private Date estDelivery; // create algo acdg to warehouse location - random algo max 7 days
 
-    // NOTE in Shipment CSV Shipment needs to have an FK of Vehicle ID
-    // NOTE in Shipment CSV Shipment needs to have an FK of Package ID
-
-    public Shipment(int shipmentID, String destination, Package pkg) {
-        this.shipmentID = shipmentID;
+    public Shipment(String destination, Package pkg) {
         this.destination = destination;
         this.pkg = pkg;
         this.status = "Pending";
         this.confirmed = false;
     }
-
-    public Package getPackage() {return this.pkg;}
-    public int getShipmentID() {return shipmentID;}
-    public String getStatus() {return status;}
-
-    public void setVehicleID(int vehicleID) {this.vehicleID = vehicleID;} // Needed for Warehouse Employee
-    public void setPackageID(int pkgID) {this.pkgID = pkgID;} // Not sure if needed pero insurance 
-    public void setStatus(String status) {this.status = status;}
-    // payShipment
-    // calcShipCost
-    // confirmShip
-    // estDeliverDay
-    // setStatus
-    // setShipTakeOff - attr only
-    // calcETA() - 7 days max
+    // Constructor for Shipment CSV File Extraction
+    public Shipment(String destination, double shippingCost, boolean confirmed, Package pkg, String status, Date shipTakeOff, Date estDelivery) {
+        this.destination = destination;
+        this.shippingCost = shippingCost;
+        this.confirmed = confirmed;
+        this.pkg = pkg;
+        this.status = status;
+        this.shipTakeOff = shipTakeOff;
+        this.estDelivery = estDelivery;
+    }
+    // Setters
+    public void setStatus(String status) { this.status = status; }
+    public void setShipTakeOff() { if (this.shipTakeOff == null) this.shipTakeOff = new Date(); }
+    public void setEtaDelivery(Date estDelivery) { this.estDelivery = estDelivery; }
+    // Getters
+    public Date getEtaDelivery() { return this.estDelivery; }
+    public String getStatus() { return this.status; }
+    public Date getShipTakeOff() { return this.shipTakeOff; }
+    public void confirmShip() { if (!confirmed) this.confirmed = true; }
+    // TODO: calcShipCost
+    // Algorithm to select an "estimated" timeframe of the shipment delivery within 7 days
+    // using Calendar class to manipulate Date and Random class to implement randomization
+    public Date calcEstTime() {
+        Date takeOff = getShipTakeOff();
+        Random rand = new Random();
+        int etaRange = rand.nextInt(7) + 1;
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(takeOff);
+        calendar.add(Calendar.DAY_OF_MONTH, etaRange);
+        return calendar.getTime();
+    }
     // shipToCSVFormat()
 }

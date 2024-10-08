@@ -240,12 +240,12 @@ public class Logistics {
 
 
 class CSVParser {
-    private String file;
     private final String[] CUSTOMER_H = {"id", "name", "contactInfo", "address"};
     private final String[] PACKAGE_H = {"cID", "pkgID", "receiverAddress", "created", "dimensionalWeight_kg", "length_cm", "width_cm", "height_cm"};
     private final String[] ITEMS_H = {"pkgID", "name", "weight_kg", "length_cm", "width_cm", "height_cm"};
     private final String[] VEHICLES_H = {"vID", "type", "licensePlate", "driver", "capacity", "availability"};
     private final String[] WAREHOUSE_H = {"wId", "location", "package_capacity", "vehicle_capacity"};
+    private String file; // hold the file path needed for operations
 
     public CSVParser() { 
         file = ""; 
