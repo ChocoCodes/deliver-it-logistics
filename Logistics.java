@@ -36,27 +36,42 @@ public class Logistics {
                 }
                 manager.showCustomerMenu(currentCustomer);
                 break;
-            case 3:
-                // Admin/Employee Module REVISE
+                case 3:
+                // Admin/Employee Module REVISED
                 System.out.println("Admin/Employee Module in progress");
-
-                String username = args[0], password = args[1], holderName = args[2];
-
+            
+                String username = args[0], password = args[1], holderName = args[2], role = args[3];
+            
                 // Username and Passwords
                 final String adminUsername = "admin";
                 final String adminPassword = "admin123";
                 final String employeeUsername = "employee";
                 final String employeePassword = "employee123";
-
+            
                 // Predefined Credentials for Admin and Employee
                 Admin admin = new Admin(holderName, adminUsername, adminPassword);
-                Employee employee = new Employee(holderName, employeeUsername, employeePassword);
-
+                Employee employee;
+            
+                switch (role.toLowerCase()) {
+                    case "frontline":
+                        employee = new FrontlineEmployee(holderName, employeeUsername, employeePassword);
+                        break;
+                    case "warehouse":
+                        employee = new WarehouseManager(holderName, employeeUsername, employeePassword);
+                        break;
+                    case "driver":
+                        employee = new Driver(holderName, employeeUsername, employeePassword);
+                        break;
+                    default:
+                        System.out.println("Invalid role.");
+                        return;
+                }
+            
                 if (username.equals(admin.getUsername()) && admin.login(password)) {
                     System.out.println("Welcome Admin");
                     admin.showMenu();
                 } else if (username.equals(employee.getUsername()) && employee.login(password)) {
-                    System.out.println("Welcome Employee!");
+                    System.out.println("Welcome " + role + "!");
                     employee.showMenu();
                 } else {
                     System.out.println("Invalid username or password. Please try again.");

@@ -5,14 +5,17 @@ public class Vehicle {
     protected String driver;
     protected double capacityKG;
     protected double currentCapacityKG;
-    protected int maxPackageCount;
-    protected int currentPackageCount;
+    protected int maxShipmentCount;
+    protected int currentShipmentCount;
     protected boolean isAvailable;
-    protected Package[] packages;
+    protected Shipment[] shipments; 
+    protected CSVParser parser = new CSVParser();
 
+    // Changed Package[] packages -> Shipment[] shipments because the Driver Role Needs Vehicle to have a Shipment 
+    // Packages method can still be accessed through shipment class
 
     // Vehicle Constructor
-    public Vehicle(int vehicleID, String type, String licensePlate, String driver, double capacityKG, int maxPackageCount, boolean isAvailable) {
+    public Vehicle(int vehicleID, String type, String licensePlate, String driver, double capacityKG, int maxShipmentCount, boolean isAvailable) {
         this.vehicleID = vehicleID;
         this.type = type;
         this.licensePlate = licensePlate;
@@ -34,10 +37,10 @@ public class Vehicle {
     public int getVehicleID() { return this.vehicleID; }
     public String getLicensePlate() { return this.licensePlate; }
     public String getDriver() { return this.driver; }
-    public Package[] getPackages() { return this.packages; }
+    public Shipment[] getShipments() { return this.shipments; }
     public double getCurrentCapacityKG() { return this.currentCapacityKG; }
-    public int getMaxPackageCount() { return this.maxPackageCount; }
-    public int getCurrentPackageCount() { return this.currentPackageCount; }
+    public int getMaxShipmentCount() { return this.maxShipmentCount; }
+    public int getCurrentShipmentCount() { return this.currentShipmentCount; }
     
     // Setters
     public void setAvailability(boolean isAvailable) { this.isAvailable = isAvailable; }
@@ -47,33 +50,31 @@ public class Vehicle {
     @Override
     public String toString() {
         return String.format(
-            "Vehicle ID: %d\nType: %s\nLicense Plate: %s\nDriver: %s\nCapacity: %.2f KG\nCurrent Load: %.2f KG\nMax Packages: %d\nCurrent Packages: %d\nAvailable: %b", 
+            "Vehicle ID: %d\nType: %s\nLicense Plate: %s\nDriver: %s\nCapacity: %.2f KG\nCurrent Load: %.2f KG\nMax Shipments: %d\nCurrent Shipments: %d\nAvailable: %b", 
             getVehicleID(),
             getType(),
             getLicensePlate(),
             getDriver(),
             getCapacity(),
             getCurrentCapacityKG(),
-            getMaxPackageCount(),
-            getCurrentPackageCount(),
+            getMaxShipmentCount(),
+            getCurrentShipmentCount(),
             isAvailable()
         );
     }
-
-    
 
     public double getAvailableCapacity() {
         return capacityKG - currentCapacityKG;
     }
 
-    public boolean addPackage(Package pkg) {
-        if (getAvailableCapacity() < capacityKG && getCurrentPackageCount() < maxPackageCount) {
-            for (int i = 0; i < packages.length; i++) {
-                if (packages[i] == null) { 
-                    if (!(currentCapacityKG + pkg.getTotalItemWeight(pkg.getContents()) > capacityKG)) {
-                        packages[i] = pkg;
-                        currentCapacityKG += pkg.getTotalItemWeight(pkg.getContents());
-                        currentPackageCount++;
+    public boolean addShipment(Shipment shipment) {
+        if (getAvailableCapacity() < capacityKG && getCurrentShipmentCount() < maxShipmentCount) {
+            for (int i = 0; i < shipments.length; i++) {
+                if (shipments[i] == null) { 
+                    if (!(currentCapacityKG + shipments[i].getPackage().getTotalItemWeight(shipments[i].getPackage().getContents()) > capacityKG)) {
+                        shipments[i] = shipment;
+                        currentCapacityKG += shipment.getPackage().getTotalItemWeight(shipment.getPackage().getContents());
+                        currentShipmentCount++;
                         return true;
                     } else {
                         return false;
@@ -84,13 +85,13 @@ public class Vehicle {
         return false;
     }
 
-    // Remove ONE package from the vehicle if it is delivered
-    public boolean removePackage(Package pkg) {
-        for (int i = 0; i < packages.length; i++) {
-            if (packages[i] != null && packages[i].equals(pkg)) {
-                currentCapacityKG -= pkg.getTotalItemWeight(pkg.getContents());
-                currentPackageCount--;
-                packages[i] = null;
+    // Remove ONE Shipment from the vehicle if it is delivered
+    public boolean removeShipment(Shipment shipment) {
+        for (int i = 0; i < shipments.length; i++) {
+            if (shipments[i] != null && shipments[i].equals(shipment)) {
+                currentCapacityKG -= shipment.getPackage().getTotalItemWeight(shipment.getPackage().getContents());
+                currentShipmentCount--;
+                shipments[i] = null;
                 return true;
             }
         }
@@ -98,37 +99,25 @@ public class Vehicle {
     }
 }
 
-class Motorcycle extends Vehicle {
+class Van extends Vehicle {
 
-    public Motorcycle(int vehicleID, String licensePlate, String driver, boolean isAvailable) {
-        // Max capacity is only 80kg and only allows 1 package
-        super(vehicleID, "Motorcycle", licensePlate, driver, 80, 1, isAvailable);
+    public Van(int vehicleID, String licensePlate, String driver, boolean isAvailable) {
+        // Max capacity is only 1200kg and only allows 75 Shipment
+        super(vehicleID, "Van", licensePlate, driver, 1200, 75, isAvailable);
     }
 
-    // Ensure that the motorcycle can only receive one package at <= 80KG 
-    @Override
-    public boolean addPackage(Package pkg) {
-        if (getCurrentPackageCount() == 0 && pkg.getTotalItemWeight(pkg.getContents()) <= 80) {
-            packages[0] = pkg;
-            currentCapacityKG += pkg.getTotalItemWeight(pkg.getContents());
-            currentPackageCount++;
-            return true;
-        }
-        return false;
-    }
-
-    // Override the toString method for Motorcycle specific display
+    // Override the toString method for Van specific display
     @Override
     public String toString() {
         return String.format(
-            "Motorcycle ID: %d\nLicense Plate: %s\nDriver: %s\nCapacity: %.2f KG\nCurrent Load: %.2f KG\nMax Packages: %d\nCurrent Packages: %d\nAvailable: %b",
+            "Van ID: %d\nLicense Plate: %s\nDriver: %s\nCapacity: %.2f KG\nCurrent Load: %.2f KG\nMax Shipments: %d\nCurrent Shipments: %d\nAvailable: %b",
             getVehicleID(),
             getLicensePlate(),
             getDriver(),
             getCapacity(),
             getCurrentCapacityKG(),
-            getMaxPackageCount(),
-            getCurrentPackageCount(),
+            getMaxShipmentCount(),
+            getCurrentShipmentCount(),
             isAvailable()
         );
     }

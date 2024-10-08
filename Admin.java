@@ -1,4 +1,4 @@
-public class Admin extends Employee {
+public class Admin extends FrontlineEmployee {
     public Admin(String name, String username, String password) {
         super(name, username, password);
     }
@@ -26,7 +26,6 @@ public class Admin extends Employee {
 
     @Override
     public void showMenu() {
-        super.showMenu(); // Invoke superclass implementation
         // Add admin-specific implementation
     }
 }
