@@ -21,14 +21,14 @@ public class Driver extends Employee {
 
             // Getting user input and handling exceptions
             try {
-                choice = Integer.parseInt(logistics.getInput("Enter your choice: "));
+                choice = Integer.parseInt(Logistics.getInput("Enter your choice: "));
 
                 switch (choice) {
                     case 1:
-                        assignVehicle(parser);
+                        assignVehicle();
                         break;
                     case 2:
-                        deliverPackage(parser);
+                        deliverPackage();
                         break;
                     case 3:
                         System.out.println("Exiting the system. Goodbye!");
@@ -43,12 +43,11 @@ public class Driver extends Employee {
         }
     }
 
-    public void assignVehicle(CSVParser csvParser) {
+    public void assignVehicle() {
         // Load available vehicles from the CSV file
-        csvParser.setFilePath("CSVFiles/vehicles.csv");
-        String[][] vehicleData = csvParser.loadCSVData(csvParser.getFilePath());
-        Vehicle[] vehicles = csvParser.toVehicle(vehicleData);
-
+        CSVParser.setFilePath("CSVFiles/vehicles.csv");
+        String[][] vehicleData = CSVParser.loadCSVData(CSVParser.getFilePath());
+        Vehicle[] vehicles = CSVParser.toVehicle(vehicleData); // TODO 
         // Display available vehicles
         System.out.println("Available Vehicles:");
         for (Vehicle v : vehicles) {
@@ -61,7 +60,7 @@ public class Driver extends Employee {
         int selectedVehicleID = 0;
         while(true) {
             try {
-                selectedVehicleID = Integer.parseInt(logistics.getInput("Enter Vehicle ID to Assign: "));
+                selectedVehicleID = Integer.parseInt(Logistics.getInput("Enter Vehicle ID to Assign: "));
                 break;
             } catch (InputMismatchException e) {
                 System.out.println("Input should be an integer. Try Again");
@@ -77,7 +76,7 @@ public class Driver extends Employee {
         }
 
         // Update the CSV with the driver assigned to the selected vehicle
-        csvParser.updateVehicleCSV(assignedVan.vehicleID, assignedVan.getDriver(), 4);
+        // TODO: CSVParser.updateVehicleCSV(assignedVan.vehicleID, assignedVan.getDriver(), 4);
     }
 
     public void deliverPackage(CSVParser parser) {
@@ -98,7 +97,7 @@ public class Driver extends Employee {
             while(choice < 1 || choice > assignedVan.getShipments().length) {
                 while(true) {
                     try {
-                        choice = Integer.parseInt(logistics.getInput("Enter Shipment ID to Deliver: "));
+                        choice = Integer.parseInt(Logistics.getInput("Enter Shipment ID to Deliver: "));
                         break;
                     } catch(InputMismatchException | NumberFormatException e) {
                         System.out.println("Enter a valid integer.");
@@ -106,11 +105,11 @@ public class Driver extends Employee {
                 }
             }
 
-            String toDeliver = logistics.getInput("Set Status of Shipment ID: " + assignedVan.getShipments()[choice - 1] + " to \"Delivered\"? (Yes/No)");
+            String toDeliver = Logistics.getInput("Set Status of Shipment ID: " + assignedVan.getShipments()[choice - 1] + " to \"Delivered\"? (Yes/No)");
             if(toDeliver.equalsIgnoreCase("Yes")) {
                 assignedVan.getShipments()[choice - 1].setStatus("Delivered");
-                parser.setFilePath("CSVFiles/shipments.csv");
-                parser.updateShipmentCSV(assignedVan.getShipments()[choice - 1].getShipmentID(), 
+                CSVParser.setFilePath("CSVFiles/shipments.csv");
+                CSVParser.updateShipmentCSV(assignedVan.getShipments()[choice - 1].getShipmentID(), 
                                          assignedVan.getShipments()[choice - 1].getStatus(), 5); // TODO change this to actual col value
                 System.out.println("Set to Delivered Successfully.");
             } 
@@ -121,9 +120,9 @@ public class Driver extends Employee {
     // D ko sure if diri ni or sa Vehicle na class
     public void loadVehicleShipmentFromCSV(int vehicleID) {
         // Load all shipments from the CSV file
-        parser.setFilePath("CSVFiles/shipments.csv");
-        String[][] shipmentData = parser.loadCSVData(parser.getFilePath());
-        Shipment[] shipments = parser.toShipment(shipmentData);
+        CSVParser.setFilePath("CSVFiles/shipments.csv");
+        String[][] shipmentData = CSVParser.loadCSVData(CSVParser.getFilePath());
+        Shipment[] shipments = CSVParser.toShipment(shipmentData);
 
         // Find shipments with matching vehicleID and assign them to this vehicle
         for (Shipment shipment : shipments) {

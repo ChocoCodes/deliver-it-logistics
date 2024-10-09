@@ -14,7 +14,7 @@ public class Package {
         this.contents = contents;
         this.receiverAddress = receiverAddress;
         this.dimension = calculateDimensions();
-        this.dimensionalWeight = calculateDimensionalWeight();
+        this.dimensionalWeight = calcDimensionalWeight();
     }
     // Getters
     public int getId() { return this.id; }
@@ -44,7 +44,7 @@ public class Package {
         }; 
     }
     // Calculate the Dimensional Weight of a package in cm^3/kg.
-    public double calculateDimensionalWeight() {
+    private double calcDimensionalWeight() {
         double boxVolume = calcBoxVolume();
         return boxVolume / 5000;
     }
@@ -52,12 +52,12 @@ public class Package {
     * actual - total item weight only; large/heavy parcels
     * dimensional - amount of space a package takes up relative to its actual weight; large but light (bulky but don’t weigh much)
     */ 
-    public double getPricingBasis() {
+    public double detWeightBasis() {
         double actual = getTotalItemWeight(getContents());
         return Math.max(actual, getDimensionalWeight());
     }
     // Get volume length of the max dimensions of the package
-    public double calcBoxVolume() {
+    private double calcBoxVolume() {
         Dimension dim = getDimensions();
         return dim.getLength() * dim.getWidth() * dim.getHeight();
     }
@@ -65,9 +65,9 @@ public class Package {
     // 0.0 fee for invalid inputs, 200 fee for small, 300 fee for medium, 500 fee for large, 700 fee for exceeding size
     public double calcBoxFee(double weight) {
         if (weight <= 0.0) return 0.0; // invalid weight
-        return (weight <= 2.0) ? 200.00 : // small packages
-               (weight <= 5.0) ? 300.00 : // medium packages
-               (weight <= 10.0) ? 500.00 : 700.00; // large and packages exceeding 10.0 kgs
+        return (weight <= 2.0) ? 150.00 : // small packages
+               (weight <= 5.0) ? 200.00 : // medium packages
+               (weight <= 10.0) ? 300.00 : 500.00; // large and packages exceeding 10.0 kgs
     }
     // Sum all item weights in KG - different from the package's dimensional weight
     public double getTotalItemWeight(Item[] contents) { 
@@ -86,7 +86,6 @@ public class Package {
         }
         return new Dimension(maxLength, maxWidth, maxHeight);
     }
-
     @Override
     public String toString() {
         Dimension dim = getDimensions();

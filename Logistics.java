@@ -1,6 +1,10 @@
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
-
 
 /** 
  *  DeliverIT - Local Logistics System
@@ -11,12 +15,11 @@ import java.util.ArrayList;
 */
 
 public class Logistics {
-    private CSVParser parser;
-    private BufferedReader reader;
+    private static CSVParser parser;
+    private static BufferedReader reader;
 
     public Logistics() {
-        this.parser = new CSVParser();
-        this.reader = new BufferedReader(new InputStreamReader(System.in));
+        reader = new BufferedReader(new InputStreamReader(System.in));
     }
     public static void main(String[] args) {
         // Instantiate Logistics Class - contains all methods
@@ -27,9 +30,9 @@ public class Logistics {
                 System.out.println("=====================================================");
                 System.out.println("\t\t Welcome to DeliverIT! \t\t");
                 System.out.println("=====================================================");
-                String name = manager.getInput("Enter Full Name");
-                manager.parser.setFilePath("CSVFiles/customers.csv");
-                Customer currentCustomer = manager.parser.searchCustomerName(name);
+                String name = getInput("Enter Full Name");
+                CSVParser.setFilePath("CSVFiles/customers.csv");
+                Customer currentCustomer = manager.searchCustomerName(name);
                 if (currentCustomer == null) {
                     System.out.printf("Customer name {%s} not found.\nPlease register in order to use the system.\n", name);
                     currentCustomer = manager.registerCustomer(name);
@@ -37,45 +40,7 @@ public class Logistics {
                 manager.showCustomerMenu(currentCustomer);
                 break;
                 case 3:
-                // Admin/Employee Module REVISED
-                System.out.println("Admin/Employee Module in progress");
-            
-                String username = args[0], password = args[1], holderName = args[2], role = args[3];
-            
-                // Username and Passwords
-                final String adminUsername = "admin";
-                final String adminPassword = "admin123";
-                final String employeeUsername = "employee";
-                final String employeePassword = "employee123";
-            
-                // Predefined Credentials for Admin and Employee
-                Admin admin = new Admin(holderName, adminUsername, adminPassword);
-                Employee employee;
-            
-                switch (role.toLowerCase()) {
-                    case "frontline":
-                        employee = new FrontlineEmployee(holderName, employeeUsername, employeePassword);
-                        break;
-                    case "warehouse":
-                        employee = new WarehouseManager(holderName, employeeUsername, employeePassword);
-                        break;
-                    case "driver":
-                        employee = new Driver(holderName, employeeUsername, employeePassword);
-                        break;
-                    default:
-                        System.out.println("Invalid role.");
-                        return;
-                }
-            
-                if (username.equals(admin.getUsername()) && admin.login(password)) {
-                    System.out.println("Welcome Admin");
-                    admin.showMenu();
-                } else if (username.equals(employee.getUsername()) && employee.login(password)) {
-                    System.out.println("Welcome " + role + "!");
-                    employee.showMenu();
-                } else {
-                    System.out.println("Invalid username or password. Please try again.");
-                }
+
                 break;
             default:
                 System.out.println("Invalid args length!\nUSAGE: javac -cp out Logistics OR javac -cp out Logistics {role} {password} {name}");
@@ -84,10 +49,9 @@ public class Logistics {
         System.out.println("Program Terminated.");
     }
     
-    public boolean checkInput(String input) { return input.length() == 0 || input == null; }
+    public static boolean checkInput(String input) { return input.length() == 0 || input == null; }
 
-
-    public String getInput(String prompt) {
+    public static String getInput(String prompt) {
         boolean exceptionOccured = false; 
         String input = "";
         do {
@@ -99,15 +63,15 @@ public class Logistics {
         return input;
     }
 
-    public boolean checkInt(String input) {
+    public static boolean checkInt(String input) {
         try {
-            return parser.toInt(input) > 0;
+            return CSVParser.toInt(input) > 0;
         } catch (NumberFormatException e) { return false; }
     }
 
-    public boolean checkDouble(String input) {
+    public static boolean checkDouble(String input) {
         try {
-            return parser.toDouble(input) > 0.0;
+            return CSVParser.toDouble(input) > 0.0;
         } catch (NumberFormatException e) { return false; }
     }
 
@@ -115,8 +79,8 @@ public class Logistics {
         System.out.println();
         String contact = getInput("Enter Contact No.");
         String address = getInput("Enter Address");
-        Customer newCustomer = new Customer(parser.getLatestID() + 1, name, contact, address);
-        parser.saveEntry(newCustomer.toCSVFormat());
+        Customer newCustomer = new Customer(CSVParser.getLatestID() + 1, name, contact, address);
+        CSVParser.saveEntry(newCustomer.toCSVFormat());
         return newCustomer;
     }
 
@@ -161,7 +125,7 @@ public class Logistics {
             do {
                 in = getInput("Option");
             } while (!checkInt(in));
-            switch(parser.toInt(in)) {
+            switch(CSVParser.toInt(in)) {
                 case 1:
                     String newName = getInput("New Name");
                     customer.setName(newName);
@@ -205,8 +169,8 @@ public class Logistics {
                 heiStr = getInput("Height(cm)");
             } while(!checkDouble(heiStr));
 
-            Dimension dim = new Dimension(parser.toDouble(lenStr), parser.toDouble(widStr), parser.toDouble(heiStr));
-            currentItems.add(new Item(name, parser.toDouble(weightStr), dim));
+            Dimension dim = new Dimension(CSVParser.toDouble(lenStr), CSVParser.toDouble(widStr), CSVParser.toDouble(heiStr));
+            currentItems.add(new Item(name, CSVParser.toDouble(weightStr), dim));
 
             String continuePrompt;
             do {
@@ -223,18 +187,46 @@ public class Logistics {
     public void sendPackage(Customer customer) {
         Item[] items = getCustomerItems();
         String receiver = getInput("Receiver Address");
-        Package pkg = new Package(parser.getLatestID() + 1, items, receiver);
+        Package pkg = new Package(CSVParser.getLatestID() + 1, items, receiver);
         pkg.displayPackageContents(); // DB
         System.out.println(pkg.toString()); // DB
-        // Save to packages csv
-        parser.setFilePath("CSVFiles/packages.csv");
-        parser.saveEntry(pkg.toCSVFormat(customer.getCustomerID()));
-        // Save to items csv
-        parser.setFilePath("CSVFiles/items.csv");
-        for (Item item : items) {
-            parser.saveEntry(item.toCSVFormat(pkg.getId()));
+        Shipment shipment = new Shipment(receiver, pkg);
+        shipment.calcShipCost();
+        System.out.printf("Total Shipping Cost: %.2f\n", shipment.getShipCost());
+        while(true) {
+            String payment = "";
+            do {
+                payment = getInput("Enter Cash");
+            } while(!Logistics.checkDouble(payment));
+            if (CSVParser.toDouble(payment) > shipment.getShipCost()) {
+                System.out.printf("Change: %.2f\n", CSVParser.toDouble(payment) - shipment.getShipCost());
+                break;
+            }
         }
-        // TODO: Process Shipment and add to CSV 
+        shipment.setStatus("Paid");
+        System.out.println(shipment.getShipCost()); // DB
+        System.out.println(shipment.getDestination()); // DB
+        System.out.println(shipment.getStatus()); // DB
+        System.out.println("Shipment paid successfully. Saving your packages...");
+        // Save to packages csv once paid
+        CSVParser.setFilePath("CSVFiles/packages.csv");
+        CSVParser.saveEntry(pkg.toCSVFormat(customer.getCustomerID()));
+        // Save to items csv once paid
+        CSVParser.setFilePath("CSVFiles/items.csv");
+        for (Item item : items) {
+            CSVParser.saveEntry(item.toCSVFormat(pkg.getId()));
+        }
+        // TODO: Save to Shipment CSV
+    }
+
+    public Customer searchCustomerName(String name) {
+        String[][] csvCustomer = CSVParser.loadCSVData(CSVParser.getFilePath());
+        for(int i = 0; i < csvCustomer.length; i++) {
+            if(csvCustomer[i][1].toLowerCase().equals(name.toLowerCase())) {
+                return CSVParser.toCustomer(csvCustomer, i);
+            }
+        }
+        return null;
     }
 }
 
@@ -243,25 +235,26 @@ class CSVParser {
     private final String[] CUSTOMER_H = {"id", "name", "contactInfo", "address"};
     private final String[] PACKAGE_H = {"cID", "pkgID", "receiverAddress", "created", "dimensionalWeight_kg", "length_cm", "width_cm", "height_cm"};
     private final String[] ITEMS_H = {"pkgID", "name", "weight_kg", "length_cm", "width_cm", "height_cm"};
-    private final String[] VEHICLES_H = {"vID", "type", "licensePlate", "driver", "capacity", "availability"};
-    private final String[] WAREHOUSE_H = {"wId", "location", "package_capacity", "vehicle_capacity"};
-    private String file; // hold the file path needed for operations
+    private static final String[] VEHICLES_H = {"vID", "type", "licensePlate", "driver", "capacity", "availability"};
+    private static final String[] WAREHOUSE_H = {"wID", "location", "package_capacity", "vehicle_capacity"};
+    private static String filePath; // hold the file path needed for operations
 
     public CSVParser() { 
-        file = ""; 
+        filePath = ""; 
     }
 
-    public void setFilePath(String file) { this.file = file; }
-    public String getFilePath() { return this.file; }
+    public static void setFilePath(String file) { filePath = file; }
+    public static String getFilePath() { return filePath; }
     public String[] getCustomerHeader() { return this.CUSTOMER_H; }
     public String[] getPackageHeader() { return this.PACKAGE_H; }
     public String[] getItemHeader() { return this.ITEMS_H; }
-    public String[] getVehicleHeader() { return this.VEHICLES_H; }
-    public String[] getWarehouseHeader() { return this.WAREHOUSE_H; }
-    public int toInt(String in) { return Integer.parseInt(in); }
-    public double toDouble(String in) { return Double.parseDouble(in); }
+    public static String[] getVehicleHeader() { return VEHICLES_H; }
+    public static String[] getWarehouseHeader() { return WAREHOUSE_H; }
 
-    public int getColumnCounts(String file) {
+    public static int toInt(String in) { return Integer.parseInt(in); }
+    public static double toDouble(String in) { return Double.parseDouble(in); }
+
+    public static int getColumnCounts(String file) {
         int counts = -1;
         try (BufferedReader fin = new BufferedReader(new FileReader(file))) {
             String buffer;
@@ -273,7 +266,7 @@ class CSVParser {
         return counts;
     }
 
-    public String[][] loadCSVData(String file) {
+    public static String[][] loadCSVData(String file) {
         ArrayList<String[]> data = new ArrayList<>();
         try (BufferedReader fin = new BufferedReader(new FileReader(file))) {
             String buffer;
@@ -290,7 +283,7 @@ class CSVParser {
     }
     
     // Individual Entity - Save an entity's attributes to the CSV File
-    public void saveEntry(String[] data) {
+    public static void saveEntry(String[] data) {
         boolean saved = false;
         try (PrintWriter fout = new PrintWriter(new FileWriter(getFilePath(), true))) {
             String placeholder = generateFormatString(data.length);
@@ -301,9 +294,9 @@ class CSVParser {
     }
 
     // Bulk Writing - Write all the current contents of the CSV after updating selected fields
-    public void writeToCSV(String[][] data, String[] header, boolean append) {
+    public static void writeToCSV(String[][] data, String[] header, boolean append) {
         boolean saved = false;
-        try (PrintWriter fout = new PrintWriter(new FileWriter(file, append))) {
+        try (PrintWriter fout = new PrintWriter(new FileWriter(filePath, append))) {
             // Generate string CSV structure and save the headers first
             if(!append) {
                 String placeholder = generateFormatString(header.length);
@@ -317,7 +310,7 @@ class CSVParser {
     }
 
     // Helper Method for CSV Structure generation for data format
-    private String generateFormatString(int length) {
+    private static String generateFormatString(int length) {
         StringBuilder format = new StringBuilder();
         for(int i = 0; i < length; i++) {
             format.append("%s,");
@@ -339,7 +332,7 @@ class CSVParser {
         return customers;
     }
 
-    public Customer toCustomer(String[][] raw, int idx) { 
+    public static Customer toCustomer(String[][] raw, int idx) { 
         return new Customer(
             toInt(raw[idx][0]), 
             raw[idx][1], 
@@ -374,17 +367,7 @@ class CSVParser {
     //    ); 
     //}
 
-    public Customer searchCustomerName(String name) {
-        String[][] csvCustomer = loadCSVData(getFilePath());
-        for(int i = 0; i < csvCustomer.length; i++) {
-            if(csvCustomer[i][1].toLowerCase().equals(name.toLowerCase())) {
-                return toCustomer(csvCustomer, i);
-            }
-        }
-        return null;
-    }
-
-    public int getLatestID() {
+    public static int getLatestID() {
         String[][] rawCSV = loadCSVData(getFilePath());
         return rawCSV.length == 0 ? 0 : toInt(rawCSV[rawCSV.length - 1][0]);
     }

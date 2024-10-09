@@ -6,7 +6,6 @@ public class FrontlineEmployee extends Employee {
 
     @Override
     public void showMenu() {
-        CSVParser csvParser = new CSVParser(); // Assuming you're using a CSVParser class for CSV handling
         boolean exit = false;
     
         while (!exit) {
@@ -18,7 +17,7 @@ public class FrontlineEmployee extends Employee {
             int choice = 0;
             while (true) {
                 try {
-                    choice = Integer.parseInt(logistics.getInput("Enter your choice: "));
+                    choice = Integer.parseInt(Logistics.getInput("Enter your choice: "));
                     if (choice >= 1 && choice <= 2) {
                         break;
                     } else {
@@ -31,7 +30,7 @@ public class FrontlineEmployee extends Employee {
     
             switch (choice) {
                 case 1:
-                    processShipment(csvParser); 
+                    processShipment(); 
                     break;
                 case 2:
                     exit = true;
@@ -44,11 +43,11 @@ public class FrontlineEmployee extends Employee {
         }
     }
     
-    public void processShipment(CSVParser csvParser) {
+    public void processShipment() {
         // Load available shipments from the CSV file
-        csvParser.setFilePath("CSVFiles/shipments.csv");
-        String[][] shipmentData = csvParser.loadCSVData(csvParser.getFilePath());
-        Shipment[] shipments = csvParser.toShipment(shipmentData);
+        CSVParser.setFilePath("CSVFiles/shipments.csv");
+        String[][] shipmentData = CSVParser.loadCSVData(CSVParser.getFilePath());
+        Shipment[] shipments = CSVParser.toShipment(shipmentData); // TODO
         
         // Display available shipments
         System.out.println("Available Shipments:");
@@ -60,24 +59,24 @@ public class FrontlineEmployee extends Employee {
         int selectedShipmentIndex = 0;
         while (true) {
             try {
-                selectedShipmentIndex = Integer.parseInt(logistics.getInput("Enter the number of the shipment to process: ")) - 1;
+                selectedShipmentIndex = Integer.parseInt(Logistics.getInput("Enter the number of the shipment to process: ")) - 1;
                 if (selectedShipmentIndex >= 0 && selectedShipmentIndex < shipments.length) {
                     break;
                 } else {
                     System.out.println("Invalid selection. Please try again.");
                 }
-            } catch (InputMismatchException | NumberFormatException e) {
+            } catch (NumberFormatException e) {
                 System.out.println("Input should be an integer. Try again.");
             }
         }
     
         // Ask to confirm the shipment
-        String confirmShipment = logistics.getInput("Confirm shipment? (Yes/No): ");
+        String confirmShipment = Logistics.getInput("Confirm shipment? (Yes/No): ");
         if (confirmShipment.equalsIgnoreCase("Yes")) {
-            shipments[selectedShipmentIndex].setConfirmed(true);
+            shipments[selectedShipmentIndex].confirmShip();
             
             // Update the CSV with the confirmed shipment status
-            csvParser.updateShipmentCSV(shipments[selectedShipmentIndex].getShipmentID(), shipments[selectedShipmentIndex].getConfirmed(), 6); // TODO change to actual col value
+            CSVParser.updateShipmentCSV(shipments[selectedShipmentIndex].getShipmentID(), shipments[selectedShipmentIndex].isConfirmed(), 6); // TODO:
             System.out.println("Shipment confirmed successfully.");
         } else {
             System.out.println("Shipment confirmation canceled.");

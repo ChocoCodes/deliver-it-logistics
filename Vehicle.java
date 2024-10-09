@@ -9,7 +9,6 @@ public class Vehicle {
     protected int currentShipmentCount;
     protected boolean isAvailable;
     protected Shipment[] shipments; 
-    protected CSVParser parser = new CSVParser();
 
     // Changed Package[] packages -> Shipment[] shipments because the Driver Role Needs Vehicle to have a Shipment 
     // Packages method can still be accessed through shipment class
