@@ -21,6 +21,8 @@ public class Logistics {
     public static void main(String[] args) {
         // Instantiate Logistics Class - contains all methods
         Logistics manager = new Logistics();
+        Admin test = new Admin("holderName", "adminUsername", "adminPassword");
+        test.showMenu();
         switch(args.length) {
             case 0:
                 // Customer Module
@@ -294,8 +296,12 @@ class CSVParser {
                 String placeholder = generateFormatString(header.length);
                 fout.printf(placeholder, (Object[]) header);
             }
-            String dataPlaceholder = generateFormatString(data[0].length);
-            for (String[] row : data) { fout.printf(dataPlaceholder, (Object[]) row); }
+            if (data.length > 0) { // To handle index out of bounds
+                String dataPlaceholder = generateFormatString(data[0].length);
+                for (String[] row : data) {
+                    fout.printf(dataPlaceholder, (Object[]) row);
+                }
+            }
             saved = true;
         } catch (IOException e) { saved = false; }
         System.out.println(saved ? "Successfully updated new data." : "An error occured while updating new data.");
