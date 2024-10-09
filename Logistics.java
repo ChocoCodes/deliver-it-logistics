@@ -21,8 +21,6 @@ public class Logistics {
     public static void main(String[] args) {
         // Instantiate Logistics Class - contains all methods
         Logistics manager = new Logistics();
-        Admin test = new Admin("holderName", "adminUsername", "adminPassword");
-        test.showMenu();
         switch(args.length) {
             case 0:
                 // Customer Module
