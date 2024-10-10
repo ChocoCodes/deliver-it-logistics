@@ -59,7 +59,7 @@ public class FrontlineEmployee extends Employee {
         int selectedShipmentIndex = 0;
         while (true) {
             try {
-                selectedShipmentIndex = Integer.parseInt(Logistics.getInput("Enter the number of the shipment to process: ")) - 1;
+                selectedShipmentIndex = Integer.parseInt(Logistics.getInput("Enter the ID of the shipment to process: ")) - 1;
                 if (selectedShipmentIndex >= 0 && selectedShipmentIndex < shipments.length) {
                     break;
                 } else {
@@ -72,12 +72,19 @@ public class FrontlineEmployee extends Employee {
     
         // Ask to confirm the shipment
         String confirmShipment = Logistics.getInput("Confirm shipment? (Yes/No): ");
-        if (confirmShipment.equalsIgnoreCase("Yes")) {
+        if (confirmShipment.equalsIgnoreCase("Yes") && shipments[selectedShipmentIndex].getStatus().equalsIgnoreCase("Paid")) {
             shipments[selectedShipmentIndex].confirmShip();
+            shipments[selectedShipmentIndex].setStatus("Pending");;
             
             // Update the CSV with the confirmed shipment status
-            CSVParser.updateShipmentCSV(shipments[selectedShipmentIndex].getShipmentID(), shipments[selectedShipmentIndex].isConfirmed(), 6); // TODO:
+            CSVParser.updateShipmentCSV(shipments[selectedShipmentIndex].getShipmentID(), shipments[selectedShipmentIndex].isConfirmed(), 7); // TODO:
+            // Update the CSV Shipment Status to "Pending"
+            CSVParser.updateShipmentCSV(shipments[selectedShipmentIndex].getShipmentID(), shipments[selectedShipmentIndex].getStatus(), 8); 
             System.out.println("Shipment confirmed successfully.");
+        } else if (confirmShipment.equalsIgnoreCase("Yes") && !(shipments[selectedShipmentIndex].getStatus().equalsIgnoreCase("Paid"))) {
+            System.out.println("An error occured. Shipment status is not \"Paid\".");
+            System.out.println("Shipment Get Status: " + shipments[selectedShipmentIndex].getStatus());
+            System.out.println("Shipment confirmation canceled.");
         } else {
             System.out.println("Shipment confirmation canceled.");
         }

@@ -75,6 +75,21 @@ public class Logistics {
         } catch (NumberFormatException e) { return false; }
     }
 
+    public static int getValidatedInput(String prompt, int min, int max) {
+        int choice = -1;
+        while (choice < min || choice > max) {
+            try {
+                choice = Integer.parseInt(Logistics.getInput(prompt));
+                if (choice < min || choice > max) {
+                    System.out.println("Please choose a valid option.");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a number.");
+            }
+        }
+        return choice;
+    }
+
     private Customer registerCustomer(String name) {
         System.out.println();
         String contact = getInput("Enter Contact No.");

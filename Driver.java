@@ -47,7 +47,7 @@ public class Driver extends Employee {
         // Load available vehicles from the CSV file
         CSVParser.setFilePath("CSVFiles/vehicles.csv");
         String[][] vehicleData = CSVParser.loadCSVData(CSVParser.getFilePath());
-        Vehicle[] vehicles = CSVParser.toVehicle(vehicleData); // TODO 
+        Vehicle[] vehicles = Vehicle.toVehicle(vehicleData); // TODO 
         // Display available vehicles
         System.out.println("Available Vehicles:");
         for (Vehicle v : vehicles) {
@@ -76,10 +76,10 @@ public class Driver extends Employee {
         }
 
         // Update the CSV with the driver assigned to the selected vehicle
-        // TODO: CSVParser.updateVehicleCSV(assignedVan.vehicleID, assignedVan.getDriver(), 4);
+        CSVParser.updateVehicleCSV(assignedVan.vehicleID, assignedVan.getDriver(), 5); // TODO: Change to actual col
     }
 
-    public void deliverPackage(CSVParser parser) {
+    public void deliverPackage() {
         if (assignedVan == null) {
             System.out.println("No vehicle assigned yet. Please assign a vehicle first.");
         } else {
@@ -89,7 +89,9 @@ public class Driver extends Employee {
             // Display Shipments in the Vehicle
             System.out.println("Shipments Stored in the Vehicle: ");
             for (Shipment s : assignedVan.getShipments()) {
-                System.out.println(s.toString());
+                if(s.getStatus().equalsIgnoreCase("Pending") && s != null){
+                    System.out.println(s.toString());
+                }
             }
             
             // Ask User what Shipment to manage
@@ -109,20 +111,21 @@ public class Driver extends Employee {
             if(toDeliver.equalsIgnoreCase("Yes")) {
                 assignedVan.getShipments()[choice - 1].setStatus("Delivered");
                 CSVParser.setFilePath("CSVFiles/shipments.csv");
+                // Set Status to Delivered
                 CSVParser.updateShipmentCSV(assignedVan.getShipments()[choice - 1].getShipmentID(), 
-                                         assignedVan.getShipments()[choice - 1].getStatus(), 5); // TODO change this to actual col value
+                                         assignedVan.getShipments()[choice - 1].getStatus(), 8); // TODO change this to actual col value
+                assignedVan.getShipments()[choice - 1] = null;
                 System.out.println("Set to Delivered Successfully.");
             } 
             return;
         }
     }
 
-    // D ko sure if diri ni or sa Vehicle na class
     public void loadVehicleShipmentFromCSV(int vehicleID) {
         // Load all shipments from the CSV file
         CSVParser.setFilePath("CSVFiles/shipments.csv");
         String[][] shipmentData = CSVParser.loadCSVData(CSVParser.getFilePath());
-        Shipment[] shipments = CSVParser.toShipment(shipmentData);
+        Shipment[] shipments = Shipment.toShipment(shipmentData);
 
         // Find shipments with matching vehicleID and assign them to this vehicle
         for (Shipment shipment : shipments) {

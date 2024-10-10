@@ -6,8 +6,8 @@ public class Shipment {
     private int id;
     private int pkgID; // Not sure if needed pero insurance 
     private int vehicleID;  // NEW: FK to reference Vehicle ID
+    // private Vehicle vehicle;
     private String destination; // receiver address alr avail - constructor
-    private Vehicle vehicle; // assign by e/a
     private double shippingCost; // calculate - package-related methods are already implemented - implement shipping cost inside shipment
     private boolean confirmed; // assign by e/a - pending set confimed
     private Package pkg; // alr finish by the time shipment obj is instantiated - constructor
@@ -36,6 +36,9 @@ public class Shipment {
     public void setStatus(String status) { this.status = status; }
     public void setShipTakeOff() { if (this.shipTakeOff == null) this.shipTakeOff = new Date(); }
     public void setEtaDelivery(Date estDelivery) { this.estDelivery = estDelivery; }
+    public void setVehicleID(int id) {this.vehicleID = id; }
+
+    // public void setVehicle(Vehicle vehicle) {this.vehicle = vehicle; }
     // Getters
     public Date getEtaDelivery() { return this.estDelivery; }
     public String getStatus() { return this.status; }
@@ -47,6 +50,8 @@ public class Shipment {
     public String getDestination() { return this.destination; }
     public boolean isConfirmed() { return this.confirmed; }
     public double getShipCost() { return this.shippingCost; }
+    // public Vehicle getVehicle() { return this.vehicle; }
+
     // Algorithm to select an "estimated" timeframe of the shipment delivery within 7 days
     // using Calendar class to manipulate Date and Random class to implement randomization
     public Date calcEstTime() {
