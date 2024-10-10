@@ -1,11 +1,9 @@
 public class Truck extends Vehicle {
-    private Warehouse[] routes;
     private int currentWarehouseRouteCount;
     private int maxWarehouseRoutes;
     private int droppedOffWarehouseCount;
     public Truck(int vehicleID, String licensePlate, String driver, boolean isAvailable, int maxWarehouseRoutes) {
         super(vehicleID, "Truck", licensePlate, driver, 1000,100, isAvailable);
-        this.routes = new Warehouse[maxWarehouseRoutes];
         this.maxWarehouseRoutes = maxWarehouseRoutes;
         this.droppedOffWarehouseCount = 0;
         this.currentWarehouseRouteCount = 0;

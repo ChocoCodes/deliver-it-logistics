@@ -5,7 +5,8 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-
+import java.text.SimpleDateFormat;
+import java.util.Date;
 /** 
  *  DeliverIT - Local Logistics System
  *  Authors: John Roland Octavio, Jul Leo Javellana, Raean Chrissean Tamayo
@@ -216,14 +217,15 @@ public class Logistics {
         for (Item item : items) {
             CSVParser.saveEntry(item.toCSVFormat(pkg.getId()));
         }
-        // TODO: Save to Shipment CSV
+        // TODO: Save to Shipment CSV - still pending
+        
     }
 
     public Customer searchCustomerName(String name) {
         String[][] csvCustomer = CSVParser.loadCSVData(CSVParser.getFilePath());
         for(int i = 0; i < csvCustomer.length; i++) {
             if(csvCustomer[i][1].toLowerCase().equals(name.toLowerCase())) {
-                return CSVParser.toCustomer(csvCustomer, i);
+                return Customer.toCustomer(csvCustomer, i);
             }
         }
         return null;
@@ -235,8 +237,9 @@ class CSVParser {
     private final String[] CUSTOMER_H = {"id", "name", "contactInfo", "address"};
     private final String[] PACKAGE_H = {"cID", "pkgID", "receiverAddress", "created", "dimensionalWeight_kg", "length_cm", "width_cm", "height_cm"};
     private final String[] ITEMS_H = {"pkgID", "name", "weight_kg", "length_cm", "width_cm", "height_cm"};
-    private static final String[] VEHICLES_H = {"vID", "type", "licensePlate", "driver", "capacity", "availability"};
+    private static final String[] VEHICLES_H = {"vID", "whId", "type", "licensePlate", "driver", "cap_max", "cap_curr", "max_ship", "curr_ship", "avail"};
     private static final String[] WAREHOUSE_H = {"wID", "location", "package_capacity", "vehicle_capacity"};
+    private static final String[] SHIPMENT_H = {"id","pkgId","vId","wId","dest","shipCost","confirmed","status","shipDate","eta"};
     private static String filePath; // hold the file path needed for operations
 
     public CSVParser() { 
@@ -250,9 +253,14 @@ class CSVParser {
     public String[] getItemHeader() { return this.ITEMS_H; }
     public static String[] getVehicleHeader() { return VEHICLES_H; }
     public static String[] getWarehouseHeader() { return WAREHOUSE_H; }
+    public static String[] getShipmentHeader() { return SHIPMENT_H; }
 
     public static int toInt(String in) { return Integer.parseInt(in); }
     public static double toDouble(String in) { return Double.parseDouble(in); }
+    public static String dateToString(Date date) {
+        SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy");
+        return format.format(date);
+    }
 
     public static int getColumnCounts(String file) {
         int counts = -1;
@@ -318,54 +326,6 @@ class CSVParser {
         format.setCharAt(format.length() - 1, '\n');
         return format.toString();
     }
-
-    public Customer[] toCustomer(String[][] raw) {
-        Customer[] customers = new Customer[raw.length];
-        for (int i = 0; i < raw.length; i++) {
-            customers[i] = new Customer(
-                toInt(raw[i][0]),
-                raw[i][1],
-                raw[i][2],
-                raw[i][3]
-            );
-        }
-        return customers;
-    }
-
-    public static Customer toCustomer(String[][] raw, int idx) { 
-        return new Customer(
-            toInt(raw[idx][0]), 
-            raw[idx][1], 
-            raw[idx][2], 
-            raw[idx][3]
-        ); 
-    }
-
-    // public Vehicle[] toVehicle(String[][] raw) {
-    //    Vehicle[] vehicles = new Vehicle[raw.length];
-    //    for (int i = 0; i < raw.length; i++) {
-    //        vehicles[i] = new Vehicle(
-    //            toInt(raw[i][0]),
-    //            raw[i][1],
-    //            raw[i][2],
-    //            raw[i][3],
-    //            Double.parseDouble(raw[i][4]),
-    //            Boolean.parseBoolean(raw[i][5])
-    //        );
-    //    }
-    //    return vehicles;
-    // }
-
-    //public Vehicle toVehicle(String[][] raw, int idx) { 
-    //    return new Vehicle(
-    //        toInt(raw[idx][0]), 
-    //        raw[idx][1], 
-    //        raw[idx][2], 
-    //        raw[idx][3],
-    //        Double.parseDouble(raw[idx][4]),
-    //        Boolean.parseBoolean(raw[idx][5])
-    //    ); 
-    //}
 
     public static int getLatestID() {
         String[][] rawCSV = loadCSVData(getFilePath());

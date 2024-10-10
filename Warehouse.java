@@ -1,40 +1,37 @@
 public class Warehouse {
     private int wareHouseID;
     private String location;
-    private int maxPackageCount; 
-    private int currentPackageCount;
-    private int maxVehicleCount;
+    private int maxShipCount; 
+    private int currShipCount;
     private int currentVehicleCount;
     private Package[] packages; // pkgID in csv
     private Vehicle[] vehicles; // vID in csv
 
     // Warehouse Constructor
-    public Warehouse(int wareHouseID, String location, int maxPackageCount, int maxVehicleCount) {
+    public Warehouse(int wareHouseID, String location, int maxShipCount, int maxVehicleCount) {
         this.wareHouseID = wareHouseID;
         this.location = location;
-        this.maxPackageCount = maxPackageCount;
-        this.currentPackageCount = 0;
-        this.maxVehicleCount = maxVehicleCount;
+        this.maxShipCount = maxShipCount;
+        this.currShipCount = 0;
         this.currentVehicleCount = 0;
-        this.packages = new Package[maxPackageCount];
+        this.packages = new Package[maxShipCount];
         this.vehicles = new Vehicle[maxVehicleCount]; 
     }
 
     // Getters
     public int getWarehouseID() { return wareHouseID; }
     public String getLocation() { return location; }
-    public int getmaxPackageCount() { return maxPackageCount; }
-    public int getCurrentPackageCount() { return currentPackageCount; }
-    public int getmaxVehicleCount() { return maxVehicleCount; }
+    public int getmaxShipCount() { return maxShipCount; }
+    public int getcurrShipCount() { return currShipCount; }
     public int getCurrentVehicleCount() { return currentVehicleCount; }
     public Package[] getPackages() { return packages; }
     public Vehicle[] getVehicles() { return vehicles; }
 
     // Add a package to the warehouse (e.g., drop off package of a vehicle)
     public boolean addPackage(Package pkg) {
-        if (currentPackageCount < maxPackageCount) {
-            packages[currentPackageCount] = pkg;
-            currentPackageCount++;
+        if (currShipCount < maxShipCount) {
+            packages[currShipCount] = pkg;
+            currShipCount++;
             return true;
         }
         return false; 
@@ -42,13 +39,13 @@ public class Warehouse {
 
     // Remove a package from the warehouse (e.g., being loaded to the vehicle)
     public boolean removePackage(Package pkg) {
-        for (int i = 0; i < currentPackageCount; i++) {
+        for (int i = 0; i < currShipCount; i++) {
             if (packages[i] != null && packages[i].equals(pkg)) {
-                for (int j = i; j < currentPackageCount - 1; j++) {
+                for (int j = i; j < currShipCount - 1; j++) {
                     packages[j] = packages[j + 1];
                 }
-                packages[currentPackageCount - 1] = null;
-                currentPackageCount--;
+                packages[currShipCount - 1] = null;
+                currShipCount--;
                 return true; 
             }
         }
@@ -82,29 +79,28 @@ public class Warehouse {
 
     // Check available space for packages
     public int getAvailableSpace() {
-        return maxPackageCount - currentPackageCount;
+        return maxShipCount - currShipCount;
     }
 
     // Display info about the warehouse
     @Override
     public String toString() {
         return String.format(
-            "Warehouse ID: %d\nLocation: %s\nmaxPackageCount: %d\nCurrent Packages: %d\nMax Vehicles: %d\nCurrent Vehicles: %d\n",
+            "Warehouse ID: %d\nLocation: %s\nmaxShipCount: %d\nCurrent Packages: %d\nCurrent Vehicles: %d\n",
             getWarehouseID(),
             getLocation(),
-            getmaxPackageCount(),
-            getCurrentPackageCount(),
-            getmaxVehicleCount(),
+            getmaxShipCount(),
+            getcurrShipCount(),
             getCurrentVehicleCount()
         );
     }
-
+    // Revise
     public String[] toCSVFormat() {
         return new String[]{
                 String.valueOf(getWarehouseID()),
                 location,
-                String.valueOf(getmaxPackageCount()),
-                String.valueOf(getmaxVehicleCount())
+                String.valueOf(getmaxShipCount()),
+                String.valueOf(getmaxShipCount())
         };
     }
 }

@@ -4,8 +4,7 @@ import java.util.Calendar;
 
 public class Shipment {
     private int id;
-    private int pkgID; // Not sure if needed pero insurance 
-    private int vehicleID;  // NEW: FK to reference Vehicle ID
+    private int whId;
     private String destination; // receiver address alr avail - constructor
     private Vehicle vehicle; // assign by e/a
     private double shippingCost; // calculate - package-related methods are already implemented - implement shipping cost inside shipment
@@ -17,6 +16,7 @@ public class Shipment {
 
     // Constructor for new Shipments Created
     public Shipment(String destination, Package pkg) {
+        this.whId = 0;
         this.destination = destination;
         this.pkg = pkg;
         this.status = "Pending";
@@ -36,6 +36,7 @@ public class Shipment {
     public void setStatus(String status) { this.status = status; }
     public void setShipTakeOff() { if (this.shipTakeOff == null) this.shipTakeOff = new Date(); }
     public void setEtaDelivery(Date estDelivery) { this.estDelivery = estDelivery; }
+    public void setWarehouseId(int whId) { this.whId = whId; }
     // Getters
     public Date getEtaDelivery() { return this.estDelivery; }
     public String getStatus() { return this.status; }
@@ -43,10 +44,11 @@ public class Shipment {
     public void confirmShip() { if (!confirmed) this.confirmed = true; }
     public Package getPackage() { return this.pkg; }
     public int getShipmentID() { return this.id; }
-    public int getVehicleID() { return this.vehicleID; }
     public String getDestination() { return this.destination; }
     public boolean isConfirmed() { return this.confirmed; }
     public double getShipCost() { return this.shippingCost; }
+    public int getWarehouseId() { return this.whId; }
+    public Vehicle getVehicle() { return this.vehicle; }
     // Algorithm to select an "estimated" timeframe of the shipment delivery within 7 days
     // using Calendar class to manipulate Date and Random class to implement randomization
     public Date calcEstTime() {
@@ -69,5 +71,20 @@ public class Shipment {
         double basis = deliveryPkg.detWeightBasis();
         this.shippingCost = deliveryPkg.calcBoxFee(basis) + calcShipFee();
     }
-    // shipToCSVFormat()
+
+    // Format the same as header: id,pkgId,vId,wId,dest,shipCost,confirmed,status,shipDate,eta
+    public String[] toCSVFormat() {
+        return new String[] {
+            String.valueOf(getShipmentID()),
+            String.valueOf(getPackage().getId()),
+            String.valueOf(getVehicle().getVehicleID()),
+            String.valueOf(getWarehouseId()),
+            getDestination(),
+            String.valueOf(getShipCost()),
+            String.valueOf(isConfirmed()),
+            getStatus(),
+            CSVParser.dateToString(getShipTakeOff()),
+            CSVParser.dateToString(getEtaDelivery())
+        };
+    }
 }
