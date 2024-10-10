@@ -126,6 +126,7 @@ public class Vehicle {
     private static int detMaxCap(String type) {
         return type.toLowerCase().equals("van") ? 500 : 1000;
     }
+    
     public static Vehicle toVehicle(String[][] raw, int idx) { 
         return new Vehicle(
             CSVParser.toInt(raw[idx][0]),
@@ -138,29 +139,5 @@ public class Vehicle {
             Integer.parseInt(raw[idx][7]),
             Boolean.parseBoolean(raw[idx][8])
         ); 
-    }
-}
-
-class Van extends Vehicle {
-
-    public Van(int vehicleID, String licensePlate, String driver, boolean isAvailable) {
-        // Max capacity is only 1200kg and only allows 75 Shipment
-        super(vehicleID, "Van", licensePlate, driver, 1200, 75, isAvailable);
-    }
-
-    // Override the toString method for Van specific display
-    @Override
-    public String toString() {
-        return String.format(
-            "Van ID: %d\nLicense Plate: %s\nDriver: %s\nCapacity: %.2f KG\nCurrent Load: %.2f KG\nMax Shipments: %d\nCurrent Shipments: %d\nAvailable: %b",
-            getVehicleID(),
-            getLicensePlate(),
-            getDriver(),
-            getCapacity(),
-            getCurrentCapacityKG(),
-            getMaxShipmentCount(),
-            getCurrentShipmentCount(),
-            isAvailable()
-        );
     }
 }

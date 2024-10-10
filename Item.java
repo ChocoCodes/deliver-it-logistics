@@ -40,4 +40,12 @@ public class Item {
             String.valueOf(dim.getHeight())
         }; 
     }
+
+    public static Item toItem(String[][] raw, int idx) {
+        return new Item(
+            raw[idx][1],
+            CSVParser.toDouble(raw[idx][2]),
+            Dimension.toDimension(raw[idx], 3)
+        );
+    }
 }

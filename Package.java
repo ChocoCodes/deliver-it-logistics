@@ -7,7 +7,7 @@ public class Package {
     private double dimensionalWeight;
     private Dimension dimension;
     private Item[] contents;
-
+    // Constructor for newly created Packages
     public Package(int id, Item[] contents, String receiverAddress) {
         this.id = id;
         this.packageCreated = new Date();
@@ -16,6 +16,16 @@ public class Package {
         this.dimension = calculateDimensions();
         this.dimensionalWeight = calcDimensionalWeight();
     }
+    // Constructor for CSV-loaded Packages
+    public Package(int id, Item[] contents, String receiverAddress, Date packageCreated, double dimensionalWeight, Dimension dimension) {
+        this.id = id;
+        this.packageCreated = packageCreated;
+        this.dimensionalWeight = dimensionalWeight;
+        this.contents = contents;
+        this.dimension = dimension;
+        this.receiverAddress = receiverAddress;
+    }
+
     // Getters
     public int getId() { return this.id; }
     public double getDimensionalWeight() { return this.dimensionalWeight; }
@@ -30,13 +40,14 @@ public class Package {
     public void setContents(Item[] contents) { this.contents = contents; }
     public void setReceiver(String receiverAddress) { this.receiverAddress = receiverAddress; }
 
-    // Return a String data for CSV Format used in parsing
+    // Follow header - pkgID,cID,receiverAddress,created,dimensionalWeight_kg,length_cm,width_cm,height_cm
     public String[] toCSVFormat(int customerID) { 
         Dimension dim = getDimensions();
         return new String[] {
             String.valueOf(getId()), 
             String.valueOf(customerID),
             getreceiverAddress(), 
+            CSVParser.dateToString(getDate()),
             String.valueOf(getDimensionalWeight()), 
             String.valueOf(dim.getLength()), 
             String.valueOf(dim.getWidth()), 
@@ -101,10 +112,26 @@ public class Package {
     }
 
     public void displayPackageContents() {
-        System.out.println("| name | weight(kg) | dimensions(cm) |");
-        for(int i = 0; i < contents.length; i++) {
-            System.out.println(contents[i].toString());
+        System.out.println("Package Info");
+        System.out.println("-------------------------------------");
+        System.out.println(toString());
+        System.out.println("-------------------------------------");
+        System.out.println("Item Info");
+        for(Item content : contents) {
+            System.out.println(content.toString());
         }
+    }
+
+    // pkgID,cID,receiverAddress,created,dimensionalWeight_kg,length_cm,width_cm,height_cm
+    public static Package toPackage(String[][] raw, int idx, Item[] items) {
+        return new Package(
+            CSVParser.toInt(raw[idx][0]),
+            items,
+            raw[idx][2],
+            CSVParser.strToDate(raw[idx][3]),
+            CSVParser.toDouble(raw[idx][4]),
+            Dimension.toDimension(raw[idx], 5)
+        );
     }
 }
 

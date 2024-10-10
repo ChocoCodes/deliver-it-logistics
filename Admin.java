@@ -32,7 +32,7 @@ public class Admin extends Employee {
 
     public void removeWarehouse() {
         System.out.println("Available Warehouses:");
-        CSVParser.setFilePath("warehouses.csv");
+        CSVParser.setFilePath("CSVFiles/warehouses.csv");
         String[][] warehousesData = CSVParser.loadCSVData(CSVParser.getFilePath());
         for (String[] warehouse : warehousesData) {
             System.out.println("ID: " + warehouse[0] + ", Location: " + warehouse[1] + ", Package Capacity: " + warehouse[2] + ", Vehicle Capacity: " + warehouse[3]);
@@ -91,13 +91,13 @@ public class Admin extends Employee {
             return;
         }
 
-        CSVParser.setFilePath("vehicles.csv");
+        CSVParser.setFilePath("CSVFiles/vehicles.csv");
         CSVParser.saveEntry(newVehicle.toCSVFormat());
     }
 
     public void removeVehicles() {
         System.out.println("Available Vehicles:");
-        CSVParser.setFilePath("vehicles.csv");
+        CSVParser.setFilePath("CSVFiles/vehicles.csv");
         String[][] vehiclesData = CSVParser.loadCSVData(CSVParser.getFilePath());
         for (String[] vehicle : vehiclesData) {
             System.out.println("ID: " + vehicle[0] + ", Type: " + vehicle[1] + ", License Plate: " + vehicle[2] + ", Driver: " + vehicle[3] + ", Capacity(KG): " + vehicle[4] + ", Availability: " + vehicle[5]);
@@ -140,7 +140,7 @@ public class Admin extends Employee {
 
         // Add warehouse information
         report.append("Warehouses:\n");
-        CSVParser.setFilePath("warehouses.csv");
+        CSVParser.setFilePath("CSVFiles/warehouses.csv");
         String[][] warehousesData = CSVParser.loadCSVData(CSVParser.getFilePath());
         for (String[] warehouse : warehousesData) {
             report.append(String.format("ID: %s, Location: %s, Max Packages: %s, Max Vehicles: %s\n",
