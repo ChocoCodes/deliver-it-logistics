@@ -4,9 +4,8 @@ import java.util.Calendar;
 
 public class Shipment {
     private int id;
-    private int pkgID; // Not sure if needed pero insurance 
-    private int vehicleID;  // NEW: FK to reference Vehicle ID
-    // private Vehicle vehicle;
+    private int whId;
+    private int vId; // assign by e/a
     private String destination; // receiver address alr avail - constructor
     private double shippingCost; // calculate - package-related methods are already implemented - implement shipping cost inside shipment
     private boolean confirmed; // assign by e/a - pending set confimed
@@ -16,14 +15,21 @@ public class Shipment {
     private Date estDelivery; // create algo acdg to warehouse location - random algo max 7 days
 
     // Constructor for new Shipments Created
-    public Shipment(String destination, Package pkg) {
+    public Shipment(int id, String destination, Package pkg) {
+        this.id = id;
+        this.whId = 0;
         this.destination = destination;
         this.pkg = pkg;
         this.status = "Pending";
         this.confirmed = false;
+        this.shipTakeOff = null;
+        this.estDelivery = null;
     }
     // Constructor for Shipment CSV File Extraction
-    public Shipment(String destination, double shippingCost, boolean confirmed, Package pkg, String status, Date shipTakeOff, Date estDelivery) {
+    public Shipment(int id, int whId, int vId, String destination, double shippingCost, boolean confirmed, Package pkg, String status, Date shipTakeOff, Date estDelivery) {
+        this.id = id;
+        this.whId = whId;
+        this.vId = vId;
         this.destination = destination;
         this.shippingCost = shippingCost;
         this.confirmed = confirmed;
@@ -36,9 +42,8 @@ public class Shipment {
     public void setStatus(String status) { this.status = status; }
     public void setShipTakeOff() { if (this.shipTakeOff == null) this.shipTakeOff = new Date(); }
     public void setEtaDelivery(Date estDelivery) { this.estDelivery = estDelivery; }
-    public void setVehicleID(int id) {this.vehicleID = id; }
-
-    // public void setVehicle(Vehicle vehicle) {this.vehicle = vehicle; }
+    public void setWarehouseId(int whId) { this.whId = whId; }
+    public void setVehicleId(int vId) { this.vId = vId; }
     // Getters
     public Date getEtaDelivery() { return this.estDelivery; }
     public String getStatus() { return this.status; }
@@ -46,12 +51,11 @@ public class Shipment {
     public void confirmShip() { if (!confirmed) this.confirmed = true; }
     public Package getPackage() { return this.pkg; }
     public int getShipmentID() { return this.id; }
-    public int getVehicleID() { return this.vehicleID; }
     public String getDestination() { return this.destination; }
     public boolean isConfirmed() { return this.confirmed; }
     public double getShipCost() { return this.shippingCost; }
-    // public Vehicle getVehicle() { return this.vehicle; }
-
+    public int getWarehouseId() { return this.whId; }
+    public int getVehicleId() { return this.vId; }
     // Algorithm to select an "estimated" timeframe of the shipment delivery within 7 days
     // using Calendar class to manipulate Date and Random class to implement randomization
     public Date calcEstTime() {
@@ -74,5 +78,59 @@ public class Shipment {
         double basis = deliveryPkg.detWeightBasis();
         this.shippingCost = deliveryPkg.calcBoxFee(basis) + calcShipFee();
     }
-    // shipToCSVFormat()
+
+    // Format the same as header: id,pkgId,vId,wId,dest,shipCost,confirmed,status,shipDate,eta
+    public String[] toCSVFormat() {
+        return new String[] {
+            String.valueOf(getShipmentID()),
+            String.valueOf(getPackage().getId()),
+            String.valueOf(getVehicleId()),
+            String.valueOf(getWarehouseId()),
+            getDestination(),
+            String.valueOf(getShipCost()),
+            String.valueOf(isConfirmed()),
+            getStatus(),
+            getShipTakeOff() == null ? "Pending" : CSVParser.dateToString(getShipTakeOff()),
+            getEtaDelivery() == null ? "Pending" : CSVParser.dateToString(getEtaDelivery())
+        };
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Shipment ID: %d\nVehicle ID: %d\nWarehouse ID: %d\nDestination: %s\nShipping Cost: %.2f\nShipment Confirmed: %b\nStatus: %s\nTake Off: %s\nETA: %s",
+            getShipmentID(),
+            getVehicleId(),
+            getWarehouseId(),
+            getDestination(),
+            getShipCost(),
+            isConfirmed(),
+            getStatus(),
+            getShipTakeOff() == null ? "Pending" : CSVParser.dateToString(getShipTakeOff()),
+            getEtaDelivery() == null ? "Pending" : CSVParser.dateToString(getEtaDelivery()) 
+        );
+    }
+
+    public void displayShipmentForm() {
+        System.out.println("=====================================");
+        System.out.println("Shipment Form");
+        System.out.println("-------------------------------------");
+        System.out.printf("%s\n", toString());
+        System.out.println("\n=====================================");
+        getPackage().displayPackageContents();
+    }
+
+    public static Shipment toShipment(String[][] raw, int idx, Package pkg) {
+        return new Shipment(
+            CSVParser.toInt(raw[idx][0]),
+            CSVParser.toInt(raw[idx][2]),
+            CSVParser.toInt(raw[idx][3]),
+            raw[idx][4],
+            CSVParser.toDouble(raw[idx][5]),
+            Boolean.parseBoolean(raw[idx][6]),
+            pkg,
+            raw[idx][7],
+            CSVParser.strToDate(raw[idx][8]),
+            CSVParser.strToDate(raw[idx][9])
+        );
+    }
 }

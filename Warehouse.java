@@ -1,40 +1,37 @@
 public class Warehouse {
     private int wareHouseID;
     private String location;
-    private int maxShipmentCount; 
-    private int currentShipmentCount;
-    private int maxVehicleCount;
+    private int maxShipCount; 
+    private int currShipCount;
     private int currentVehicleCount;
-    private Shipment[] Shipments; // pkgID in csv
+    private Shipment[] shipments; // ShipmentID in csv
     private Vehicle[] vehicles; // vID in csv
 
     // Warehouse Constructor
-    public Warehouse(int wareHouseID, String location, int maxShipmentCount, int maxVehicleCount) {
+    public Warehouse(int wareHouseID, String location, int maxShipCount, int maxVehicleCount) {
         this.wareHouseID = wareHouseID;
         this.location = location;
-        this.maxShipmentCount = maxShipmentCount;
-        this.currentShipmentCount = 0;
-        this.maxVehicleCount = maxVehicleCount;
+        this.maxShipCount = maxShipCount;
+        this.currShipCount = 0;
         this.currentVehicleCount = 0;
-        this.Shipments = new Shipment[maxShipmentCount];
+        this.shipments = new Shipment[maxShipCount];
         this.vehicles = new Vehicle[maxVehicleCount]; 
     }
 
     // Getters
     public int getWarehouseID() { return wareHouseID; }
     public String getLocation() { return location; }
-    public int getmaxShipmentCount() { return maxShipmentCount; }
-    public int getCurrentShipmentCount() { return currentShipmentCount; }
-    public int getmaxVehicleCount() { return maxVehicleCount; }
+    public int getmaxShipCount() { return maxShipCount; }
+    public int getcurrShipCount() { return currShipCount; }
     public int getCurrentVehicleCount() { return currentVehicleCount; }
-    public Shipment[] getShipments() { return Shipments; }
+    public Shipment[] getshipments() { return shipments; }
     public Vehicle[] getVehicles() { return vehicles; }
 
     // Add a Shipment to the warehouse (e.g., drop off Shipment of a vehicle)
     public boolean addShipment(Shipment pkg) {
-        if (currentShipmentCount < maxShipmentCount) {
-            Shipments[currentShipmentCount] = pkg;
-            currentShipmentCount++;
+        if (currShipCount < maxShipCount) {
+            shipments[currShipCount] = pkg;
+            currShipCount++;
             return true;
         }
         return false; 
@@ -42,13 +39,13 @@ public class Warehouse {
 
     // Remove a Shipment from the warehouse (e.g., being loaded to the vehicle)
     public boolean removeShipment(Shipment pkg) {
-        for (int i = 0; i < currentShipmentCount; i++) {
-            if (Shipments[i] != null && Shipments[i].equals(pkg)) {
-                for (int j = i; j < currentShipmentCount - 1; j++) {
-                    Shipments[j] = Shipments[j + 1];
+        for (int i = 0; i < currShipCount; i++) {
+            if (shipments[i] != null && shipments[i].equals(pkg)) {
+                for (int j = i; j < currShipCount - 1; j++) {
+                    shipments[j] = shipments[j + 1];
                 }
-                Shipments[currentShipmentCount - 1] = null;
-                currentShipmentCount--;
+                shipments[currShipCount - 1] = null;
+                currShipCount--;
                 return true; 
             }
         }
@@ -57,12 +54,9 @@ public class Warehouse {
 
     // Add a vehicle to the warehouse (e.g., a vehicle came to the warehouse for loading or drop off)
     public boolean addVehicle(Vehicle vehicle) {
-        if (currentVehicleCount < maxVehicleCount) {
             vehicles[currentVehicleCount] = vehicle;
             currentVehicleCount++;
             return true;
-        }
-        return false;
     }
 
     // Remove a vehicle from the warehouse (e.g., a vehicle left for delivery to another warehouse location)
@@ -80,31 +74,31 @@ public class Warehouse {
         return false; 
     }
 
-    // Check available space for Shipments
+    // Check available space for shipments
     public int getAvailableSpace() {
-        return maxShipmentCount - currentShipmentCount;
+        return maxShipCount - currShipCount;
     }
 
     // Display info about the warehouse
     @Override
     public String toString() {
         return String.format(
-            "Warehouse ID: %d\nLocation: %s\nmaxShipmentCount: %d\nCurrent Shipments: %d\nMax Vehicles: %d\nCurrent Vehicles: %d\n",
+            "Warehouse ID: %d\nLocation: %s\nmaxShipCount: %d\nCurrent Packages: %d\nCurrent Vehicles: %d\n",
             getWarehouseID(),
             getLocation(),
-            getmaxShipmentCount(),
-            getCurrentShipmentCount(),
-            getmaxVehicleCount(),
+            getmaxShipCount(),
+            getcurrShipCount(),
             getCurrentVehicleCount()
         );
     }
 
+    // Revise
     public String[] toCSVFormat() {
         return new String[]{
                 String.valueOf(getWarehouseID()),
                 location,
-                String.valueOf(getmaxShipmentCount()),
-                String.valueOf(getmaxVehicleCount())
+                String.valueOf(getmaxShipCount()),
+                String.valueOf(getmaxShipCount())
         };
     }
 }

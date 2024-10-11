@@ -117,7 +117,8 @@ public class WarehouseManager extends Employee {
         loadShipmentsToVehicle(loadToVehicleShipments, selectedVehicle);
     
         // Update shipment and vehicle CSV files
-        updateShipmentAndVehicleCSV(loadToVehicleShipments, selectedVehicle);
+        Shipment[] arrLoadToVehicleShipments = loadToVehicleShipments.toArray(new Shipment[0]);
+        updateShipmentAndVehicleCSV(arrLoadToVehicleShipments, selectedVehicle);
     
         System.out.println("Shipments successfully loaded to " + vehicleTypeChoice + " with ID: " + selectedVehicle.getVehicleID());
     }
@@ -181,13 +182,81 @@ public class WarehouseManager extends Employee {
     }
 
     public void vehicleArrival() {
-        // Logic for vehicle arriving in the warehouse
         System.out.println("Vehicle arriving to warehouse... ");
+        
+        Vehicle[] vehicles = loadVehicles();
+        ArrayList<Vehicle> possibleArrivingVehicles = new ArrayList<>();
+    
+        // Find vehicles not yet in any warehouse (warehouse ID == 0) and unavailable (isAvailable == false)
+        for (Vehicle vehicle : vehicles) {
+            if (!vehicle.isAvailable() && vehicle.getWarehouseId() == 0) {
+                possibleArrivingVehicles.add(vehicle);
+            }
+        }
+    
+        if (possibleArrivingVehicles.isEmpty()) {
+            System.out.println("No vehicles arriving.");
+            return;
+        }
+    
+        displayVehicleOptions(possibleArrivingVehicles, "arriving");
+    
+        int vehicleChoice = Logistics.getValidatedInput("Select a vehicle by number: ", 1, possibleArrivingVehicles.size());
+        Vehicle selectedVehicle = possibleArrivingVehicles.get(vehicleChoice - 1);
+    
+        if (!confirmAction("marking vehicle ID: " + selectedVehicle.getVehicleID() + " as arrived")) {
+            System.out.println("Arrival canceled.");
+            return;
+        }
+    
+        selectedVehicle.setWarehouseId(currentWarehouse.getWarehouseID());
+    
+        // Update vehicle warehouse ID in CSV
+        CSVParser.updateVehicleCSV(selectedVehicle.getVehicleID(), currentWarehouse.getWarehouseID(), 2);
+    
+        System.out.println("Vehicle ID: " + selectedVehicle.getVehicleID() + " marked as arrived in warehouse: " + currentWarehouse.getLocation());
     }
-
+    
     public void vehicleLeaving() {
-        //Logic for vehicle leaving the warehouse
         System.out.println("Vehicle leaving the warehouse...");
+        
+        Vehicle[] vehicles = loadVehicles();
+        ArrayList<Vehicle> readyToLeaveVehicles = new ArrayList<>();
+    
+        // Find vehicles currently available in the warehouse
+        for (Vehicle vehicle : vehicles) {
+            if (vehicle.getWarehouseId() == currentWarehouse.getWarehouseID() && vehicle.isAvailable()) {
+                readyToLeaveVehicles.add(vehicle);
+            }
+        }
+    
+        if (readyToLeaveVehicles.isEmpty()) {
+            System.out.println("No available vehicles ready to leave the warehouse.");
+            return;
+        }
+    
+        displayVehicleOptions(readyToLeaveVehicles, "leaving");
+    
+        int vehicleChoice = Logistics.getValidatedInput("Select a vehicle by number: ", 1, readyToLeaveVehicles.size());
+        Vehicle selectedVehicle = readyToLeaveVehicles.get(vehicleChoice - 1);
+    
+        if (!confirmAction("marking vehicle ID: " + selectedVehicle.getVehicleID() + " as leaving")) {
+            System.out.println("Departure canceled.");
+            return;
+        }
+    
+        currentWarehouse.removeVehicle(selectedVehicle);
+        selectedVehicle.setWarehouseId(0);  // Indicate that vehicle is not on any warehouse
+        selectedVehicle.setAvailability(false);
+    
+        // Update vehicle CSV (warehouse ID to 0, isAvailable to false)
+        CSVParser.updateVehicleCSV(selectedVehicle.getVehicleID(), selectedVehicle.getWarehouseId(), 2);
+        CSVParser.updateVehicleCSV(selectedVehicle.getVehicleID(), selectedVehicle.isAvailable(), 10);
+    
+        // Update warehouse CSV to reflect current vehicle count
+        CSVParser.updateWarehouseCSV(currentWarehouse.getWarehouseID(), currentWarehouse.getCurrentVehicleCount(), 7);
+    
+        System.out.println("Vehicle ID: " + selectedVehicle.getVehicleID() + " has left the warehouse.");
     }
 
     // Helper Methods
@@ -206,13 +275,20 @@ public class WarehouseManager extends Employee {
     private ArrayList<Shipment> filterShipmentsForLoading(Shipment[] shipments, String destination) {
         ArrayList<Shipment> filteredShipments = new ArrayList<>();
         for (Shipment shipment : shipments) {
-            if (shipment.getWarehouseID() == currentWarehouse.getWarehouseID()
+            if (shipment.getWarehouseId() == currentWarehouse.getWarehouseID()
                     && shipment.getStatus().equalsIgnoreCase("Pending")
                     && shipment.getDestination().equalsIgnoreCase(destination)) {
                 filteredShipments.add(shipment);
             }
         }
         return filteredShipments;
+    }
+
+    private void displayVehicleOptions(ArrayList<Vehicle> vehicles, String action) {
+        System.out.println("Available vehicles for " + action + ":");
+        for (int i = 0; i < vehicles.size(); i++) {
+            System.out.println((i + 1) + ". " + vehicles.get(i).toString());
+        }
     }
 
     private String chooseVehicleType() {
@@ -229,7 +305,7 @@ public class WarehouseManager extends Employee {
     private ArrayList<Vehicle> filterAvailableVehicles(Vehicle[] vehicles, String vehicleType) {
         ArrayList<Vehicle> availableVehicles = new ArrayList<>();
         for (Vehicle vehicle : vehicles) {
-            if (vehicle.getWarehouseID() == currentWarehouse.getWarehouseID() && vehicle.isAvailable()
+            if (vehicle.getWarehouseId() == currentWarehouse.getWarehouseID() && vehicle.isAvailable()
                     && vehicle.getType().equalsIgnoreCase(vehicleType)) {
                 availableVehicles.add(vehicle);
             }
@@ -262,8 +338,10 @@ public class WarehouseManager extends Employee {
     private void loadShipmentsToVehicle(ArrayList<Shipment> shipments, Vehicle vehicle) {
         for (Shipment s : shipments) {
             if (vehicle.addShipment(s)) {
+                s.setWarehouseId(0); // Indicating its not on the warehouse anymore
                 currentWarehouse.removeShipment(s);
-                s.setVehicleID(vehicle.getVehicleID());
+                s.setVehicleId(vehicle.getVehicleID());
+                
             } else {
                 System.out.println("Cannot add Shipment ID: " + s.getShipmentID() + " to vehicle due to exceeding capacity and/or weight limit.");
             }
@@ -272,7 +350,7 @@ public class WarehouseManager extends Employee {
 
     private void assignShipmentsToVehicle(Shipment[] shipments, Vehicle vehicle) {
         for (Shipment shipment : shipments) {
-            if (shipment.getVehicleID() == vehicle.getVehicleID()) {
+            if (shipment.getVehicleId() == vehicle.getVehicleID()) {
                 vehicle.addShipment(shipment);
             }
         }
@@ -282,6 +360,8 @@ public class WarehouseManager extends Employee {
         Shipment[] droppedOffShipments = new Shipment[vehicle.getShipments().length];
         int index = 0;
         for (Shipment shipment : vehicle.getShipments()) {
+            shipment.setVehicleId(0); // Indicating its not on the warehouse
+            shipment.setWarehouseId(currentWarehouse.getWarehouseID()); // Indicating its on the warehouse
             vehicle.removeShipment(shipment);
             currentWarehouse.addShipment(shipment);
             droppedOffShipments[index] = shipment;
@@ -300,14 +380,19 @@ public class WarehouseManager extends Employee {
     }
 
     private void updateShipmentAndVehicleCSV(Shipment[] shipments, Vehicle vehicle) {
+        final int VEHICLE_ID_COL_IN_SHIPMENT = 3;
+        final int WAREHOUSE_ID_COL_IN_SHIPMENT = 4;
+        final int VEHICLE_CURR_CAP_COL = 7;
+        final int VEHICLE_CURR_SHIP_COL = 9;
+        final int VEHICLE_AVAIL_COL = 10;
+        
         for (Shipment s : shipments) {
-            CSVParser.updateShipmentCSV(s.getShipmentID(), vehicle.getVehicleID(), 3); // TODO: Change to actual column
+            CSVParser.updateShipmentCSV(s.getShipmentID(), vehicle.getVehicleID(), VEHICLE_ID_COL_IN_SHIPMENT); 
+            CSVParser.updateShipmentCSV(s.getShipmentID(), currentWarehouse.getWarehouseID(), WAREHOUSE_ID_COL_IN_SHIPMENT); 
         }
 
-        CSVParser.updateVehicleCSV(vehicle.getVehicleID(), vehicle.getCurrentCapacityKG(), 7); // Update current capacity
-        CSVParser.updateVehicleCSV(vehicle.getVehicleID(), vehicle.getCurrentShipmentCount(), 9); // Update shipment count
-        CSVParser.updateVehicleCSV(vehicle.getVehicleID(), vehicle.isAvailable(), 10); // Update availability
+        CSVParser.updateVehicleCSV(vehicle.getVehicleID(), vehicle.getCurrentCapacityKG(), VEHICLE_CURR_CAP_COL); 
+        CSVParser.updateVehicleCSV(vehicle.getVehicleID(), vehicle.getCurrentShipmentCount(), VEHICLE_CURR_SHIP_COL); 
+        CSVParser.updateVehicleCSV(vehicle.getVehicleID(), vehicle.isAvailable(), VEHICLE_AVAIL_COL);
     }
-    // MISCELLANEOUS METHODS
-
 }

@@ -9,7 +9,6 @@ public class Driver extends Employee {
 
     @Override
     public void showMenu() {
-        int choice = 0;
         boolean done = false;
 
         while (!done) {
@@ -20,9 +19,7 @@ public class Driver extends Employee {
             System.out.println("---------------------------------");
 
             // Getting user input and handling exceptions
-            try {
-                choice = Integer.parseInt(Logistics.getInput("Enter your choice: "));
-
+            int choice = Logistics.getValidatedInput("Select a number: ", 1, 3);
                 switch (choice) {
                     case 1:
                         assignVehicle();
@@ -37,9 +34,6 @@ public class Driver extends Employee {
                     default:
                         System.out.println("Invalid choice. Please select 1, 2, or 3.");
                 }
-            } catch (InputMismatchException | NumberFormatException e) {
-                System.out.println("Invalid input. Please enter a valid number.");
-            }
         }
     }
 
@@ -50,25 +44,19 @@ public class Driver extends Employee {
         Vehicle[] vehicles = Vehicle.toVehicle(vehicleData); // TODO 
         // Display available vehicles
         System.out.println("Available Vehicles:");
+        int i = 0;
         for (Vehicle v : vehicles) {
-            if (v.getDriver().equals(null) || v.getDriver().isEmpty()) {
-                System.out.println(v.toString());
+            if (!(v.getDriver().equals(null) || v.getDriver().isEmpty())) {
+                System.out.println((i + 1) + ": " + v.toString());
+                i++;
             }
         }
 
         // Select Vehicle to Assign to Driver
-        int selectedVehicleID = 0;
-        while(true) {
-            try {
-                selectedVehicleID = Integer.parseInt(Logistics.getInput("Enter Vehicle ID to Assign: "));
-                break;
-            } catch (InputMismatchException e) {
-                System.out.println("Input should be an integer. Try Again");
-            }
-        }
+        int selectedVehicle = Logistics.getValidatedInput("Select a vehicle by ID number: ", 0, 0);
 
         for (Vehicle v : vehicles) {
-            if (v.getVehicleID() == selectedVehicleID) {
+            if (v.getVehicleID() == selectedVehicle) {
                 v.setDriver(this.name);
                 assignedVan = v;
                 break;
@@ -113,7 +101,7 @@ public class Driver extends Employee {
                 CSVParser.setFilePath("CSVFiles/shipments.csv");
                 // Set Status to Delivered
                 CSVParser.updateShipmentCSV(assignedVan.getShipments()[choice - 1].getShipmentID(), 
-                                         assignedVan.getShipments()[choice - 1].getStatus(), 8); // TODO change this to actual col value
+                                            assignedVan.getShipments()[choice - 1].getStatus(), 8); // TODO change this to actual col value
                 assignedVan.getShipments()[choice - 1] = null;
                 System.out.println("Set to Delivered Successfully.");
             } 
@@ -129,7 +117,7 @@ public class Driver extends Employee {
 
         // Find shipments with matching vehicleID and assign them to this vehicle
         for (Shipment shipment : shipments) {
-            if (shipment.getVehicleID() == vehicleID) {
+            if (shipment.getVehicleId() == vehicleID) {
                 // Assign shipment to vehicle
                 assignedVan.addShipment(shipment);
             }
