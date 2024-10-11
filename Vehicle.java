@@ -1,30 +1,28 @@
 public class Vehicle {
     protected int vehicleID;
+    protected int whId;
     protected String type;
     protected String licensePlate;
     protected String driver;
     protected double capacityKG;
     protected double currentCapacityKG;
-    protected int maxPackageCount;
-    protected int currentPackageCount;
+    protected int maxShipmentCount;
+    protected int currentShipmentCount;
     protected boolean isAvailable;
-    protected Package[] packages;
+    protected Shipment[] shipments; 
 
+    // Changed Package[] packages -> Shipment[] shipments because the Driver Role Needs Vehicle to have a Shipment 
+    // Packages method can still be accessed through shipment class
 
-    // Vehicle Constructor
-    public Vehicle(int vehicleID, String type, String licensePlate, String driver, double capacityKG, int maxPackageCount, boolean isAvailable) {
+    // Vehicle Constructor for CSV File
+    public Vehicle(int vehicleID, int whId, String type, String licensePlate, String driver, double capacityKG, double currentCapacityKG, int maxShipmentCount, boolean isAvailable) {
         this.vehicleID = vehicleID;
         this.type = type;
         this.licensePlate = licensePlate;
         this.driver = driver;
         this.capacityKG = capacityKG;
         this.isAvailable = isAvailable;
-    }
-
-    public Vehicle(int vehicleID, String type, String licensePlate) {
-        this.vehicleID = vehicleID;
-        this.type = type;
-        this.licensePlate = licensePlate;
+        this.shipments = null;
     }
 
     // Getters
@@ -34,10 +32,10 @@ public class Vehicle {
     public int getVehicleID() { return this.vehicleID; }
     public String getLicensePlate() { return this.licensePlate; }
     public String getDriver() { return this.driver; }
-    public Package[] getPackages() { return this.packages; }
+    public Shipment[] getShipments() { return this.shipments; }
     public double getCurrentCapacityKG() { return this.currentCapacityKG; }
-    public int getMaxPackageCount() { return this.maxPackageCount; }
-    public int getCurrentPackageCount() { return this.currentPackageCount; }
+    public int getMaxShipmentCount() { return this.maxShipmentCount; }
+    public int getCurrentShipmentCount() { return this.currentShipmentCount; }
     
     // Setters
     public void setAvailability(boolean isAvailable) { this.isAvailable = isAvailable; }
@@ -47,15 +45,15 @@ public class Vehicle {
     @Override
     public String toString() {
         return String.format(
-            "Vehicle ID: %d\nType: %s\nLicense Plate: %s\nDriver: %s\nCapacity: %.2f KG\nCurrent Load: %.2f KG\nMax Packages: %d\nCurrent Packages: %d\nAvailable: %b", 
+            "Vehicle ID: %d\nType: %s\nLicense Plate: %s\nDriver: %s\nCapacity: %.2f KG\nCurrent Load: %.2f KG\nMax Shipments: %d\nCurrent Shipments: %d\nAvailable: %b", 
             getVehicleID(),
             getType(),
             getLicensePlate(),
             getDriver(),
             getCapacity(),
             getCurrentCapacityKG(),
-            getMaxPackageCount(),
-            getCurrentPackageCount(),
+            getMaxShipmentCount(),
+            getCurrentShipmentCount(),
             isAvailable()
         );
     }
@@ -75,14 +73,14 @@ public class Vehicle {
         return capacityKG - currentCapacityKG;
     }
 
-    public boolean addPackage(Package pkg) {
-        if (getAvailableCapacity() < capacityKG && getCurrentPackageCount() < maxPackageCount) {
-            for (int i = 0; i < packages.length; i++) {
-                if (packages[i] == null) { 
-                    if (!(currentCapacityKG + pkg.getTotalItemWeight(pkg.getContents()) > capacityKG)) {
-                        packages[i] = pkg;
-                        currentCapacityKG += pkg.getTotalItemWeight(pkg.getContents());
-                        currentPackageCount++;
+    public boolean addShipment(Shipment shipment) {
+        if (getAvailableCapacity() < capacityKG && getCurrentShipmentCount() < maxShipmentCount) {
+            for (int i = 0; i < shipments.length; i++) {
+                if (shipments[i] == null) { 
+                    if (!(currentCapacityKG + shipments[i].getPackage().getTotalItemWeight(shipments[i].getPackage().getContents()) > capacityKG)) {
+                        shipments[i] = shipment;
+                        currentCapacityKG += shipment.getPackage().getTotalItemWeight(shipment.getPackage().getContents());
+                        currentShipmentCount++;
                         return true;
                     } else {
                         return false;
@@ -93,52 +91,53 @@ public class Vehicle {
         return false;
     }
 
-    // Remove ONE package from the vehicle if it is delivered
-    public boolean removePackage(Package pkg) {
-        for (int i = 0; i < packages.length; i++) {
-            if (packages[i] != null && packages[i].equals(pkg)) {
-                currentCapacityKG -= pkg.getTotalItemWeight(pkg.getContents());
-                currentPackageCount--;
-                packages[i] = null;
+    // Remove ONE Shipment from the vehicle if it is delivered
+    public boolean removeShipment(Shipment shipment) {
+        for (int i = 0; i < shipments.length; i++) {
+            if (shipments[i] != null && shipments[i].equals(shipment)) {
+                currentCapacityKG -= shipment.getPackage().getTotalItemWeight(shipment.getPackage().getContents());
+                currentShipmentCount--;
+                shipments[i] = null;
                 return true;
             }
         }
         return false;
     }
-}
 
-class Motorcycle extends Vehicle {
-
-    public Motorcycle(int vehicleID, String licensePlate, String driver, boolean isAvailable) {
-        // Max capacity is only 80kg and only allows 1 package
-        super(vehicleID, "Motorcycle", licensePlate, driver, 80, 1, isAvailable);
-    }
-
-    // Ensure that the motorcycle can only receive one package at <= 80KG 
-    @Override
-    public boolean addPackage(Package pkg) {
-        if (getCurrentPackageCount() == 0 && pkg.getTotalItemWeight(pkg.getContents()) <= 80) {
-            packages[0] = pkg;
-            currentCapacityKG += pkg.getTotalItemWeight(pkg.getContents());
-            currentPackageCount++;
-            return true;
+    // Follow header in formatting - id,whId,type,licensePlate,driver,cap_max,curr_cap,max_ship,curr_ship,avail
+    public static Vehicle[] toVehicle(String[][] raw) {
+       Vehicle[] vehicles = new Vehicle[raw.length];
+        for (int i = 0; i < raw.length; i++) {
+            vehicles[i] = new Vehicle(
+                CSVParser.toInt(raw[i][0]),
+                CSVParser.toInt(raw[i][1]),
+                raw[i][2],
+                raw[i][3],
+                raw[i][4],
+                detMaxCap(raw[i][2]),
+                Double.parseDouble(raw[i][6]),
+                Integer.parseInt(raw[i][7]),
+                Boolean.parseBoolean(raw[i][8])
+            );
         }
-        return false;
-    }
+        return vehicles;
+     }
 
-    // Override the toString method for Motorcycle specific display
-    @Override
-    public String toString() {
-        return String.format(
-            "Motorcycle ID: %d\nLicense Plate: %s\nDriver: %s\nCapacity: %.2f KG\nCurrent Load: %.2f KG\nMax Packages: %d\nCurrent Packages: %d\nAvailable: %b",
-            getVehicleID(),
-            getLicensePlate(),
-            getDriver(),
-            getCapacity(),
-            getCurrentCapacityKG(),
-            getMaxPackageCount(),
-            getCurrentPackageCount(),
-            isAvailable()
-        );
+    private static int detMaxCap(String type) {
+        return type.toLowerCase().equals("van") ? 500 : 1000;
+    }
+    
+    public static Vehicle toVehicle(String[][] raw, int idx) { 
+        return new Vehicle(
+            CSVParser.toInt(raw[idx][0]),
+            CSVParser.toInt(raw[idx][1]),
+            raw[idx][2],
+            raw[idx][3],
+            raw[idx][4],
+            Double.parseDouble(raw[idx][5]),
+            Double.parseDouble(raw[idx][6]),
+            Integer.parseInt(raw[idx][7]),
+            Boolean.parseBoolean(raw[idx][8])
+        ); 
     }
 }

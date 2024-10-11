@@ -1,11 +1,9 @@
 public class Truck extends Vehicle {
-    private Warehouse[] routes;
     private int currentWarehouseRouteCount;
     private int maxWarehouseRoutes;
     private int droppedOffWarehouseCount;
     public Truck(int vehicleID, String licensePlate, String driver, boolean isAvailable, int maxWarehouseRoutes) {
         super(vehicleID, "Truck", licensePlate, driver, 1000,100, isAvailable);
-        this.routes = new Warehouse[maxWarehouseRoutes];
         this.maxWarehouseRoutes = maxWarehouseRoutes;
         this.droppedOffWarehouseCount = 0;
         this.currentWarehouseRouteCount = 0;
@@ -46,14 +44,14 @@ public class Truck extends Vehicle {
     @Override
     public String toString() {
         return String.format(
-                "Truck ID: %d\nLicense Plate: %s\nDriver: %s\nCapacity: %.2f KG\nCurrent Load: %.2f KG\nMax Packages: %d\nCurrent Packages: %d\nWarehouses to visit: %d\nWarehouses visited: %d\nAvailable: %b",
+                "Truck ID: %d\nLicense Plate: %s\nDriver: %s\nCapacity: %.2f KG\nCurrent Load: %.2f KG\nMax Shipments: %d\nCurrent Shipments: %d\nWarehouses to visit: %d\nWarehouses visited: %d\nAvailable: %b",
                 getVehicleID(),
                 getLicensePlate(),
                 getDriver(),
                 getCapacity(),
                 getCurrentCapacityKG(),
-                getMaxPackageCount(),
-                getCurrentPackageCount(),
+                getMaxShipmentCount(),
+                getCurrentShipmentCount(),
                 getCurrentWarehouseRouteCount(),
                 getDroppedOffWarehouseCount(),
                 isAvailable()

@@ -17,4 +17,12 @@ public class Dimension {
     public void setLength(double length) { this.length = length; }
     public void setWidth(double width) { this.width = width; }
     public void setHeight(double height) { this.height = height; }
+
+    // Dimensions of an item/
+    public static Dimension toDimension(String[] raw, int start) {
+        double l = CSVParser.toDouble(raw[start]),
+        w = CSVParser.toDouble(raw[start + 1]),
+        h = CSVParser.toDouble(raw[start + 2]);
+        return new Dimension(h, w, l);
+    }
 }

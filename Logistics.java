@@ -1,6 +1,13 @@
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
-
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /** 
  *  DeliverIT - Local Logistics System
@@ -12,11 +19,11 @@ import java.util.ArrayList;
 
 public class Logistics {
     private CSVParser parser;
-    private BufferedReader reader;
+    private static BufferedReader reader;
 
     public Logistics() {
-        this.parser = new CSVParser();
-        this.reader = new BufferedReader(new InputStreamReader(System.in));
+        parser = new CSVParser();
+        reader = new BufferedReader(new InputStreamReader(System.in));
     }
     public static void main(String[] args) {
         // Instantiate Logistics Class - contains all methods
@@ -27,41 +34,16 @@ public class Logistics {
                 System.out.println("=====================================================");
                 System.out.println("\t\t Welcome to DeliverIT! \t\t");
                 System.out.println("=====================================================");
-                String name = manager.getInput("Enter Full Name");
-                manager.parser.setFilePath("CSVFiles/customers.csv");
-                Customer currentCustomer = manager.parser.searchCustomerName(name);
+                String name = getInput("Enter Full Name");
+                CSVParser.setFilePath("CSVFiles/customers.csv");
+                Customer currentCustomer = manager.searchCustomerName(name);
                 if (currentCustomer == null) {
                     System.out.printf("Customer name {%s} not found.\nPlease register in order to use the system.\n", name);
                     currentCustomer = manager.registerCustomer(name);
                 }
                 manager.showCustomerMenu(currentCustomer);
                 break;
-            case 3:
-                // Admin/Employee Module REVISE
-                System.out.println("Admin/Employee Module in progress");
-
-                String username = args[0], password = args[1], holderName = args[2];
-
-                // Username and Passwords
-                final String adminUsername = "admin";
-                final String adminPassword = "admin123";
-                final String employeeUsername = "employee";
-                final String employeePassword = "employee123";
-
-                // Predefined Credentials for Admin and Employee
-                Admin admin = new Admin(holderName, adminUsername, adminPassword);
-                Employee employee = new Employee(holderName, employeeUsername, employeePassword);
-
-                if (username.equals(admin.getUsername()) && admin.login(password)) {
-                    System.out.println("Welcome Admin");
-                    admin.showMenu();
-                } else if (username.equals(employee.getUsername()) && employee.login(password)) {
-                    System.out.println("Welcome Employee!");
-                    employee.showMenu();
-                } else {
-                    System.out.println("Invalid username or password. Please try again.");
-                }
-                break;
+                case 3: break;
             default:
                 System.out.println("Invalid args length!\nUSAGE: javac -cp out Logistics OR javac -cp out Logistics {role} {password} {name}");
                 return;
@@ -69,10 +51,9 @@ public class Logistics {
         System.out.println("Program Terminated.");
     }
     
-    public boolean checkInput(String input) { return input.length() == 0 || input == null; }
+    public static boolean checkInput(String input) { return input.length() == 0 || input == null; }
 
-
-    public String getInput(String prompt) {
+    public static String getInput(String prompt) {
         boolean exceptionOccured = false; 
         String input = "";
         do {
@@ -84,15 +65,15 @@ public class Logistics {
         return input;
     }
 
-    public boolean checkInt(String input) {
+    public static boolean checkInt(String input) {
         try {
-            return parser.toInt(input) > 0;
+            return CSVParser.toInt(input) > 0;
         } catch (NumberFormatException e) { return false; }
     }
 
-    public boolean checkDouble(String input) {
+    public static boolean checkDouble(String input) {
         try {
-            return parser.toDouble(input) > 0.0;
+            return CSVParser.toDouble(input) > 0.0;
         } catch (NumberFormatException e) { return false; }
     }
 
@@ -100,57 +81,57 @@ public class Logistics {
         System.out.println();
         String contact = getInput("Enter Contact No.");
         String address = getInput("Enter Address");
-        Customer newCustomer = new Customer(parser.getLatestID() + 1, name, contact, address);
-        parser.saveEntry(newCustomer.toCSVFormat());
+        Customer newCustomer = new Customer(CSVParser.getLatestID() + 1, name, contact, address);
+        CSVParser.saveEntry(newCustomer.toCSVFormat());
         return newCustomer;
     }
 
     private void showCustomerMenu(Customer customer) {
         String in;
         char op;
-        boolean valid = true;
-
-        System.out.printf("Welcome, %s!\n", customer.getName());
-        System.out.println("[S]end Package\n[E]dit Information\n[T]rack Package\n[Q]uit");
-        do {
-            do {
-                in = getInput("Option").toUpperCase();
-            } while (in.length() != 1);
+        while(true) {
+            System.out.printf("Hello, %s!\n", customer.getName());
+            System.out.println("[S]end Package\n[E]dit Information\n[T]rack Shipment\n[Q]uit");
+            in = getInput("Option").toUpperCase();
+            if (in.length() != 1) { 
+                System.out.println("Invalid Input.");
+                continue;
+            }
             op = in.charAt(0);
             switch(op) {
                 case 'S':
                     sendPackage(customer);
                     break;
-                case 'E':   
+                case 'E':
                     editCustomerInfo(customer);
                     break;
                 case 'T':
-                    System.out.println("In progress.");
+                    // track shipment
+                    trackShipment(customer);
                     break;
-                case 'Q':
-                    return;
+                case 'Q': return;
                 default:
-                    valid = false;
+                    System.out.println("Only [S,E,T,Q] are valid inputs.");
                     break;
             }
-        } while(!valid);
+        }
     }
 
     private void editCustomerInfo(Customer customer) {
         String in;
-        boolean valid = true;
-        System.out.println("Edit Customer Information");
-        System.out.println("[1] Name\n[2] Contact Info\n[3] Address\n[4] Back");
-
-        do {
-            do {
-                in = getInput("Option");
-            } while (!checkInt(in));
-            switch(parser.toInt(in)) {
+        while (true) {
+            System.out.println("Edit Customer Information");
+            System.out.println("[1] Name\n[2] Contact Info\n[3] Address\n[4] Back");
+            in = getInput("Option");
+            if (!checkInt(in)) {
+                System.out.println("Invalid Input.");
+                continue;
+            }
+            switch (CSVParser.toInt(in)) {
                 case 1:
                     String newName = getInput("New Name");
-                    customer.setName(newName);
                     parser.updateCustomerCSV(customer.getCustomerID(), newName, 1);
+                    customer.setName(newName);
                     break;
                 case 2:
                     String newInfo = getInput("New Contact No.");
@@ -162,16 +143,15 @@ public class Logistics {
                     customer.setAddress(newAddr);
                     parser.updateCustomerCSV(customer.getCustomerID(), newAddr, 3);                    
                     break;
-                case 4:
-                    return;
+                case 4: return;
                 default:
-                    valid = false;
+                    System.out.println("Choose from options 1-4 only.");
                     break;
             }
-        } while(!valid);
+        }
     }
 
-    public Item[] getCustomerItems() {
+    private Item[] getCustomerItems() {
         ArrayList<Item> currentItems = new ArrayList<>();
         boolean isDone = false;
         String name, weightStr, lenStr, widStr, heiStr;
@@ -190,8 +170,8 @@ public class Logistics {
                 heiStr = getInput("Height(cm)");
             } while(!checkDouble(heiStr));
 
-            Dimension dim = new Dimension(parser.toDouble(lenStr), parser.toDouble(widStr), parser.toDouble(heiStr));
-            currentItems.add(new Item(name, parser.toDouble(weightStr), dim));
+            Dimension dim = new Dimension(CSVParser.toDouble(lenStr), CSVParser.toDouble(widStr), CSVParser.toDouble(heiStr));
+            currentItems.add(new Item(name, CSVParser.toDouble(weightStr), dim));
 
             String continuePrompt;
             do {
@@ -205,48 +185,94 @@ public class Logistics {
         return currentItems.toArray(new Item[0]);
     }
 
-    public void sendPackage(Customer customer) {
+    private void sendPackage(Customer customer) {
         Item[] items = getCustomerItems();
         String receiver = getInput("Receiver Address");
-        Package pkg = new Package(parser.getLatestID() + 1, items, receiver);
+        Package pkg = new Package(CSVParser.getLatestID() + 1, items, receiver);
         pkg.displayPackageContents(); // DB
         System.out.println(pkg.toString()); // DB
-        // Save to packages csv
-        parser.setFilePath("CSVFiles/packages.csv");
-        parser.saveEntry(pkg.toCSVFormat(customer.getCustomerID()));
-        // Save to items csv
-        parser.setFilePath("CSVFiles/items.csv");
-        for (Item item : items) {
-            parser.saveEntry(item.toCSVFormat(pkg.getId()));
+        CSVParser.setFilePath("CSVFiles/shipments.csv");
+        Shipment shipment = new Shipment(CSVParser.getLatestID() + 1,receiver, pkg);
+        shipment.calcShipCost();
+        System.out.printf("Total Shipping Cost: %.2f\n", shipment.getShipCost());
+        while(true) {
+            String payment = getInput("Enter Cash");
+            if (!Logistics.checkDouble(payment)) continue;
+            if (CSVParser.toDouble(payment) > shipment.getShipCost()) {
+                System.out.printf("Change: %.2f\n", CSVParser.toDouble(payment) - shipment.getShipCost());
+                break;
+            }
         }
-        // TODO: Process Shipment and add to CSV 
+        shipment.setStatus("Paid");
+        System.out.println("Shipment paid successfully. Saving your package/s...");
+        CSVParser.setFilePath("CSVFiles/packages.csv");
+        CSVParser.saveEntry(pkg.toCSVFormat(customer.getCustomerID()));
+        CSVParser.setFilePath("CSVFiles/items.csv");
+        for (Item item : items) {
+            CSVParser.saveEntry(item.toCSVFormat(pkg.getId()));
+        }
+        CSVParser.setFilePath("CSVFiles/shipments.csv");
+        CSVParser.saveEntry(shipment.toCSVFormat());
+        shipment.displayShipmentForm();
     }
+
+    private Customer searchCustomerName(String name) {
+        String[][] csvCustomer = CSVParser.loadCSVData(CSVParser.getFilePath());
+        for(int i = 0; i < csvCustomer.length; i++) {
+            if(csvCustomer[i][1].toLowerCase().equals(name.toLowerCase())) {
+                return Customer.toCustomer(csvCustomer, i);
+            }
+        }
+        return null;
+    }
+
+    private void trackShipment(Customer customer) {
+        Shipment[] customerShips = parser.searchShipments(customer.getCustomerID());
+        System.out.printf("Customer %s, You have %s shipment/s still in the process.\n", customer.getName(), customerShips.length);
+        for(Shipment s : customerShips) {
+            s.displayShipmentForm();
+        }
+    }
+
 }
 
 
 class CSVParser {
-    private String file;
     private final String[] CUSTOMER_H = {"id", "name", "contactInfo", "address"};
     private final String[] PACKAGE_H = {"cID", "pkgID", "receiverAddress", "created", "dimensionalWeight_kg", "length_cm", "width_cm", "height_cm"};
     private final String[] ITEMS_H = {"pkgID", "name", "weight_kg", "length_cm", "width_cm", "height_cm"};
-    private final String[] VEHICLES_H = {"vID", "type", "licensePlate", "driver", "capacity", "availability"};
-    private final String[] WAREHOUSE_H = {"wId", "location", "package_capacity", "vehicle_capacity"};
+    private static final String[] VEHICLES_H = {"vID", "whId", "type", "licensePlate", "driver", "cap_max", "cap_curr", "max_ship", "curr_ship", "avail"};
+    private static final String[] WAREHOUSE_H = {"wID", "location", "package_capacity", "vehicle_capacity"};
+    private static final String[] SHIPMENT_H = {"id","pkgId","vId","wId","dest","shipCost","confirmed","status","shipDate","eta"};
+    private static String filePath; // hold the file path needed for operations
 
     public CSVParser() { 
-        file = ""; 
+        filePath = ""; 
     }
 
-    public void setFilePath(String file) { this.file = file; }
-    public String getFilePath() { return this.file; }
+    public static void setFilePath(String file) { filePath = file; }
+    public static String getFilePath() { return filePath; }
     public String[] getCustomerHeader() { return this.CUSTOMER_H; }
     public String[] getPackageHeader() { return this.PACKAGE_H; }
     public String[] getItemHeader() { return this.ITEMS_H; }
-    public String[] getVehicleHeader() { return this.VEHICLES_H; }
-    public String[] getWarehouseHeader() { return this.WAREHOUSE_H; }
-    public int toInt(String in) { return Integer.parseInt(in); }
-    public double toDouble(String in) { return Double.parseDouble(in); }
+    public static String[] getVehicleHeader() { return VEHICLES_H; }
+    public static String[] getWarehouseHeader() { return WAREHOUSE_H; }
+    public static String[] getShipmentHeader() { return SHIPMENT_H; }
 
-    public int getColumnCounts(String file) {
+    public static int toInt(String in) { return Integer.parseInt(in); }
+    public static double toDouble(String in) { return Double.parseDouble(in); }
+    public static String dateToString(Date date) {
+        SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy");
+        return format.format(date);
+    }
+    public static Date strToDate(String csvDate) {
+        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
+        try {
+            return sdf.parse(csvDate);
+        } catch (ParseException e) { return null; }
+    }
+    
+    public static int getColumnCounts(String file) {
         int counts = -1;
         try (BufferedReader fin = new BufferedReader(new FileReader(file))) {
             String buffer;
@@ -258,7 +284,7 @@ class CSVParser {
         return counts;
     }
 
-    public String[][] loadCSVData(String file) {
+    public static String[][] loadCSVData(String file) {
         ArrayList<String[]> data = new ArrayList<>();
         try (BufferedReader fin = new BufferedReader(new FileReader(file))) {
             String buffer;
@@ -275,20 +301,20 @@ class CSVParser {
     }
     
     // Individual Entity - Save an entity's attributes to the CSV File
-    public void saveEntry(String[] data) {
+    public static void saveEntry(String[] data) {
         boolean saved = false;
         try (PrintWriter fout = new PrintWriter(new FileWriter(getFilePath(), true))) {
             String placeholder = generateFormatString(data.length);
             fout.printf(placeholder,(Object[]) data);
             saved = true;
         } catch (IOException e) { saved = false; }
-        System.out.println(saved ? "Successfully saved new data." : "An error occured while saving new data.");
+        if(!saved) System.out.println("Error saving new file data");
     }
 
     // Bulk Writing - Write all the current contents of the CSV after updating selected fields
-    public void writeToCSV(String[][] data, String[] header, boolean append) {
+    public static void writeToCSV(String[][] data, String[] header, boolean append) {
         boolean saved = false;
-        try (PrintWriter fout = new PrintWriter(new FileWriter(file, append))) {
+        try (PrintWriter fout = new PrintWriter(new FileWriter(filePath, append))) {
             // Generate string CSV structure and save the headers first
             if(!append) {
                 String placeholder = generateFormatString(header.length);
@@ -306,7 +332,7 @@ class CSVParser {
     }
 
     // Helper Method for CSV Structure generation for data format
-    private String generateFormatString(int length) {
+    private static String generateFormatString(int length) {
         StringBuilder format = new StringBuilder();
         for(int i = 0; i < length; i++) {
             format.append("%s,");
@@ -315,65 +341,48 @@ class CSVParser {
         return format.toString();
     }
 
-    public Customer[] toCustomer(String[][] raw) {
-        Customer[] customers = new Customer[raw.length];
-        for (int i = 0; i < raw.length; i++) {
-            customers[i] = new Customer(
-                toInt(raw[i][0]),
-                raw[i][1],
-                raw[i][2],
-                raw[i][3]
-            );
-        }
-        return customers;
-    }
-
-    public Customer toCustomer(String[][] raw, int idx) { 
-        return new Customer(
-            toInt(raw[idx][0]), 
-            raw[idx][1], 
-            raw[idx][2], 
-            raw[idx][3]
-        ); 
-    }
-
-    // public Vehicle[] toVehicle(String[][] raw) {
-    //    Vehicle[] vehicles = new Vehicle[raw.length];
-    //    for (int i = 0; i < raw.length; i++) {
-    //        vehicles[i] = new Vehicle(
-    //            toInt(raw[i][0]),
-    //            raw[i][1],
-    //            raw[i][2],
-    //            raw[i][3],
-    //            Double.parseDouble(raw[i][4]),
-    //            Boolean.parseBoolean(raw[i][5])
-    //        );
-    //    }
-    //    return vehicles;
-    // }
-
-    //public Vehicle toVehicle(String[][] raw, int idx) { 
-    //    return new Vehicle(
-    //        toInt(raw[idx][0]), 
-    //        raw[idx][1], 
-    //        raw[idx][2], 
-    //        raw[idx][3],
-    //        Double.parseDouble(raw[idx][4]),
-    //        Boolean.parseBoolean(raw[idx][5])
-    //    ); 
-    //}
-
-    public Customer searchCustomerName(String name) {
-        String[][] csvCustomer = loadCSVData(getFilePath());
-        for(int i = 0; i < csvCustomer.length; i++) {
-            if(csvCustomer[i][1].toLowerCase().equals(name.toLowerCase())) {
-                return toCustomer(csvCustomer, i);
+    public Package[] searchPackage(int custID) {
+        ArrayList<Package> custPkg = new ArrayList<>();
+        String[][] csvPkg = loadCSVData("CSVFiles/packages.csv");
+        for(int i = 0; i < csvPkg.length; i++) {
+            int id = CSVParser.toInt(csvPkg[i][1]);
+            if(id == custID) {
+                Item[] custItems = searchItems(id);
+                custPkg.add(Package.toPackage(csvPkg, i, custItems));
             }
         }
-        return null;
+        return custPkg.toArray(new Package[0]);
+    }
+    // pkgId,name,weight_kg,length_cm,width_cm,height_cm
+    public Item[] searchItems(int pkgID) {
+        String[][] csvItems = loadCSVData("CSVFiles/items.csv");
+        ArrayList<Item> items = new ArrayList<>();
+        for(int i = 0; i < csvItems.length; i++) {
+            if(CSVParser.toInt(csvItems[i][0]) == pkgID) {
+                items.add(Item.toItem(csvItems, i));
+            }
+        } 
+        return items.toArray(new Item[0]);
     }
 
-    public int getLatestID() {
+    public Shipment[] searchShipments(int custID) {
+        // Load customer package/s
+        ArrayList<Shipment> customerShipments = new ArrayList<>();
+        Package[] custPkg = searchPackage(custID);
+        // Load shipment CSV
+        CSVParser.setFilePath("CSVFiles/shipments.csv");
+        String[][] csvShips = CSVParser.loadCSVData(CSVParser.getFilePath());
+        for(Package pkg : custPkg) {
+            int pkgId = pkg.getId();
+            for(int i = 0; i < csvShips.length; i++) {
+                int shipPkgId = CSVParser.toInt(csvShips[i][1]);
+                if((pkgId == shipPkgId) && csvShips[i][7].equalsIgnoreCase("Paid")) customerShipments.add(Shipment.toShipment(csvShips, i, pkg));
+            }
+        }
+        return customerShipments.toArray(new Shipment[0]);
+    }
+
+    public static int getLatestID() {
         String[][] rawCSV = loadCSVData(getFilePath());
         return rawCSV.length == 0 ? 0 : toInt(rawCSV[rawCSV.length - 1][0]);
     }

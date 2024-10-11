@@ -1,5 +1,6 @@
-import java.io.*;
-import java.util.*;
+import java.io.PrintWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class Admin extends Employee {
     public Admin(String name, String username, String password) {
@@ -8,44 +9,44 @@ public class Admin extends Employee {
 
     // Admin-specific functionalities
     public void addWarehouse() {
-        parser.setFilePath("CSVFiles/warehouses.csv");
-        String location = logistics.getInput("Enter warehouse location");
+        String location = Logistics.getInput("Enter warehouse location");
         int maxPackageCount;
         do {
-            String maxPackageCountStr = logistics.getInput("Enter maximum package capacity");
-            maxPackageCount = parser.toInt(maxPackageCountStr);
+            String maxPackageCountStr = Logistics.getInput("Enter maximum package capacity");
+            maxPackageCount = CSVParser.toInt(maxPackageCountStr);
         } while (maxPackageCount <= 0);
 
         int maxVehicleCount;
         do {
-            String maxVehicleCountStr = logistics.getInput("Enter maximum number of vehicles");
-            maxVehicleCount = parser.toInt(maxVehicleCountStr);
+            String maxVehicleCountStr = Logistics.getInput("Enter maximum number of vehicles");
+            maxVehicleCount = CSVParser.toInt(maxVehicleCountStr);
         } while (maxVehicleCount <= 0);
 
-        Warehouse newWarehouse = new Warehouse(parser.getLatestID() + 1, location, maxPackageCount, maxVehicleCount);
+        Warehouse newWarehouse = new Warehouse(CSVParser.getLatestID() + 1, location, maxPackageCount, maxVehicleCount);
 
-        parser.saveEntry(newWarehouse.toCSVFormat());
+        CSVParser.setFilePath("CSVFiles/warehouses.csv");
+        CSVParser.saveEntry(newWarehouse.toCSVFormat());
 
         System.out.println("Warehouse added successfully.");
     }
 
     public void removeWarehouse() {
         System.out.println("Available Warehouses:");
-        parser.setFilePath("CSVFiles/warehouses.csv");
-        String[][] warehousesData = parser.loadCSVData(parser.getFilePath());
+        CSVParser.setFilePath("CSVFiles/warehouses.csv");
+        String[][] warehousesData = CSVParser.loadCSVData(CSVParser.getFilePath());
         for (String[] warehouse : warehousesData) {
             System.out.println("ID: " + warehouse[0] + ", Location: " + warehouse[1] + ", Package Capacity: " + warehouse[2] + ", Vehicle Capacity: " + warehouse[3]);
         }
 
         int warehouseId;
         do {
-            String idStr = logistics.getInput("Enter Warehouse ID to remove");
-            warehouseId = parser.toInt(idStr);
+            String idStr = Logistics.getInput("Enter Warehouse ID to remove");
+            warehouseId = CSVParser.toInt(idStr);
         } while (warehouseId <= 0);
 
         boolean removed = false;
         for (int i = 0; i < warehousesData.length; i++) {
-            if (parser.toInt(warehousesData[i][0]) == warehouseId) {
+            if (CSVParser.toInt(warehousesData[i][0]) == warehouseId) {
                 warehousesData[i] = null;
                 removed = true;
                 break;
@@ -60,7 +61,7 @@ public class Admin extends Employee {
                     updatedData[index++] = warehouse;
                 }
             }
-            parser.writeToCSV(updatedData, parser.getWarehouseHeader(), false);
+            CSVParser.writeToCSV(updatedData, CSVParser.getWarehouseHeader(), false);
             System.out.println("Warehouse removed successfully.");
         } else {
             System.out.println("Warehouse not found.");
@@ -68,51 +69,49 @@ public class Admin extends Employee {
     }
 
     public void addVehicles() {
-        parser.setFilePath("CSVFiles/vehicles.csv");
-        String type = logistics.getInput("Enter vehicle type (Truck/Motorcycle)");
+        String type = Logistics.getInput("Enter vehicle type (Truck/Motorcycle)");
 
-        String licensePlate = logistics.getInput("Enter vehicle license plate");
-        String driver = logistics.getInput("Enter driver name");
+        String licensePlate = Logistics.getInput("Enter vehicle license plate");
+        String driver = Logistics.getInput("Enter driver name");
         boolean isAvailable = true;
 
         Vehicle newVehicle;
         if (type.equalsIgnoreCase("Truck")) {
             int maxWarehouseRoutes;
             do {
-                String maxWarehouseRoutesStr = logistics.getInput("Enter maximum number of warehouse routes for the truck");
-                maxWarehouseRoutes = parser.toInt(maxWarehouseRoutesStr);
+                String maxWarehouseRoutesStr = Logistics.getInput("Enter maximum number of warehouse routes for the truck");
+                maxWarehouseRoutes = CSVParser.toInt(maxWarehouseRoutesStr);
             } while (maxWarehouseRoutes <= 0);
 
-            newVehicle = new Truck(parser.getLatestID() + 1, licensePlate, driver, isAvailable, maxWarehouseRoutes);
-        } else if (type.equalsIgnoreCase("Motorcycle")) {
-            newVehicle = new Motorcycle(parser.getLatestID() + 1, licensePlate, driver, isAvailable);
+            newVehicle = new Truck(CSVParser.getLatestID() + 1, licensePlate, driver, isAvailable, maxWarehouseRoutes);
+        } else if (type.equalsIgnoreCase("Van")) {
+            newVehicle = new Van(CSVParser.getLatestID() + 1, licensePlate, driver, isAvailable);
         } else {
             System.out.println("Invalid vehicle type. Please enter either 'Truck' or 'Motorcycle'.");
             return;
         }
 
-        parser.saveEntry(newVehicle.toCSVFormat());
-
-        System.out.println("Vehicle added successfully.");
+        CSVParser.setFilePath("CSVFiles/vehicles.csv");
+        CSVParser.saveEntry(newVehicle.toCSVFormat());
     }
 
     public void removeVehicles() {
         System.out.println("Available Vehicles:");
-        parser.setFilePath("CSVFiles/vehicles.csv");
-        String[][] vehiclesData = parser.loadCSVData(parser.getFilePath());
+        CSVParser.setFilePath("CSVFiles/vehicles.csv");
+        String[][] vehiclesData = CSVParser.loadCSVData(CSVParser.getFilePath());
         for (String[] vehicle : vehiclesData) {
             System.out.println("ID: " + vehicle[0] + ", Type: " + vehicle[1] + ", License Plate: " + vehicle[2] + ", Driver: " + vehicle[3] + ", Capacity(KG): " + vehicle[4] + ", Availability: " + vehicle[5]);
         }
 
         int vehicleId;
         do {
-            String idStr = logistics.getInput("Enter Vehicle ID to remove");
-            vehicleId = parser.toInt(idStr);
+            String idStr = Logistics.getInput("Enter Vehicle ID to remove");
+            vehicleId = CSVParser.toInt(idStr);
         } while (vehicleId <= 0);
 
         boolean removed = false;
         for (int i = 0; i < vehiclesData.length; i++) {
-            if (parser.toInt(vehiclesData[i][0]) == vehicleId) {
+            if (CSVParser.toInt(vehiclesData[i][0]) == vehicleId) {
                 vehiclesData[i] = null;
                 removed = true;
                 break;
@@ -127,7 +126,7 @@ public class Admin extends Employee {
                     updatedData[index++] = vehicle;
                 }
             }
-            parser.writeToCSV(updatedData, parser.getVehicleHeader(), false);
+            CSVParser.writeToCSV(updatedData, CSVParser.getVehicleHeader(), false);
             System.out.println("Vehicle removed successfully.");
         } else {
             System.out.println("Vehicle not found.");
@@ -141,8 +140,8 @@ public class Admin extends Employee {
 
         // Add warehouse information
         report.append("Warehouses:\n");
-        parser.setFilePath("CSVFiles/warehouses.csv");
-        String[][] warehousesData = parser.loadCSVData(parser.getFilePath());
+        CSVParser.setFilePath("CSVFiles/warehouses.csv");
+        String[][] warehousesData = CSVParser.loadCSVData(CSVParser.getFilePath());
         for (String[] warehouse : warehousesData) {
             report.append(String.format("ID: %s, Location: %s, Max Packages: %s, Max Vehicles: %s\n",
                     warehouse[0], warehouse[1], warehouse[2], warehouse[3]));
@@ -151,8 +150,8 @@ public class Admin extends Employee {
 
         // Add vehicle information
         report.append("Vehicles:\n");
-        parser.setFilePath("CSVFiles/vehicles.csv");
-        String[][] vehiclesData = parser.loadCSVData(parser.getFilePath());
+        CSVParser.setFilePath("CSVFiles/vehicles.csv");
+        String[][] vehiclesData = CSVParser.loadCSVData(CSVParser.getFilePath());
         for (String[] vehicle : vehiclesData) {
             report.append(String.format("ID: %s, Type: %s, License Plate: %s, Driver: %s, Capacity: %s KG\n",
                     vehicle[0], vehicle[1], vehicle[2], vehicle[3], vehicle[4]));
@@ -161,8 +160,8 @@ public class Admin extends Employee {
 
         // Add package information
         report.append("Packages:\n");
-        parser.setFilePath("CSVFiles/packages.csv");
-        String[][] packagesData = parser.loadCSVData(parser.getFilePath());
+        CSVParser.setFilePath("CSVFiles/packages.csv");
+        String[][] packagesData = CSVParser.loadCSVData(CSVParser.getFilePath());
         for (String[] pkg : packagesData) {
             report.append(String.format("ID: %s, Customer ID: %s, Receiver Address: %s, Created: %s\n",
                     pkg[1], pkg[0], pkg[2], pkg[3]));
@@ -177,66 +176,7 @@ public class Admin extends Employee {
         }
     }
 
+    // Add admin-specific implementation
     @Override
-    public void showMenu() {
-        int choice;
-
-        do {
-            System.out.println("\nAdmin Menu:");
-            System.out.println("1. Encode Order");
-            System.out.println("2. Process Shipment");
-            System.out.println("3. Sort Package");
-            System.out.println("4. Add Warehouse");
-            System.out.println("5. Remove Warehouse");
-            System.out.println("6. Add Vehicle");
-            System.out.println("7. Remove Vehicle");
-            System.out.println("8. Generate Report");
-            System.out.println("9. Exit");
-
-            while(true) {
-                try {
-                    choice = Integer.parseInt(logistics.getInput("Enter your choice: "));
-                    break;
-                } catch (InputMismatchException e) {
-                    System.out.println("Enter a valid Integer.");
-                }
-            }
-
-            switch (choice) {
-                case 1:
-                    System.out.println("Encoding order...");
-                    encodeOrder();
-                    break;
-                case 2:
-                    System.out.println("Processing shipment...");
-                    System.out.println("Work in progress");
-                    break;
-                case 3:
-                    System.out.println("Sorting package...");
-                    break;
-                case 4:
-                    addWarehouse();
-                    break;
-                case 5:
-                    removeWarehouse();
-                    break;
-                case 6:
-                    addVehicles();
-                    break;
-                case 7:
-                    removeVehicles();
-                    break;
-                case 8:
-                    String reportLocation = logistics.getInput("Enter report file location");
-                    generateReports(reportLocation);
-                    break;
-                case 9:
-                    System.out.println("Exiting Admin Menu...");
-                    break;
-                default:
-                    System.out.println("Invalid choice, please try again.");
-            }
-        } while (choice != 9);
-        System.out.println("Admin session ended.");
-    }
+    public void showMenu() {}
 }
