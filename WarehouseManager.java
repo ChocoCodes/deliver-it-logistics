@@ -263,7 +263,12 @@ public class WarehouseManager extends Employee {
     private Shipment[] loadShipments() {
         CSVParser.setFilePath("CSVFiles/shipments.csv");
         String[][] shipmentData = CSVParser.loadCSVData(CSVParser.getFilePath());
-        return Shipment.toShipment(shipmentData);
+    
+        Shipment[] shipments = new Shipment[shipmentData.length];
+        for (int i = 0; i < shipmentData.length; i++) {
+            shipments[i] = Shipment.toShipment(shipmentData, i, null); // Pass null for the Package
+        }
+        return shipments;
     }
 
     private Vehicle[] loadVehicles() {
