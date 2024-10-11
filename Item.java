@@ -1,4 +1,5 @@
 public class Item {
+    private final String[] ITEMS_H = {"pkgID", "name", "weight_kg", "length_cm", "width_cm", "height_cm"};
     private String name;
     private double weight; // in kilograms
     private Dimension dimension;
@@ -12,7 +13,7 @@ public class Item {
     public String getName() { return this.name; }
     public double getWeight() { return this.weight; }
     public Dimension getDimensions() { return this.dimension; }
-
+    public String[] getItemHeader() { return this.ITEMS_H; }
     @Override
     public String toString() {
         Dimension dim = getDimensions();

@@ -75,9 +75,9 @@ public class FrontlineEmployee extends Employee {
             paidShipmentsArr[selectedShipmentIndex].setStatus("Pending");;
             
             // Update the CSV with the confirmed shipment status
-            CSVParser.updateShipmentCSV(paidShipmentsArr[selectedShipmentIndex].getShipmentID(), paidShipmentsArr[selectedShipmentIndex].isConfirmed(), 7); // TODO:
+            CSVParser.updateShipmentCSV(paidShipmentsArr[selectedShipmentIndex].getShipmentID(), paidShipmentsArr[selectedShipmentIndex].isConfirmed(), 7); // TODO: Fix
             // Update the CSV Shipment Status to "Pending"
-            CSVParser.updateShipmentCSV(paidShipmentsArr[selectedShipmentIndex].getShipmentID(), paidShipmentsArr[selectedShipmentIndex].getStatus(), 8); 
+            CSVParser.updateShipmentCSV(paidShipmentsArr[selectedShipmentIndex].getShipmentID(), paidShipmentsArr[selectedShipmentIndex].getStatus(), 8); // TODO: Fix
             System.out.println("Shipment confirmed successfully.");
         } else if (confirmShipment.equalsIgnoreCase("Yes") && !(paidShipmentsArr[selectedShipmentIndex].getStatus().equalsIgnoreCase("Paid"))) {
             System.out.println("An error occured. Shipment status is not \"Paid\".");

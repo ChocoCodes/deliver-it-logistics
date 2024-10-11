@@ -3,6 +3,7 @@ import java.util.Random;
 import java.util.Calendar;
 
 public class Shipment {
+    private final String[] SHIPMENT_H = {"id","sId","vId","wId","dest","shipCost","confirmed","status","shipDate","eta"};
     private int id;
     private int whId;
     private int vId; // assign by e/a
@@ -56,6 +57,7 @@ public class Shipment {
     public double getShipCost() { return this.shippingCost; }
     public int getWarehouseId() { return this.whId; }
     public int getVehicleId() { return this.vId; }
+    public String[] getShipmentHeader() { return this.SHIPMENT_H; }
     // Algorithm to select an "estimated" timeframe of the shipment delivery within 7 days
     // using Calendar class to manipulate Date and Random class to implement randomization
     public Date calcEstTime() {

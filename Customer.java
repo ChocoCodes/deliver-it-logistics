@@ -1,4 +1,5 @@
 public class Customer {
+    private final String[] CUSTOMER_H = {"id", "name", "contactInfo", "address"};
     private int id;
     private String name;
     private String contactInfo;
@@ -17,7 +18,8 @@ public class Customer {
     public String getName() { return this.name; }
     public String getContactInfo() { return this.contactInfo; }
     public String getAddress() { return this.address; }
-
+    public String[] getCustomerHeader() { return this.CUSTOMER_H; }
+    
     public void setName(String name) { this.name = name; }
     public void setContactInfo(String contactInfo) { this.contactInfo = contactInfo; }
     public void setAddress(String address) { this.address = address; }

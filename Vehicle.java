@@ -1,4 +1,5 @@
 public class Vehicle {
+    protected final String[] VEHICLES_H = {"vID", "whId", "type", "licensePlate", "driver", "cap_max", "cap_curr", "max_ship", "curr_ship", "avail"};
     protected int vehicleID;
     protected int whId;
     protected String type;
@@ -37,6 +38,7 @@ public class Vehicle {
     public int getMaxShipmentCount() { return this.maxShipmentCount; }
     public int getCurrentShipmentCount() { return this.currentShipmentCount; }
     public int getWarehouseId() {return this.whId; }
+    public String[] getVehicleHeader() { return this.VEHICLES_H; }
     
     // Setters
     public void setAvailability(boolean isAvailable) { this.isAvailable = isAvailable; }

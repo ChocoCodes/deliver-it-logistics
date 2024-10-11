@@ -212,7 +212,7 @@ public class WarehouseManager extends Employee {
         selectedVehicle.setWarehouseId(currentWarehouse.getWarehouseID());
     
         // Update vehicle warehouse ID in CSV
-        CSVParser.updateVehicleCSV(selectedVehicle.getVehicleID(), currentWarehouse.getWarehouseID(), 2);
+        CSVParser.updateCSV(selectedVehicle.getVehicleID(), String.valueOf(currentWarehouse.getWarehouseID()), 2, selectedVehicle.getVehicleHeader());
     
         System.out.println("Vehicle ID: " + selectedVehicle.getVehicleID() + " marked as arrived in warehouse: " + currentWarehouse.getLocation());
     }
@@ -229,32 +229,30 @@ public class WarehouseManager extends Employee {
                 readyToLeaveVehicles.add(vehicle);
             }
         }
-    
         if (readyToLeaveVehicles.isEmpty()) {
             System.out.println("No available vehicles ready to leave the warehouse.");
             return;
         }
-    
+
         displayVehicleOptions(readyToLeaveVehicles, "leaving");
-    
         int vehicleChoice = Logistics.getValidatedInput("Select a vehicle by number: ", 1, readyToLeaveVehicles.size());
         Vehicle selectedVehicle = readyToLeaveVehicles.get(vehicleChoice - 1);
-    
         if (!confirmAction("marking vehicle ID: " + selectedVehicle.getVehicleID() + " as leaving")) {
             System.out.println("Departure canceled.");
             return;
         }
-    
         currentWarehouse.removeVehicle(selectedVehicle);
         selectedVehicle.setWarehouseId(0);  // Indicate that vehicle is not on any warehouse
         selectedVehicle.setAvailability(false);
     
         // Update vehicle CSV (warehouse ID to 0, isAvailable to false)
-        CSVParser.updateVehicleCSV(selectedVehicle.getVehicleID(), selectedVehicle.getWarehouseId(), 2);
-        CSVParser.updateVehicleCSV(selectedVehicle.getVehicleID(), selectedVehicle.isAvailable(), 10);
+        CSVParser.setFilePath("CSVFiles/vehicles.csv");
+        CSVParser.updateCSV(selectedVehicle.getVehicleID(), String.valueOf(selectedVehicle.getWarehouseId()), 2, selectedVehicle.getVehicleHeader());
+        CSVParser.updateCSV(selectedVehicle.getVehicleID(), String.valueOf(selectedVehicle.isAvailable()), 10, selectedVehicle.getVehicleHeader());
     
         // Update warehouse CSV to reflect current vehicle count
-        CSVParser.updateWarehouseCSV(currentWarehouse.getWarehouseID(), currentWarehouse.getCurrentVehicleCount(), 7);
+        CSVParser.setFilePath("CSVFiles.warehouses.csv");
+        CSVParser.updateCSV(currentWarehouse.getWarehouseID(), String.valueOf(currentWarehouse.getcurrVehicleCtr()), 7, currentWarehouse.getWarehouseHeader());
     
         System.out.println("Vehicle ID: " + selectedVehicle.getVehicleID() + " has left the warehouse.");
     }
@@ -390,14 +388,15 @@ public class WarehouseManager extends Employee {
         final int VEHICLE_CURR_CAP_COL = 7;
         final int VEHICLE_CURR_SHIP_COL = 9;
         final int VEHICLE_AVAIL_COL = 10;
-        
+        CSVParser.setFilePath("CSVFiles/shipments.csv");
         for (Shipment s : shipments) {
-            CSVParser.updateShipmentCSV(s.getShipmentID(), vehicle.getVehicleID(), VEHICLE_ID_COL_IN_SHIPMENT); 
-            CSVParser.updateShipmentCSV(s.getShipmentID(), currentWarehouse.getWarehouseID(), WAREHOUSE_ID_COL_IN_SHIPMENT); 
+            CSVParser.updateCSV(s.getShipmentID(), String.valueOf(vehicle.getVehicleID()), VEHICLE_ID_COL_IN_SHIPMENT, s.getShipmentHeader()); 
+            CSVParser.updateCSV(s.getShipmentID(), String.valueOf(currentWarehouse.getWarehouseID()), WAREHOUSE_ID_COL_IN_SHIPMENT, s.getShipmentHeader()); 
         }
-
-        CSVParser.updateVehicleCSV(vehicle.getVehicleID(), vehicle.getCurrentCapacityKG(), VEHICLE_CURR_CAP_COL); 
-        CSVParser.updateVehicleCSV(vehicle.getVehicleID(), vehicle.getCurrentShipmentCount(), VEHICLE_CURR_SHIP_COL); 
-        CSVParser.updateVehicleCSV(vehicle.getVehicleID(), vehicle.isAvailable(), VEHICLE_AVAIL_COL);
+        // update vehicle csv
+        CSVParser.setFilePath("CSVFiles/vehicles.csv");
+        CSVParser.updateCSV(vehicle.getVehicleID(), String.valueOf(vehicle.getCurrentCapacityKG()), VEHICLE_CURR_CAP_COL, vehicle.getVehicleHeader()); 
+        CSVParser.updateCSV(vehicle.getVehicleID(), String.valueOf(vehicle.getCurrentShipmentCount()), VEHICLE_CURR_SHIP_COL, vehicle.getVehicleHeader()); 
+        CSVParser.updateCSV(vehicle.getVehicleID(), String.valueOf(vehicle.isAvailable()), VEHICLE_AVAIL_COL,vehicle.getVehicleHeader());
     }
 }

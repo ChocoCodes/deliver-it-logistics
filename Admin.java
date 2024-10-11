@@ -25,7 +25,7 @@ public class Admin extends Employee {
         Warehouse newWarehouse = new Warehouse(CSVParser.getLatestID() + 1, location, maxPackageCount, maxVehicleCount);
 
         CSVParser.setFilePath("CSVFiles/warehouses.csv");
-        CSVParser.saveEntry(newWarehouse.toCSVFormat());
+        CSVParser.saveEntry(newWarehouse.toCSVFormat()); // TODO: Fix
 
         System.out.println("Warehouse added successfully.");
     }
@@ -61,7 +61,7 @@ public class Admin extends Employee {
                     updatedData[index++] = warehouse;
                 }
             }
-            CSVParser.writeToCSV(updatedData, CSVParser.getWarehouseHeader(), false);
+            CSVParser.writeToCSV(updatedData, CSVParser.getWarehouseHeader(), false); // TODO: Fix 2nd param
             System.out.println("Warehouse removed successfully.");
         } else {
             System.out.println("Warehouse not found.");
@@ -85,7 +85,7 @@ public class Admin extends Employee {
 
             newVehicle = new Truck(CSVParser.getLatestID() + 1, licensePlate, driver, isAvailable, maxWarehouseRoutes);
         } else if (type.equalsIgnoreCase("Van")) {
-            newVehicle = new Van(CSVParser.getLatestID() + 1, licensePlate, driver, isAvailable);
+            newVehicle = new Van(CSVParser.getLatestID() + 1, licensePlate, driver, isAvailable); // TODO: Fix - Van is removed
         } else {
             System.out.println("Invalid vehicle type. Please enter either 'Truck' or 'Motorcycle'.");
             return;
@@ -126,7 +126,7 @@ public class Admin extends Employee {
                     updatedData[index++] = vehicle;
                 }
             }
-            CSVParser.writeToCSV(updatedData, CSVParser.getVehicleHeader(), false);
+            CSVParser.writeToCSV(updatedData, CSVParser.getVehicleHeader(), false); // TODO: Fix - 2nd param
             System.out.println("Vehicle removed successfully.");
         } else {
             System.out.println("Vehicle not found.");

@@ -145,18 +145,18 @@ public class Logistics {
             switch (CSVParser.toInt(in)) {
                 case 1:
                     String newName = getInput("New Name");
-                    parser.updateCustomerCSV(customer.getCustomerID(), newName, 1);
+                    CSVParser.updateCSV(customer.getCustomerID(), newName, 1, customer.getCustomerHeader());
                     customer.setName(newName);
                     break;
                 case 2:
                     String newInfo = getInput("New Contact No.");
                     customer.setContactInfo(newInfo);
-                    parser.updateCustomerCSV(customer.getCustomerID(), newInfo, 2);
+                    CSVParser.updateCSV(customer.getCustomerID(), newInfo, 2, customer.getCustomerHeader());
                     break;
                 case 3:
                     String newAddr = getInput("New Address");
                     customer.setAddress(newAddr);
-                    parser.updateCustomerCSV(customer.getCustomerID(), newAddr, 3);                    
+                    CSVParser.updateCSV(customer.getCustomerID(), newAddr, 3, customer.getCustomerHeader());                    
                     break;
                 case 4: return;
                 default:
@@ -253,12 +253,6 @@ public class Logistics {
 
 
 class CSVParser {
-    private final String[] CUSTOMER_H = {"id", "name", "contactInfo", "address"};
-    private final String[] PACKAGE_H = {"cID", "pkgID", "receiverAddress", "created", "dimensionalWeight_kg", "length_cm", "width_cm", "height_cm"};
-    private final String[] ITEMS_H = {"pkgID", "name", "weight_kg", "length_cm", "width_cm", "height_cm"};
-    private static final String[] VEHICLES_H = {"vID", "whId", "type", "licensePlate", "driver", "cap_max", "cap_curr", "max_ship", "curr_ship", "avail"};
-    private static final String[] WAREHOUSE_H = {"wID", "location", "package_capacity", "vehicle_capacity"};
-    private static final String[] SHIPMENT_H = {"id","pkgId","vId","wId","dest","shipCost","confirmed","status","shipDate","eta"};
     private static String filePath; // hold the file path needed for operations
 
     public CSVParser() { 
@@ -267,12 +261,6 @@ class CSVParser {
 
     public static void setFilePath(String file) { filePath = file; }
     public static String getFilePath() { return filePath; }
-    public String[] getCustomerHeader() { return this.CUSTOMER_H; }
-    public String[] getPackageHeader() { return this.PACKAGE_H; }
-    public String[] getItemHeader() { return this.ITEMS_H; }
-    public static String[] getVehicleHeader() { return VEHICLES_H; }
-    public static String[] getWarehouseHeader() { return WAREHOUSE_H; }
-    public static String[] getShipmentHeader() { return SHIPMENT_H; }
 
     public static int toInt(String in) { return Integer.parseInt(in); }
     public static double toDouble(String in) { return Double.parseDouble(in); }
@@ -402,7 +390,7 @@ class CSVParser {
         return rawCSV.length == 0 ? 0 : toInt(rawCSV[rawCSV.length - 1][0]);
     }
 
-    public void updateCustomerCSV(int id, String newAttribute, int columnIndex) {
+    public static void updateCSV(int id, String newAttribute, int columnIndex, String[] headers) {
         String[][] csvData = loadCSVData(getFilePath());
         for (int i = 0; i < csvData.length; i++) {
             if (toInt(csvData[i][0]) == id) {
@@ -411,6 +399,6 @@ class CSVParser {
             }
         }
         // Rewrite Customer CSV
-        writeToCSV(csvData, getCustomerHeader(), false); 
+        writeToCSV(csvData, headers, false); 
     }
 }

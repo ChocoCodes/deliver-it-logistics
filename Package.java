@@ -1,6 +1,7 @@
 import java.util.Date;
 
 public class Package {
+    private final String[] PACKAGE_H = {"cID", "pkgID", "receiverAddress", "created", "dimensionalWeight_kg", "length_cm", "width_cm", "height_cm"};
     private int id;
     private String receiverAddress;
     private Date packageCreated;
@@ -34,6 +35,7 @@ public class Package {
     public String getreceiverAddress() { return this.receiverAddress; }
     public int itemCounts() { return getContents().length; }
     public Dimension getDimensions() { return this.dimension; }
+    public String[] getPackageHeader() { return this.PACKAGE_H; }
     // Setters
     public void setId(int id) { this.id = id; }
     public void setDate(Date packageCreated) { this.packageCreated = packageCreated; }
