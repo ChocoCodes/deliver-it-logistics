@@ -49,7 +49,10 @@ public class FrontlineEmployee extends Employee {
         // Load available shipments from the CSV file
         CSVParser.setFilePath("CSVFiles/shipments.csv");
         String[][] shipmentData = CSVParser.loadCSVData(CSVParser.getFilePath());
-        Shipment[] shipments = Shipment.toShipment(shipmentData); // TODO
+        Shipment[] shipments = new Shipment[shipmentData.length];
+        for (int i = 0; i < shipmentData.length; i++) {
+            shipments[i] = Shipment.toShipment(shipmentData, i, null); // Pass null for the Package
+        }
         
         // Display available shipments
         ArrayList<Shipment> paidShipments = new ArrayList<Shipment>();

@@ -113,7 +113,10 @@ public class Driver extends Employee {
         // Load all shipments from the CSV file
         CSVParser.setFilePath("CSVFiles/shipments.csv");
         String[][] shipmentData = CSVParser.loadCSVData(CSVParser.getFilePath());
-        Shipment[] shipments = Shipment.toShipment(shipmentData);
+        Shipment[] shipments = new Shipment[shipmentData.length];
+        for (int i = 0; i < shipmentData.length; i++) {
+            shipments[i] = Shipment.toShipment(shipmentData, i, null); // Pass null for the Package
+        }
 
         // Find shipments with matching vehicleID and assign them to this vehicle
         for (Shipment shipment : shipments) {
