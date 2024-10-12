@@ -113,10 +113,9 @@ public class Shipment {
     }
 
     public void displayShipmentForm() {
-        System.out.println("=====================================");
         System.out.println("Shipment Form");
         System.out.println("-------------------------------------");
-        System.out.printf("%s\n", toString());
+        System.out.printf("%s", toString());
         System.out.println("\n=====================================");
         getPackage().displayPackageContents();
     }

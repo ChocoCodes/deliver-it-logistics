@@ -1,2 +1,3 @@
 id,pkgId,vId,wId,dest,shipCost,confirmed,status,shipDate,eta
 1,6,0,0,Bacolod City,200.0,false,Paid,Pending,Pending
+2,7,0,0,Bago City,300.0,false,Pending,Pending,Pending

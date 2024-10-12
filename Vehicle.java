@@ -52,8 +52,9 @@ public class Vehicle {
     @Override
     public String toString() {
         return String.format(
-            "Vehicle ID: %d\nType: %s\nLicense Plate: %s\nDriver: %s\nCapacity: %.2f KG\nCurrent Load: %.2f KG\nMax Shipments: %d\nCurrent Shipments: %d\nAvailable: %b", 
+            "Vehicle ID: %d\nWarehouse ID: %d\nType: %s\nLicense Plate: %s\nDriver: %s\nCapacity: %.2f KG\nCurrent Load: %.2f KG\nMax Shipments: %d\nCurrent Shipments: %d\nAvailable: %b", 
             getVehicleID(),
+            getWarehouseId(),
             getType(),
             getLicensePlate(),
             getDriver(),

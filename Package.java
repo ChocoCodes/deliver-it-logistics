@@ -103,27 +103,26 @@ public class Package {
     public String toString() {
         Dimension dim = getDimensions();
         return String.format(
-            "Package ID: %d\nDimensions: %dx%dx%d cm.\nItem Counts: %d\nReceiver Address: %s\n",
+            "Package ID: %d\nDimensions: %s cm.\nItem Counts: %d\nReceiver Address: %s",
             getId(),
-            (int) Math.round(dim.getLength()),
-            (int) Math.round(dim.getWidth()),
-            (int) Math.round(dim.getHeight()),
+            dim.toString(),
             itemCounts(),
             getreceiverAddress()
         );
     }
-
     public void displayPackageContents() {
-        System.out.println("Package Info");
+        Item[] items = getContents();
+        System.out.println("Package Information");
         System.out.println("-------------------------------------");
         System.out.println(toString());
+        System.out.println("=====================================");
+        System.out.println("Item Information");
         System.out.println("-------------------------------------");
-        System.out.println("Item Info");
-        for(Item content : contents) {
-            System.out.println(content.toString());
+        for(Item item : items) {
+            System.out.println(item.toString());
         }
+        System.out.println("=====================================");
     }
-
     // pkgID,cID,receiverAddress,created,dimensionalWeight_kg,length_cm,width_cm,height_cm
     public static Package toPackage(String[][] raw, int idx, Item[] items) {
         return new Package(

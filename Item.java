@@ -14,22 +14,19 @@ public class Item {
     public double getWeight() { return this.weight; }
     public Dimension getDimensions() { return this.dimension; }
     public String[] getItemHeader() { return this.ITEMS_H; }
+    
     @Override
     public String toString() {
         Dimension dim = getDimensions();
-        return String.format("| %s | %.2f | %dx%dx%d |",
+        return String.format("| %s | %.2f | %s |",
             getName(),
             getWeight(),
-            (int) Math.round(dim.getLength()),
-            (int) Math.round(dim.getWidth()),
-            (int) Math.round(dim.getHeight())
+            dim.toString()
         );
     }
-
     public double toKilograms(double grams) {
         return grams / 1000.0;
     }
-
     public String[] toCSVFormat(int pkgID) { 
         Dimension dim = getDimensions();
         return new String[] {
@@ -41,7 +38,6 @@ public class Item {
             String.valueOf(dim.getHeight())
         }; 
     }
-
     public static Item toItem(String[][] raw, int idx) {
         return new Item(
             raw[idx][1],

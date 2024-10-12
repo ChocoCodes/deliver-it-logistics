@@ -25,4 +25,9 @@ public class Dimension {
         h = CSVParser.toDouble(raw[start + 2]);
         return new Dimension(h, w, l);
     }
+
+    @Override
+    public String toString() {
+        return String.format("%.2fx%.2fx%.2f", getLength(), getWidth(), getHeight());
+    }
 }

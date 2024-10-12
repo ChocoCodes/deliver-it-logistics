@@ -14,7 +14,7 @@ import java.util.Date;
  *  Authors: John Roland Octavio, Jul Leo Javellana, Raean Chrissean Tamayo
  * 
  * 
- *  Driver Class of the whole System
+ *  Logistics System Driver Class
 */
 
 public class Logistics {
@@ -243,7 +243,9 @@ public class Logistics {
 
     private void trackShipment(Customer customer) {
         Shipment[] customerShips = parser.searchShipments(customer.getCustomerID());
+        System.out.println("=================================================================");
         System.out.printf("Customer %s, You have %s shipment/s still in the process.\n", customer.getName(), customerShips.length);
+        System.out.println("=================================================================");
         for(Shipment s : customerShips) {
             s.displayShipmentForm();
         }
@@ -350,8 +352,7 @@ class CSVParser {
         for(int i = 0; i < csvPkg.length; i++) {
             int id = CSVParser.toInt(csvPkg[i][1]);
             if(id == custID) {
-                Item[] custItems = searchItems(id);
-                custPkg.add(Package.toPackage(csvPkg, i, custItems));
+                custPkg.add(Package.toPackage(csvPkg, i, null));
             }
         }
         return custPkg.toArray(new Package[0]);
@@ -361,7 +362,8 @@ class CSVParser {
         String[][] csvItems = loadCSVData("CSVFiles/items.csv");
         ArrayList<Item> items = new ArrayList<>();
         for(int i = 0; i < csvItems.length; i++) {
-            if(CSVParser.toInt(csvItems[i][0]) == pkgID) {
+            int itemPkgId = CSVParser.toInt(csvItems[i][0]);
+            if(itemPkgId == pkgID) {
                 items.add(Item.toItem(csvItems, i));
             }
         } 
@@ -375,11 +377,17 @@ class CSVParser {
         // Load shipment CSV
         CSVParser.setFilePath("CSVFiles/shipments.csv");
         String[][] csvShips = CSVParser.loadCSVData(CSVParser.getFilePath());
-        for(Package pkg : custPkg) {
-            int pkgId = pkg.getId();
-            for(int i = 0; i < csvShips.length; i++) {
-                int shipPkgId = CSVParser.toInt(csvShips[i][1]);
-                if((pkgId == shipPkgId) && csvShips[i][7].equalsIgnoreCase("Paid")) customerShipments.add(Shipment.toShipment(csvShips, i, pkg));
+        for(int i = 0; i < csvShips.length; i++) {
+            int shipPkgId = CSVParser.toInt(csvShips[i][1]);
+            if(csvShips[i][7].equalsIgnoreCase("Paid") || csvShips[i][7].equalsIgnoreCase("Pending")) {
+                for(Package pkg : custPkg) {
+                    if(pkg.getId() == shipPkgId) {
+                        Item[] items = searchItems(pkg.getId());
+                        pkg.setContents(items);
+                        customerShipments.add(Shipment.toShipment(csvShips, i, pkg));
+                        break;
+                    }
+                }
             }
         }
         return customerShipments.toArray(new Shipment[0]);
