@@ -217,6 +217,7 @@ public class WarehouseManager extends Employee {
         selectedVehicle.setWarehouseId(currentWarehouse.getWarehouseID());
     
         // Update vehicle warehouse ID in CSV
+        CSVParser.setFilePath("CSVFiles/vehicles.csv");
         CSVParser.updateCSV(selectedVehicle.getVehicleID(), String.valueOf(currentWarehouse.getWarehouseID()), 2, selectedVehicle.getVehicleHeader());
         updateWarehouseCSV();
         System.out.println("Vehicle ID: " + selectedVehicle.getVehicleID() + " marked as arrived in warehouse: " + currentWarehouse.getLocation());

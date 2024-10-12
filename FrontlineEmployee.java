@@ -75,6 +75,7 @@ public class FrontlineEmployee extends Employee {
             paidShipmentsArr[selectedShipmentIndex].setStatus("Pending");;
             
             // Update the CSV with the confirmed shipment status
+            CSVParser.setFilePath("CSVFiles/shipments.csv");
             CSVParser.updateCSV(
                 paidShipmentsArr[selectedShipmentIndex].getShipmentID(), 
                 String.valueOf(paidShipmentsArr[selectedShipmentIndex].isConfirmed()), 

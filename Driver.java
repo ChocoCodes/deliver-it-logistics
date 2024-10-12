@@ -64,6 +64,7 @@ public class Driver extends Employee {
         assignedVan = availabVehiclesArr[selectedVehicleNum];
 
         // Update the CSV with the driver assigned to the selected vehicle
+        CSVParser.setFilePath("CSVFiles/vehicles.csv");
         CSVParser.updateCSV(assignedVan.vehicleID, assignedVan.getDriver(), 5, assignedVan.getVehicleHeader()); 
     }
 
@@ -121,6 +122,7 @@ public class Driver extends Employee {
                     );
 
                 // Save Updates to Vehicle CSV
+                CSVParser.setFilePath("CSVFiles/vehicles.csv");
                 CSVParser.updateCSV(assignedVan.getVehicleID(), String.valueOf(assignedVan.getCurrentShipmentCount()), 9, assignedVan.getVehicleHeader());
                 CSVParser.updateCSV(assignedVan.getVehicleID(), String.valueOf(assignedVan.getCurrentCapacityKG()), 7, assignedVan.getVehicleHeader());
 
