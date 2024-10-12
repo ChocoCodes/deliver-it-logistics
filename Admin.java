@@ -9,24 +9,12 @@ public class Admin extends Employee {
 
     // Admin-specific functionalities
     public void addWarehouse() {
-        String location = Logistics.getInput("Enter warehouse location");
-        int maxPackageCount;
-        do {
-            String maxPackageCountStr = Logistics.getInput("Enter maximum package capacity");
-            maxPackageCount = CSVParser.toInt(maxPackageCountStr);
-        } while (maxPackageCount <= 0);
-
-        int maxVehicleCount;
-        do {
-            String maxVehicleCountStr = Logistics.getInput("Enter maximum number of vehicles");
-            maxVehicleCount = CSVParser.toInt(maxVehicleCountStr);
-        } while (maxVehicleCount <= 0);
-
-        Warehouse newWarehouse = new Warehouse(CSVParser.getLatestID() + 1, location, maxPackageCount, maxVehicleCount);
-
         CSVParser.setFilePath("CSVFiles/warehouses.csv");
-        CSVParser.saveEntry(newWarehouse.toCSVFormat()); // TODO: Fix
-
+        String location = Logistics.getInput("Enter warehouse location");
+        int maxPackageCount = getValidIntInput("Enter maximum package capacity");
+        int maxVehicleCount = getValidIntInput("Enter maximum number of vehicles");
+        Warehouse newWarehouse = new Warehouse(CSVParser.getLatestID() + 1, location, maxPackageCount, maxVehicleCount);
+        CSVParser.saveEntry(newWarehouse.toCSVFormat(0, 0));
         System.out.println("Warehouse added successfully.");
     }
 
@@ -34,17 +22,14 @@ public class Admin extends Employee {
         System.out.println("Available Warehouses:");
         CSVParser.setFilePath("CSVFiles/warehouses.csv");
         String[][] warehousesData = CSVParser.loadCSVData(CSVParser.getFilePath());
+        Warehouse[] warehouses = Warehouse.toWarehouse(warehousesData);
         for (String[] warehouse : warehousesData) {
-            System.out.println("ID: " + warehouse[0] + ", Location: " + warehouse[1] + ", Package Capacity: " + warehouse[2] + ", Vehicle Capacity: " + warehouse[3]);
+            System.out.println("ID: " + warehouse[0] + ", Shipment ID: " + warehouse[1] + ", Vehicle ID: " + warehouse[2] + ", Location: " + warehouse[3] + ", Max Shipment: " + warehouse[4] + ", Current Shipment: " + warehouse[5] + ", Current Vehicles: " + warehouse[6]);
         }
 
-        int warehouseId;
-        do {
-            String idStr = Logistics.getInput("Enter Warehouse ID to remove");
-            warehouseId = CSVParser.toInt(idStr);
-        } while (warehouseId <= 0);
-
+        int warehouseId = getValidIntInput("Enter Warehouse ID to remove");
         boolean removed = false;
+
         for (int i = 0; i < warehousesData.length; i++) {
             if (CSVParser.toInt(warehousesData[i][0]) == warehouseId) {
                 warehousesData[i] = null;
@@ -61,7 +46,7 @@ public class Admin extends Employee {
                     updatedData[index++] = warehouse;
                 }
             }
-            CSVParser.writeToCSV(updatedData, CSVParser.getWarehouseHeader(), false); // TODO: Fix 2nd param
+            CSVParser.writeToCSV(updatedData, warehouses[0].getWarehouseHeader(), false);
             System.out.println("Warehouse removed successfully.");
         } else {
             System.out.println("Warehouse not found.");
@@ -69,29 +54,28 @@ public class Admin extends Employee {
     }
 
     public void addVehicles() {
-        String type = Logistics.getInput("Enter vehicle type (Truck/Motorcycle)");
-
+        CSVParser.setFilePath("CSVFiles/vehicles.csv");
+        String type = Logistics.getInput("Enter vehicle type (Truck/Van)");
+        int whId = 0;
         String licensePlate = Logistics.getInput("Enter vehicle license plate");
         String driver = Logistics.getInput("Enter driver name");
+        int maxShipmentCount = getValidIntInput("Enter maximum shipment count: ");
+        int currentShipmentCount = 0;
         boolean isAvailable = true;
 
         Vehicle newVehicle;
         if (type.equalsIgnoreCase("Truck")) {
-            int maxWarehouseRoutes;
-            do {
-                String maxWarehouseRoutesStr = Logistics.getInput("Enter maximum number of warehouse routes for the truck");
-                maxWarehouseRoutes = CSVParser.toInt(maxWarehouseRoutesStr);
-            } while (maxWarehouseRoutes <= 0);
-
-            newVehicle = new Truck(CSVParser.getLatestID() + 1, licensePlate, driver, isAvailable, maxWarehouseRoutes);
+            int maxWarehouseRoutes = getValidIntInput("Enter maximum number of warehouse routes for the truck");
+            newVehicle = new Truck(CSVParser.getLatestID() + 1, whId, licensePlate, driver, maxShipmentCount, currentShipmentCount, isAvailable, maxWarehouseRoutes);
         } else if (type.equalsIgnoreCase("Van")) {
-            newVehicle = new Van(CSVParser.getLatestID() + 1, licensePlate, driver, isAvailable); // TODO: Fix - Van is removed
+            double capacityKG = getValidDoubleInput("Enter maximum capacity (KG): ");
+            double currentCapacity = 0;
+            newVehicle = new Vehicle(CSVParser.getLatestID() + 1, whId, type, licensePlate, driver, capacityKG, currentCapacity, maxShipmentCount, currentShipmentCount, isAvailable);
         } else {
-            System.out.println("Invalid vehicle type. Please enter either 'Truck' or 'Motorcycle'.");
+            System.out.println("Invalid vehicle type. Please enter either 'Truck' or 'Van'.");
             return;
         }
 
-        CSVParser.setFilePath("CSVFiles/vehicles.csv");
         CSVParser.saveEntry(newVehicle.toCSVFormat());
     }
 
@@ -99,17 +83,14 @@ public class Admin extends Employee {
         System.out.println("Available Vehicles:");
         CSVParser.setFilePath("CSVFiles/vehicles.csv");
         String[][] vehiclesData = CSVParser.loadCSVData(CSVParser.getFilePath());
+        Vehicle vehicles = Vehicle.toVehicle(vehiclesData, 1);
         for (String[] vehicle : vehiclesData) {
-            System.out.println("ID: " + vehicle[0] + ", Type: " + vehicle[1] + ", License Plate: " + vehicle[2] + ", Driver: " + vehicle[3] + ", Capacity(KG): " + vehicle[4] + ", Availability: " + vehicle[5]);
+            System.out.println("ID: " + vehicle[0] + ", Warehouse ID: " + vehicle[1] + ",  Type: " + vehicle[2] + ", License Plate: " + vehicle[3] + ", Driver: " + vehicle[4] + ", Maximum Capacity: " + vehicle[5] + ", Current Capacity: " + vehicle[6] + ", Current Shipments: " + vehicle[7] + ", Availability: " + vehicle[8]);
         }
 
-        int vehicleId;
-        do {
-            String idStr = Logistics.getInput("Enter Vehicle ID to remove");
-            vehicleId = CSVParser.toInt(idStr);
-        } while (vehicleId <= 0);
-
+        int vehicleId = getValidIntInput("Enter Vehicle ID to remove");
         boolean removed = false;
+
         for (int i = 0; i < vehiclesData.length; i++) {
             if (CSVParser.toInt(vehiclesData[i][0]) == vehicleId) {
                 vehiclesData[i] = null;
@@ -126,7 +107,7 @@ public class Admin extends Employee {
                     updatedData[index++] = vehicle;
                 }
             }
-            CSVParser.writeToCSV(updatedData, CSVParser.getVehicleHeader(), false); // TODO: Fix - 2nd param
+            CSVParser.writeToCSV(updatedData, vehicles.getVehicleHeader(), false);
             System.out.println("Vehicle removed successfully.");
         } else {
             System.out.println("Vehicle not found.");
@@ -143,18 +124,8 @@ public class Admin extends Employee {
         CSVParser.setFilePath("CSVFiles/warehouses.csv");
         String[][] warehousesData = CSVParser.loadCSVData(CSVParser.getFilePath());
         for (String[] warehouse : warehousesData) {
-            report.append(String.format("ID: %s, Location: %s, Max Packages: %s, Max Vehicles: %s\n",
-                    warehouse[0], warehouse[1], warehouse[2], warehouse[3]));
-        }
-        report.append("\n");
-
-        // Add vehicle information
-        report.append("Vehicles:\n");
-        CSVParser.setFilePath("CSVFiles/vehicles.csv");
-        String[][] vehiclesData = CSVParser.loadCSVData(CSVParser.getFilePath());
-        for (String[] vehicle : vehiclesData) {
-            report.append(String.format("ID: %s, Type: %s, License Plate: %s, Driver: %s, Capacity: %s KG\n",
-                    vehicle[0], vehicle[1], vehicle[2], vehicle[3], vehicle[4]));
+            report.append(String.format("ID: %s, Stock ID: %s, Vehicle ID: %s, Location: %s, Max Shipments: %s, Current Shipments: %s, Current Vehicles: %s\n",
+                    warehouse[0], warehouse[1], warehouse[2], warehouse[3], warehouse[4], warehouse[5], warehouse[6]));
         }
         report.append("\n");
 
@@ -163,8 +134,28 @@ public class Admin extends Employee {
         CSVParser.setFilePath("CSVFiles/packages.csv");
         String[][] packagesData = CSVParser.loadCSVData(CSVParser.getFilePath());
         for (String[] pkg : packagesData) {
-            report.append(String.format("ID: %s, Customer ID: %s, Receiver Address: %s, Created: %s\n",
-                    pkg[1], pkg[0], pkg[2], pkg[3]));
+            report.append(String.format("ID: %s, Customer ID: %s, Receiver Address: %s, Created: %s, Weight: %s kg, Dimensions: %s x %s x %s cm\n",
+                    pkg[0], pkg[1], pkg[2], pkg[3], pkg[4], pkg[5], pkg[6], pkg[7]));
+        }
+        report.append("\n");
+
+        // Add vehicle information
+        report.append("Vehicles:\n");
+        CSVParser.setFilePath("CSVFiles/vehicles.csv");
+        String[][] vehiclesData = CSVParser.loadCSVData(CSVParser.getFilePath());
+        for (String[] vehicle : vehiclesData) {
+            report.append(String.format("ID: %s, Warehouse ID: %s, Type: %s, License Plate: %s, Driver: %s, Max Capacity: %s KG, Current Capacity: %s KG, Max Shipments: %s, Current Shipments: %s, Available: %s\n",
+                    vehicle[0], vehicle[1], vehicle[2], vehicle[3], vehicle[4], vehicle[5], vehicle[6], vehicle[7], vehicle[8], vehicle[9]));
+        }
+        report.append("\n");
+
+        // Add shipment information
+        report.append("Shipments:\n");
+        CSVParser.setFilePath("CSVFiles/shipments.csv");
+        String[][] shipmentsData = CSVParser.loadCSVData(CSVParser.getFilePath());
+        for (String[] shipment : shipmentsData) {
+            report.append(String.format("ID: %s, Package ID: %s, Vehicle ID: %s, Warehouse ID: %s, Destination: %s, Cost: %s, Confirmed: %s, Status: %s, Ship Date: %s, ETA: %s\n",
+                    shipment[0], shipment[1], shipment[2], shipment[3], shipment[4], shipment[5], shipment[6], shipment[7], shipment[8], shipment[9]));
         }
 
         // Write report to file
@@ -178,5 +169,84 @@ public class Admin extends Employee {
 
     // Add admin-specific implementation
     @Override
-    public void showMenu() {}
+    public void showMenu() {
+        boolean exit = false;
+
+        while (!exit) {
+            System.out.println("---------------------------");
+            System.out.println("Admin Menu");
+            System.out.println("1. Add Warehouse");
+            System.out.println("2. Remove Warehouse");
+            System.out.println("3. Add Vehicle");
+            System.out.println("4. Remove Vehicle");
+            System.out.println("5. Generate Reports");
+            System.out.println("6. Exit");
+            System.out.println("---------------------------");
+
+            int choice = Logistics.getValidatedInput("Enter your choice", 1, 6);
+
+            switch (choice) {
+                case 1:
+                    addWarehouse();
+                    break;
+                case 2:
+                    removeWarehouse();
+                    break;
+                case 3:
+                    addVehicles();
+                    break;
+                case 4:
+                    removeVehicles();
+                    break;
+                case 5:
+                    String reportLocation = Logistics.getInput("Enter the file path for the report");
+                    generateReports(reportLocation);
+                    break;
+                case 6:
+                    exit = true;
+                    System.out.println("Exiting Admin menu...");
+                    break;
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+                    break;
+            }
+        }
+    }
+    // Helper function for validating integer input
+    private int getValidIntInput(String prompt) {
+        int result;
+        do {
+            String inputStr = Logistics.getInput(prompt);
+            try {
+                result = CSVParser.toInt(inputStr);
+                if (result <= 0) {
+                    System.out.println("Please enter a valid positive integer.");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a valid integer.");
+                result = -1;
+            }
+        } while (result <= 0);
+        return result;
+    }
+
+    // Helper function for validating double input
+    private double getValidDoubleInput(String prompt) {
+        double result;
+        do {
+            String inputStr = Logistics.getInput(prompt);
+            try {
+                result = CSVParser.toDouble(inputStr);
+                if (result <= 0) {
+                    System.out.println("Please enter a valid positive number.");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a valid number.");
+                result = -1;
+            }
+        } while (result <= 0);
+        return result;
+    }
 }
+
+

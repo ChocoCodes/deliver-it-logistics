@@ -1,7 +1,7 @@
 public class Truck extends Vehicle {
     private int maxWarehouseRoutes;
-    public Truck(int vehicleID, String licensePlate, String driver, boolean isAvailable, int maxWarehouseRoutes) {
-        super(vehicleID, "Truck", licensePlate, driver, 1000,100, isAvailable);
+    public Truck(int vehicleID, int whId, String licensePlate, String driver, int maxShipmentCount, int currentShipmentCount, boolean isAvailable, int maxWarehouseRoutes) {
+        super(vehicleID, whId,"Truck", licensePlate, driver, 1000,100, maxShipmentCount, currentShipmentCount, isAvailable);
         this.maxWarehouseRoutes = maxWarehouseRoutes;
     }
 
