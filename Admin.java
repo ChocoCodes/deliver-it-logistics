@@ -249,10 +249,4 @@ public class Admin extends Employee {
     }
 }
 
-class Main {
-    public static void main (String[] args) {
-        Admin admin = new Admin(null, null, null);
-        Logistics lg = new Logistics();
-        admin.showMenu();
-    }
-}
+
