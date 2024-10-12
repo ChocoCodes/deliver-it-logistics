@@ -1,4 +1,4 @@
-import java.util.InputMismatchException;
+import java.util.ArrayList;
 
 public class Driver extends Employee {
     private Vehicle assignedVan;
@@ -41,89 +41,101 @@ public class Driver extends Employee {
         // Load available vehicles from the CSV file
         CSVParser.setFilePath("CSVFiles/vehicles.csv");
         String[][] vehicleData = CSVParser.loadCSVData(CSVParser.getFilePath());
-        Vehicle[] vehicles = Vehicle.toVehicle(vehicleData); // TODO 
+        Vehicle[] vehicles = Vehicle.toVehicle(vehicleData); 
+
+        // DB
+        System.out.println("DB Vehicle ID 2 Availability should be true based on csv");
+        System.out.println(vehicles[1].toString());
+        System.out.println("___________________________________\n");
         // Display available vehicles
         System.out.println("Available Vehicles:");
         int i = 0;
+        ArrayList<Vehicle> availableVehicles = new ArrayList<Vehicle>();
         for (Vehicle v : vehicles) {
-            if (!(v.getDriver().equals(null) || v.getDriver().isEmpty())) {
+            if (v.getDriver() != null && !v.getDriver().isEmpty() && v.isAvailable()) { // Vehicles without a driver and is not used (available)
                 System.out.println((i + 1) + ": " + v.toString());
+                availableVehicles.add(v);
                 i++;
             }
         }
-
         // Select Vehicle to Assign to Driver
-        int selectedVehicle = Logistics.getValidatedInput("Select a vehicle by ID number: ", 0, 0);
-
-        for (Vehicle v : vehicles) {
-            if (v.getVehicleID() == selectedVehicle) {
-                v.setDriver(this.name);
-                assignedVan = v;
-                break;
-            }
-        }
+        Vehicle[] availabVehiclesArr = availableVehicles.toArray(new Vehicle[0]);
+        int selectedVehicleNum = Logistics.getValidatedInput("Select a vehicle by ID number: ", 1, vehicles.length) - 1;
+        assignedVan = availabVehiclesArr[selectedVehicleNum];
 
         // Update the CSV with the driver assigned to the selected vehicle
-        CSVParser.updateVehicleCSV(assignedVan.vehicleID, assignedVan.getDriver(), 5); // TODO: Change to actual col
+        CSVParser.setFilePath("CSVFiles/vehicles.csv");
+        CSVParser.updateCSV(assignedVan.vehicleID, assignedVan.getDriver(), 5, assignedVan.getVehicleHeader()); 
     }
 
     public void deliverPackage() {
         if (assignedVan == null) {
             System.out.println("No vehicle assigned yet. Please assign a vehicle first.");
+            return;
         } else {
             System.out.println("Delivering package with vehicle ID : " + assignedVan.getVehicleID() + ", type: " + assignedVan.getType());
-            loadVehicleShipmentFromCSV(assignedVan.vehicleID);
+            // Load all shipments from the CSV file
+            CSVParser.setFilePath("CSVFiles/shipments.csv");
+            String[][] shipmentData = CSVParser.loadCSVData(CSVParser.getFilePath());
+            Shipment[] shipments = new Shipment[shipmentData.length];
 
-            // Display Shipments in the Vehicle
+            // Display and Load Shipments to the Vehicle
             System.out.println("Shipments Stored in the Vehicle: ");
-            for (Shipment s : assignedVan.getShipments()) {
-                if(s.getStatus().equalsIgnoreCase("Pending") && s != null){
-                    System.out.println(s.toString());
+                int i = 0;
+                for (Shipment s : shipments) {
+                    if(s.getStatus().equalsIgnoreCase("Pending") && s != null && s.getVehicleId() == assignedVan.getVehicleID()) {
+                        System.out.println((i + 1) + ": " + s.toString());
+                        assignedVan.addShipment(s);
+                        i++;
+                    }
+                }
+                if (assignedVan.getShipments() != null && assignedVan.getCurrentShipmentCount() < 1) {
+                System.out.println("No pending shipments to deliver.");
+                return;
                 }
             }
             
             // Ask User what Shipment to manage
-            int choice = 0;
-            while(choice < 1 || choice > assignedVan.getShipments().length) {
-                while(true) {
-                    try {
-                        choice = Integer.parseInt(Logistics.getInput("Enter Shipment ID to Deliver: "));
-                        break;
-                    } catch(InputMismatchException | NumberFormatException e) {
-                        System.out.println("Enter a valid integer.");
-                    }
-                }
-            }
+            int selectedShipmentNum = Logistics.getValidatedInput("Select a shipment to manage by number: ", 1, assignedVan.getCurrentShipmentCount()) - 1;
 
-            String toDeliver = Logistics.getInput("Set Status of Shipment ID: " + assignedVan.getShipments()[choice - 1] + " to \"Delivered\"? (Yes/No)");
+            String toDeliver = Logistics.getInput("Set Status of Shipment ID: " + assignedVan.getShipments()[selectedShipmentNum] + " to \"Delivered\"? (Yes/No)");
             if(toDeliver.equalsIgnoreCase("Yes")) {
-                assignedVan.getShipments()[choice - 1].setStatus("Delivered");
+                assignedVan.getShipments()[selectedShipmentNum].setStatus("Delivered");
+                assignedVan.getShipments()[selectedShipmentNum].setVehicleId(0); // Set Vehicle ID to 0 indicating that its not in the vehicle anymore
+                assignedVan.removeShipment(assignedVan.getShipments()[selectedShipmentNum]); // Remove it from the Vehicle
+
                 CSVParser.setFilePath("CSVFiles/shipments.csv");
-                // Set Status to Delivered
-                CSVParser.updateShipmentCSV(assignedVan.getShipments()[choice - 1].getShipmentID(), 
-                                            assignedVan.getShipments()[choice - 1].getStatus(), 8); // TODO change this to actual col value
-                assignedVan.getShipments()[choice - 1] = null;
+                // Set Status to Delivered in Shipment CSV
+                CSVParser.updateCSV(
+                    assignedVan.getShipments()[selectedShipmentNum].getShipmentID(), 
+                    assignedVan.getShipments()[selectedShipmentNum].getStatus(), 
+                    8, 
+                    assignedVan.getShipments()[selectedShipmentNum].getShipmentHeader()
+                    );
+                    
+                // Save Updates to Shipment CSV
+                CSVParser.updateCSV(
+                    assignedVan.getShipments()[selectedShipmentNum].getShipmentID(), 
+                    String.valueOf(assignedVan.getShipments()[selectedShipmentNum].getVehicleId()), 
+                    3, 
+                    assignedVan.getShipments()[selectedShipmentNum].getShipmentHeader()
+                    );
+
+                // Save Updates to Vehicle CSV
+                CSVParser.setFilePath("CSVFiles/vehicles.csv");
+                CSVParser.updateCSV(assignedVan.getVehicleID(), String.valueOf(assignedVan.getCurrentShipmentCount()), 9, assignedVan.getVehicleHeader());
+                CSVParser.updateCSV(assignedVan.getVehicleID(), String.valueOf(assignedVan.getCurrentCapacityKG()), 7, assignedVan.getVehicleHeader());
+
                 System.out.println("Set to Delivered Successfully.");
             } 
             return;
         }
-    }
 
-    public void loadVehicleShipmentFromCSV(int vehicleID) {
-        // Load all shipments from the CSV file
-        CSVParser.setFilePath("CSVFiles/shipments.csv");
-        String[][] shipmentData = CSVParser.loadCSVData(CSVParser.getFilePath());
-        Shipment[] shipments = new Shipment[shipmentData.length];
-        for (int i = 0; i < shipmentData.length; i++) {
-            shipments[i] = Shipment.toShipment(shipmentData, i, null); // Pass null for the Package
-        }
-
-        // Find shipments with matching vehicleID and assign them to this vehicle
-        for (Shipment shipment : shipments) {
-            if (shipment.getVehicleId() == vehicleID) {
-                // Assign shipment to vehicle
-                assignedVan.addShipment(shipment);
-            }
+        // DB
+        public static void main(String[] args) {
+            Driver driver = new Driver(null, null, null);
+            Logistics lg = new Logistics();
+            driver.showMenu();
         }
     }
-}
+
