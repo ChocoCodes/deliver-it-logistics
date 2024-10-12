@@ -1,5 +1,7 @@
+import java.awt.*;
+
 public class Warehouse {
-    private final String[] WAREHOUSE_H = {"wID", "location", "package_capacity", "vehicle_capacity"};
+    private final String[] WAREHOUSE_H = {"wId", "sId", "vId", "location", "max_ship", "curr_ship", "curr_vehicle"};
     private int wareHouseID;
     private String location;
     private int maxShipCount; 
@@ -122,7 +124,8 @@ public class Warehouse {
             String.valueOf(vId),
             location,
             String.valueOf(getmaxShipCount()),
-            String.valueOf(getmaxShipCount())
+            String.valueOf(getmaxShipCount()),
+                String.valueOf(getcurrVehicleCtr())
         };
     }
 }
