@@ -48,6 +48,7 @@ public class Vehicle {
     public void setAvailability(boolean isAvailable) { this.isAvailable = isAvailable; }
     public void setDriver(String driver) { this.driver = driver; }
     public void setShipments(Shipment[] shipments) { this.shipments = shipments; }
+    public void setWarehouseId(int id) {this.whId = id; }
     // Display Info for Vehicles only
     @Override
     public String toString() {

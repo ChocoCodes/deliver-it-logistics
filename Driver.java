@@ -52,7 +52,7 @@ public class Driver extends Employee {
         int i = 0;
         ArrayList<Vehicle> availableVehicles = new ArrayList<Vehicle>();
         for (Vehicle v : vehicles) {
-            if (v.getDriver() != null || !(v.getDriver().isEmpty()) && v.isAvailable() == true) { // Vehicles without a driver and is not used (available)
+            if (v.getDriver() != null && !v.getDriver().isEmpty() && v.isAvailable()) { // Vehicles without a driver and is not used (available)
                 System.out.println((i + 1) + ": " + v.toString());
                 availableVehicles.add(v);
                 i++;
