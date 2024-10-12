@@ -18,10 +18,14 @@ public class Vehicle {
     // Vehicle Constructor for CSV File
     public Vehicle(int vehicleID, int whId, String type, String licensePlate, String driver, double capacityKG, double currentCapacityKG, int maxShipmentCount, boolean isAvailable) {
         this.vehicleID = vehicleID;
+        this.whId = whId;
         this.type = type;
         this.licensePlate = licensePlate;
         this.driver = driver;
         this.capacityKG = capacityKG;
+        this.currentCapacityKG = currentCapacityKG;
+        this.maxShipmentCount = maxShipmentCount;
+        this.currentCapacityKG = currentCapacityKG;
         this.isAvailable = isAvailable;
         this.shipments = null;
     }
@@ -43,8 +47,7 @@ public class Vehicle {
     // Setters
     public void setAvailability(boolean isAvailable) { this.isAvailable = isAvailable; }
     public void setDriver(String driver) { this.driver = driver; }
-    public void setWarehouseId(int id) {this.whId = id; }
-
+    public void setShipments(Shipment[] shipments) { this.shipments = shipments; }
     // Display Info for Vehicles only
     @Override
     public String toString() {
