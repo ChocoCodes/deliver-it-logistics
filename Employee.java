@@ -1,20 +1,15 @@
 public abstract class Employee {
+    public static final String DEFAULT_USER = "employee";
+    public static final String DEFAULT_PASS = "employee123";
+
     protected String name;
-    protected String username;
-    protected String password;
 
-    public Employee(String name, String username, String password) {
+    public Employee(String name) {
         this.name = name;
-        this.username = username;
-        this.password = password;
     }
 
-    public String getUsername() {
-        return username;
-    }
-
-    public boolean login(String inputPassword) {
-        return this.password.equals(inputPassword);
+    public static boolean login(String inUser, String inPass) {
+        return DEFAULT_USER.equals(inUser) && DEFAULT_PASS.equals(inPass);
     }
 
     public abstract void showMenu();

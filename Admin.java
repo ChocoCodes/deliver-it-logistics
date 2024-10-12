@@ -2,11 +2,17 @@ import java.io.PrintWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 
-public class Admin extends Employee {
-    public Admin(String name, String username, String password) {
-        super(name, username, password);
+class Admin extends Employee {
+    public static final String ADMIN_USER = "admin";
+    public static final String ADMIN_PASS = "admin123";
+
+    public Admin(String name) {
+        super(name);
     }
 
+    public static boolean login(String inUser, String inPass) {
+        return ADMIN_USER.equals(inUser) && ADMIN_PASS.equals(inPass);
+    }
     // Admin-specific functionalities
     public void addWarehouse() {
         CSVParser.setFilePath("CSVFiles/warehouses.csv");

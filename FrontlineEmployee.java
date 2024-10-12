@@ -2,8 +2,8 @@ import java.util.ArrayList;
 
 public class FrontlineEmployee extends Employee {
 
-    public FrontlineEmployee(String name, String username, String password) {
-        super(name, username, password);
+    public FrontlineEmployee(String name) {
+        super(name);
     }
 
     @Override

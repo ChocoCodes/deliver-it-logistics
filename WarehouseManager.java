@@ -4,8 +4,8 @@ public class WarehouseManager extends Employee {
 
     private Warehouse currentWarehouse; 
 
-    public WarehouseManager(String name, String username, String password) {
-        super(name, username, password);
+    public WarehouseManager(String name) {
+        super(name);
         this.currentWarehouse = null;
     }
 

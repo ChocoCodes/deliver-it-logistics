@@ -44,7 +44,39 @@ public class Logistics {
                 manager.showCustomerMenu(currentCustomer);
                 break;
             case 4: 
+                // Employees and Admin Module
                 String user = args[0], pass = args[1], holder = args[2], role = args[3];
+                boolean isAdmin = Admin.login(user, pass), isEmp = Employee.login(user, pass);
+                if (!isAdmin && !isEmp) {
+                    System.out.println("Invalid username/password.");
+                    return;
+                }
+                if (isAdmin) {
+                    new Admin(holder).showMenu();
+                    return; // to debug
+                }
+
+                Employee employee;
+                switch(role.toLowerCase()) {
+                    case "frontline":
+                        employee = new FrontlineEmployee(holder);
+                        break;
+                    case "warehouse":
+                        employee = new WarehouseManager(holder);
+                        break;
+                    case "driver":
+                        employee = new Driver(holder);
+                        break;
+                    default:
+                        System.out.println("Invalid Role.");
+                        return;
+                }
+                // Re-check if the login credentials are valid for employees
+                if (!isEmp) {
+                    System.out.println("Invalid username/password for employee.");
+                    return;
+                }
+                employee.showMenu();
                 break;
             default:
                 System.out.println("Invalid args length!\nUSAGE: javac -cp out Logistics OR javac -cp out Logistics {role} {password} {name}");

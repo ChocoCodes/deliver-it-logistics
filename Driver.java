@@ -3,8 +3,8 @@ import java.util.ArrayList;
 public class Driver extends Employee {
     private Vehicle assignedVan;
 
-    public Driver(String name, String username, String password) {
-        super(name, username, password);
+    public Driver(String name) {
+        super(name);
     }
 
     @Override
