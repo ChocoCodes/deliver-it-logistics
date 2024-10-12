@@ -16,12 +16,16 @@ public class Vehicle {
     // Packages method can still be accessed through shipment class
 
     // Vehicle Constructor for CSV File
-    public Vehicle(int vehicleID, int whId, String type, String licensePlate, String driver, double capacityKG, double currentCapacityKG, int maxShipmentCount, boolean isAvailable) {
+    public Vehicle(int vehicleID, int whId, String type, String licensePlate, String driver, double capacityKG, double currentCapacityKG, int maxShipmentCount, int currentShipmentCount, boolean isAvailable) {
         this.vehicleID = vehicleID;
+        this.whId = whId;
         this.type = type;
         this.licensePlate = licensePlate;
         this.driver = driver;
         this.capacityKG = capacityKG;
+        this.currentCapacityKG = currentCapacityKG;
+        this.maxShipmentCount = maxShipmentCount;
+        this.currentShipmentCount = currentShipmentCount;
         this.isAvailable = isAvailable;
         this.shipments = null;
     }
@@ -43,8 +47,7 @@ public class Vehicle {
     // Setters
     public void setAvailability(boolean isAvailable) { this.isAvailable = isAvailable; }
     public void setDriver(String driver) { this.driver = driver; }
-    public void setWarehouseId(int id) {this.whId = id; }
-
+    public void setShipments(Shipment[] shipments) { this.shipments = shipments; }
     // Display Info for Vehicles only
     @Override
     public String toString() {
@@ -121,7 +124,8 @@ public class Vehicle {
                 detMaxCap(raw[i][2]),
                 Double.parseDouble(raw[i][6]),
                 Integer.parseInt(raw[i][7]),
-                Boolean.parseBoolean(raw[i][8])
+                Integer.parseInt(raw[i][8]),
+                Boolean.parseBoolean(raw[i][9])
             );
         }
         return vehicles;
@@ -130,7 +134,9 @@ public class Vehicle {
     private static int detMaxCap(String type) {
         return type.toLowerCase().equals("van") ? 500 : 1000;
     }
-    
+    // id,whId,type,licensePlate,driver,cap_max,curr_cap,max_ship,curr_ship,avail
+    // 0, 1, 2, 3, 4, 5, 6, 7, 8, 9
+    // int, int string, string, string, double, double, int, int, boolean
     public static Vehicle toVehicle(String[][] raw, int idx) { 
         return new Vehicle(
             CSVParser.toInt(raw[idx][0]),
@@ -141,7 +147,8 @@ public class Vehicle {
             Double.parseDouble(raw[idx][5]),
             Double.parseDouble(raw[idx][6]),
             Integer.parseInt(raw[idx][7]),
-            Boolean.parseBoolean(raw[idx][8])
+            Integer.parseInt(raw[idx][8]),
+            Boolean.parseBoolean(raw[idx][9])
         ); 
     }
 }
