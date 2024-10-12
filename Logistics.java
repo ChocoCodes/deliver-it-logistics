@@ -43,7 +43,9 @@ public class Logistics {
                 }
                 manager.showCustomerMenu(currentCustomer);
                 break;
-                case 3: break;
+            case 4: 
+                String user = args[0], pass = args[1], holder = args[2], role = args[3];
+                break;
             default:
                 System.out.println("Invalid args length!\nUSAGE: javac -cp out Logistics OR javac -cp out Logistics {role} {password} {name}");
                 return;
@@ -121,7 +123,6 @@ public class Logistics {
                     editCustomerInfo(customer);
                     break;
                 case 'T':
-                    // track shipment
                     trackShipment(customer);
                     break;
                 case 'Q': return;
