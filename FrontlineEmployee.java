@@ -1,7 +1,11 @@
 import java.util.ArrayList;
 
 public class FrontlineEmployee extends Employee {
-
+    // Column Identifiers
+    final int ARRAY_OFFSET = 1;
+    final int SHIP_CONFIRMED_COL = 7 - ARRAY_OFFSET;
+    final int SHIP_STATUS_COL = 8 - ARRAY_OFFSET;
+    
     public FrontlineEmployee(String name, String username, String password) {
         super(name, username, password);
     }
@@ -79,17 +83,17 @@ public class FrontlineEmployee extends Employee {
             CSVParser.updateCSV(
                 paidShipmentsArr[selectedShipmentIndex].getShipmentID(), 
                 String.valueOf(paidShipmentsArr[selectedShipmentIndex].isConfirmed()), 
-                7, 
+                SHIP_CONFIRMED_COL, 
                 paidShipmentsArr[selectedShipmentIndex].getShipmentHeader()
-                ); 
-
+            );
+            
             // Update the CSV Shipment Status to "Pending"
             CSVParser.updateCSV(
                 paidShipmentsArr[selectedShipmentIndex].getShipmentID(), 
                 paidShipmentsArr[selectedShipmentIndex].getStatus(), 
-                8, 
+                SHIP_STATUS_COL, 
                 paidShipmentsArr[selectedShipmentIndex].getShipmentHeader()
-                ); 
+            );
                 
             System.out.println("Shipment confirmed successfully.");
         } else if (confirmShipment.equalsIgnoreCase("Yes") && !(paidShipmentsArr[selectedShipmentIndex].getStatus().equalsIgnoreCase("Paid"))) {

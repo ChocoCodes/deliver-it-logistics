@@ -17,5 +17,9 @@ public abstract class Employee {
         return this.password.equals(inputPassword);
     }
 
+    public String getName() {
+        return name;
+    }
+
     public abstract void showMenu();
 }

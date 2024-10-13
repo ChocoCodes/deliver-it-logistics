@@ -31,19 +31,22 @@ public class Warehouse {
     public int getmaxShipCount() { return this.maxShipCount; }
     public int getcurrShipCount() { return this.currShipCount; }
     public int getcurrVehicleCtr() { return this.currVehicleCtr; }
-    public Shipment[] getshipments() { return this.shipments; }
+    public Shipment[] getShipments() { return this.shipments; }
     public Vehicle[] getVehicles() { return this.vehicles; }
     public String[] getWarehouseHeader() { return this.WAREHOUSE_H; }
+
+    // Setters
+    public void setShipments(Shipment[] shp) { this.shipments = shp; }
+    public void setVehicles(Vehicle[] vehicles) { this.vehicles = vehicles; }
 
     public static Warehouse[] toWarehouse(String[][] raw) {
         Warehouse[] wh = new Warehouse[raw.length];
         for(int i = 0; i < raw.length; i++) {
             wh[i] = new Warehouse(
                 CSVParser.toInt(raw[i][0]), 
-                raw[i][3], 
-                CSVParser.toInt(raw[i][4]), 
-                CSVParser.toInt(raw[i][5]), 
-                CSVParser.toInt(raw[i][6])
+                raw[i][1], 
+                CSVParser.toInt(raw[i][2]), 
+                CSVParser.toInt(raw[i][3])
             );
         }
         return wh;
@@ -51,9 +54,9 @@ public class Warehouse {
     
 
     // Add a Shipment to the warehouse (e.g., drop off Shipment of a vehicle)
-    public boolean addShipment(Shipment pkg) {
+    public boolean addShipment(Shipment shp) {
         if (currShipCount < maxShipCount) {
-            shipments[currShipCount] = pkg;
+            shipments[currShipCount] = shp;
             currShipCount++;
             return true;
         }
@@ -61,9 +64,9 @@ public class Warehouse {
     }
 
     // Remove a Shipment from the warehouse (e.g., being loaded to the vehicle)
-    public boolean removeShipment(Shipment pkg) {
+    public boolean removeShipment(Shipment shp) {
         for (int i = 0; i < currShipCount; i++) {
-            if (shipments[i] != null && shipments[i].equals(pkg)) {
+            if (shipments[i] != null && shipments[i].equals(shp)) {
                 for (int j = i; j < currShipCount - 1; j++) {
                     shipments[j] = shipments[j + 1];
                 }

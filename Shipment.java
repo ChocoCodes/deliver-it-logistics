@@ -27,7 +27,7 @@ public class Shipment {
         this.estDelivery = null;
     }
     // Constructor for Shipment CSV File Extraction
-    public Shipment(int id, int whId, int vId, String destination, double shippingCost, boolean confirmed, Package pkg, String status, Date shipTakeOff, Date estDelivery) {
+    public Shipment(int id, int vId, int whId, String destination, double shippingCost, boolean confirmed, Package pkg, String status, Date shipTakeOff, Date estDelivery) {
         this.id = id;
         this.whId = whId;
         this.vId = vId;

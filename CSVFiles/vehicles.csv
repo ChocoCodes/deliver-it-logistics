@@ -1,9 +1,9 @@
-id,whId,type,licensePlate,driver,cap_max,curr_cap,max_ship,curr_ship,avail
-1,0,Truck,ABD-9965,null,1500,500,10,2,False
-2,1,Van,RRZ-4133,John Doe,75,30,5,1,True
-3,0,Van,ABC-5623,,100,50,6,3,True
-4,2,Truck,FDF-2048,null,2000,0,15,0,True
-5,1,Van,POZ-1234,Alice Smith,120,80,7,5,False
-6,3,Truck,BNZ-9485,Jack Daniels,1800,1000,12,7,True
-7,0,Van,PPZ-1111,,95,40,4,2,False
-8,4,Truck,XYL-7723,null,1600,900,11,6,True
+vID,whId,type,licensePlate,driver,cap_max,cap_curr,max_ship,curr_ship,avail
+1,1,Truck,ABD-9965,,1000,0,100,0,True
+2,1,Van,RRZ-4133,John Doe,500,0,80,0,True
+3,1,Van,ABC-5623,Raean,500,0,80,0,True
+4,1,Truck,FDF-2048,,1000,0,100,0,True
+5,1,Van,POZ-1234,Alice Smith,500,0,80,0,True
+6,0,Van,BNZ-9485,Jack Daniels,1000,409.40000000000003,100,13,false
+7,1,Van,PPZ-1111,NA,500,0,80,0,True
+8,0,Truck,XYL-7723,NA,1000,409.40000000000003,100,13,true
