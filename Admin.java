@@ -23,9 +23,13 @@ public class Admin extends Employee {
         CSVParser.setFilePath("CSVFiles/warehouses.csv");
         String[][] warehousesData = CSVParser.loadCSVData(CSVParser.getFilePath());
         Warehouse[] warehouses = Warehouse.toWarehouse(warehousesData);
-        for (String[] warehouse : warehousesData) {
-            System.out.println("ID: " + warehouse[0] + ", Shipment ID: " + warehouse[1] + ", Vehicle ID: " + warehouse[2] + ", Location: " + warehouse[3] + ", Max Shipment: " + warehouse[4] + ", Current Shipment: " + warehouse[5] + ", Current Vehicles: " + warehouse[6]);
+
+        if (warehousesData.length == 0) {
+            System.out.println("No warehouses available.");
+            return;
         }
+
+        displayTable(warehousesData, warehouses[0].getWarehouseHeader());
 
         int warehouseId = getValidIntInput("Enter Warehouse ID to remove");
         boolean removed = false;
@@ -84,9 +88,13 @@ public class Admin extends Employee {
         CSVParser.setFilePath("CSVFiles/vehicles.csv");
         String[][] vehiclesData = CSVParser.loadCSVData(CSVParser.getFilePath());
         Vehicle vehicles = Vehicle.toVehicle(vehiclesData, 1);
-        for (String[] vehicle : vehiclesData) {
-            System.out.println("ID: " + vehicle[0] + ", Warehouse ID: " + vehicle[1] + ",  Type: " + vehicle[2] + ", License Plate: " + vehicle[3] + ", Driver: " + vehicle[4] + ", Maximum Capacity: " + vehicle[5] + ", Current Capacity: " + vehicle[6] + ", Current Shipments: " + vehicle[7] + ", Availability: " + vehicle[8]);
+
+        if (vehiclesData.length == 0) {
+            System.out.println("No vehicles available.");
+            return;
         }
+
+        displayTable(vehiclesData, vehicles.getVehicleHeader());
 
         int vehicleId = getValidIntInput("Enter Vehicle ID to remove");
         boolean removed = false;
@@ -247,6 +255,40 @@ public class Admin extends Employee {
         } while (result <= 0);
         return result;
     }
+    private void displayTable(String[][] data, String[] headers) {
+        // Calculate column widths
+        int[] columnWidths = new int[headers.length];
+        for (int i = 0; i < headers.length; i++) {
+            columnWidths[i] = headers[i].length();
+            for (String[] row : data) {
+                if (row[i] != null && row[i].length() > columnWidths[i]) {
+                    columnWidths[i] = row[i].length();
+                }
+            }
+        }
+
+        // Print header
+        printTableRow(headers, columnWidths);
+        printSeparator(columnWidths);
+
+        // Print data
+        for (String[] row : data) {
+            printTableRow(row, columnWidths);
+        }
+    }
+    private void printTableRow(String[] row, int[] columnWidths) {
+        for (int i = 0; i < row.length; i++) {
+            System.out.printf("| %-" + columnWidths[i] + "s ", row[i]);
+        }
+        System.out.println("|");
+    }
+    private void printSeparator(int[] columnWidths) {
+        for (int width : columnWidths) {
+            System.out.print("+-" + "-".repeat(width) + "-");
+        }
+        System.out.println("+");
+    }
 }
+
 
 
