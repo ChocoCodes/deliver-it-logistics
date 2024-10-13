@@ -12,5 +12,9 @@ public abstract class Employee {
         return DEFAULT_USER.equals(inUser) && DEFAULT_PASS.equals(inPass);
     }
 
+    public String getName() {
+        return name;
+    }
+
     public abstract void showMenu();
 }

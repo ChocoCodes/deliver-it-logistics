@@ -3,7 +3,7 @@ import java.util.Random;
 import java.util.Calendar;
 
 public class Shipment {
-    private final String[] SHIPMENT_H = {"id","sId","vId","wId","dest","shipCost","confirmed","status","shipDate","eta"};
+    private final String[] SHIPMENT_H = {"id","pkgId","vId","wId","dest","shipCost","confirmed","status","shipDate","eta"};
     private int id;
     private int whId;
     private int vId; // assign by e/a
@@ -27,7 +27,7 @@ public class Shipment {
         this.estDelivery = null;
     }
     // Constructor for Shipment CSV File Extraction
-    public Shipment(int id, int whId, int vId, String destination, double shippingCost, boolean confirmed, Package pkg, String status, Date shipTakeOff, Date estDelivery) {
+    public Shipment(int id, int vId, int whId, String destination, double shippingCost, boolean confirmed, Package pkg, String status, Date shipTakeOff, Date estDelivery) {
         this.id = id;
         this.whId = whId;
         this.vId = vId;

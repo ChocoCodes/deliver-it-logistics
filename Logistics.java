@@ -9,10 +9,13 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-/** 
- *  DeliverIT - Local Logistics System
- *  Authors: John Roland Octavio, Jul Leo Javellana, Raean Chrissean Tamayo
+/** CSP202: Object Oriented Programming - BSCS 2-A
+ *  DeliverIT - Local Logistics System Simulation
  * 
+ *  Authors: John Roland Octavio
+ *           Jul Leo Javellana
+ *           Raean Chrissean Tamayo
+ *  
  * 
  *  Logistics System Driver Class
 */

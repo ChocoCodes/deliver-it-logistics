@@ -79,17 +79,17 @@ public class FrontlineEmployee extends Employee {
             CSVParser.updateCSV(
                 paidShipmentsArr[selectedShipmentIndex].getShipmentID(), 
                 String.valueOf(paidShipmentsArr[selectedShipmentIndex].isConfirmed()), 
-                7, 
+                6, 
                 paidShipmentsArr[selectedShipmentIndex].getShipmentHeader()
-                ); 
-
+            );
+            
             // Update the CSV Shipment Status to "Pending"
             CSVParser.updateCSV(
                 paidShipmentsArr[selectedShipmentIndex].getShipmentID(), 
                 paidShipmentsArr[selectedShipmentIndex].getStatus(), 
-                8, 
+                7, 
                 paidShipmentsArr[selectedShipmentIndex].getShipmentHeader()
-                ); 
+            );
                 
             System.out.println("Shipment confirmed successfully.");
         } else if (confirmShipment.equalsIgnoreCase("Yes") && !(paidShipmentsArr[selectedShipmentIndex].getStatus().equalsIgnoreCase("Paid"))) {

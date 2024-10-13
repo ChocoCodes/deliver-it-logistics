@@ -1,3 +1,2 @@
-wId,sId,vId,location,max_ship,curr_ship,curr_vehicle
-0,val,0,0
-1,val,0,0
+wID,location,package_capacity,vehicle_capacity
+1,Bacolod,1000,80

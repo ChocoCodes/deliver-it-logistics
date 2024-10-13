@@ -27,7 +27,7 @@ public class Vehicle {
         this.maxShipmentCount = maxShipmentCount;
         this.currentShipmentCount = currentShipmentCount;
         this.isAvailable = isAvailable;
-        this.shipments = null;
+        this.shipments = new Shipment[maxShipmentCount];
     }
 
     // Getters
@@ -83,30 +83,42 @@ public class Vehicle {
     }
 
     public boolean addShipment(Shipment shipment) {
-        if (getAvailableCapacity() < capacityKG && getCurrentShipmentCount() < maxShipmentCount) {
-            for (int i = 0; i < shipments.length; i++) {
-                if (shipments[i] == null) { 
-                    if (!(currentCapacityKG + shipments[i].getPackage().getTotalItemWeight(shipments[i].getPackage().getContents()) > capacityKG)) {
-                        shipments[i] = shipment;
-                        currentCapacityKG += shipment.getPackage().getTotalItemWeight(shipment.getPackage().getContents());
-                        currentShipmentCount++;
-                        return true;
-                    } else {
-                        return false;
-                    }
-                }
+        if (shipment == null) {
+            return false;
+        }
+
+        if (this.shipments == null) {
+            this.shipments = new Shipment[getMaxShipmentCount()];
+        }
+
+        double shipmentWeight = shipment.getPackage().getDimensionalWeight();
+        if (currentCapacityKG + shipmentWeight > capacityKG || currentShipmentCount >= maxShipmentCount) {
+            return false;
+        }
+    
+        for (int i = 0; i < shipments.length; i++) {
+            if (shipments[i] == null) {
+                shipments[i] = shipment;
+                currentCapacityKG += shipmentWeight;
+                currentShipmentCount++;  
+                return true;
             }
         }
-        return false;
+        return false; 
     }
-
-    // Remove ONE Shipment from the vehicle if it is delivered
+    
     public boolean removeShipment(Shipment shipment) {
+        if (shipment == null) {
+            return false;
+        }
+    
         for (int i = 0; i < shipments.length; i++) {
             if (shipments[i] != null && shipments[i].equals(shipment)) {
-                currentCapacityKG -= shipment.getPackage().getTotalItemWeight(shipment.getPackage().getContents());
+                // Decrease current weight and shipment count
+                currentCapacityKG -= shipments[i].getPackage().getDimensionalWeight();
                 currentShipmentCount--;
-                shipments[i] = null;
+    
+                shipments[i] = null;  
                 return true;
             }
         }
