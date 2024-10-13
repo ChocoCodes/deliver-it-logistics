@@ -66,7 +66,14 @@ public class Driver extends Employee {
             if (
                 (v.getDriver().equals("null") || v.getDriver().equalsIgnoreCase("NA") || 
                 v.getDriver().trim().isEmpty()) && v.isAvailable() && v.getType().equalsIgnoreCase("Van")) {
-                System.out.println("Number " + (i + 1) + ":\n" + v.toString() + "\n");
+                    System.out.printf("Vehicle %d ID: %d | Type: %s | Warehouse ID: %d | License Plate: %s | Current Shipments: %d\n", 
+                    (i + 1),
+                    v.getVehicleID(),
+                    v.getType(),
+                    v.getWarehouseId(),
+                    v.getLicensePlate(),
+                    v.getCurrentShipmentCount()
+                    );
                 availableVehicles.add(v);
                 i++;
             }
@@ -108,7 +115,6 @@ public class Driver extends Employee {
 
         // Load shipments for the assigned vehicle 
         Shipment[] shipments = loadShipments();
-        System.out.println(shipments[1].toString());
         // Display and Load Shipments to the Vehicle
         System.out.println("Shipments Stored in the Vehicle: ");
         int i = 0;
@@ -117,7 +123,7 @@ public class Driver extends Employee {
         ArrayList<Shipment> pendingShipments = new ArrayList<Shipment>();
         for (Shipment s : shipments) {
             if (s != null && s.getStatus().equalsIgnoreCase("Pending") && s.getVehicleId() == currentAssignedVehicle.getVehicleID()) {
-                System.out.println("Number " + (i + 1) + ":\n" + s.toString() + "\n");
+                System.out.printf("Shipment No. %d | ID: %d | Status: %s\n",(i + 1), shipments[i].getShipmentID(), shipments[i].getStatus());
                 pendingShipments.add(s);
                 hasPendingShipments = true; // Mark that we have added a pending shipment
                 i++;

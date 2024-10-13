@@ -1,9 +1,5 @@
 vID,whId,type,licensePlate,driver,cap_max,cap_curr,max_ship,curr_ship,avail
-1,1,Truck,ABD-9965,,1000,0,100,0,true
-2,1,Van,RRZ-4133,John Doe,500,0,80,0,true
-3,1,Van,ABC-5623,Raean,500,0,80,0,true
-4,2,Truck,FDF-2048,,1000,0,100,0,true
-5,1,Van,POZ-1234,Alice Smith,500,0,80,0,true
-6,0,Van,BNZ-9485,Jack Daniels,1000,409.40000000000003,100,13,true
-7,2,Van,PPZ-1111,John,500,274,80,9,true
-8,0,Truck,XYL-7723,NA,1000,409.40000000000003,100,13,true
+1,1,Van,ABC1234,John,1000,500,50,25,true
+2,2,Truck,DEF5678,Jane,2000,903,100,40,true
+3,2,Van,GHI9101,Mike,1000,480,50,9,true
+4,2,Truck,JKL1213,Amy,2000,900,100,45,true

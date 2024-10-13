@@ -71,7 +71,6 @@ public class FrontlineEmployee extends Employee {
         int selectedShipmentIndex = (Logistics.getValidatedInput("Select a number to manage Shipment", 1, shipments.length)) - 1;
         // Ask to confirm the shipment
         String confirmShipment = Logistics.getInput("Confirm shipment? (Yes/No)");
-        System.out.println(confirmShipment + " DB");
         if (confirmShipment.equalsIgnoreCase("Yes") && paidShipmentsArr[selectedShipmentIndex].getStatus().equalsIgnoreCase("Paid")) {
             paidShipmentsArr[selectedShipmentIndex].confirmShip();
             paidShipmentsArr[selectedShipmentIndex].setStatus("Pending");

@@ -1,20 +1,12 @@
 id,pkgId,vId,wId,dest,shipCost,confirmed,status,shipDate,eta
-1,6,7,0,Bago City,200.0,true,Pending,2024-10-01,2024-10-04
-2,8,7,0,Bago City,150.0,true,Pending,2024-09-29,2024-10-02
-3,7,0,0,Bago City,450.0,true,Delivered,10/13/2024,10/19/2024
-4,18,7,0,Bago City,400.0,true,Pending,2024-10-04,2024-10-07
-5,14,7,0,Bago City,250.0,true,Pending,2024-10-01,2024-10-04
-6,3,7,0,Bago City,180.0,true,Pending,2024-09-28,2024-10-01
-7,22,7,0,Bago City,160.0,true,Pending,2024-10-02,2024-10-05
-8,10,7,0,Bago City,350.0,true,Pending,2024-09-30,2024-10-03
-9,5,7,0,Bago City,200.0,true,Pending,2024-10-02,2024-10-05
-10,19,0,1,Tacloban,170.0,true,Pending,2024-09-29,2024-10-02
-11,7,7,0,Bago City,220.0,true,Pending,2024-10-04,2024-10-07
-12,15,7,0,Bago City,260.0,true,Pending,2024-09-30,2024-10-03
-13,2,0,1,General Santos,190.0,true,Pending,2024-10-03,2024-10-06
-14,17,7,0,Bago City,175.0,true,Pending,2024-09-27,2024-10-01
-15,9,0,1,Roxas City,280.0,true,Pending,2024-09-30,2024-10-03
-16,20,0,1,Legazpi City,195.0,true,Pending,2024-10-01,2024-10-05
-17,4,0,1,Iligan City,225.0,true,Pending,2024-09-28,2024-10-02
-18,11,0,1,Laoag City,140.0,true,Pending,2024-10-02,2024-10-05
-19,16,6,1,Bago City,270.0,false,Paid,2024-10-03,2024-10-06
+1,1,0,0,Bago City Block 1 Lot 1,100,true,Delivered,04/10/2024,05/10/2024
+2,2,0,2,Bago City Block 2 Lot 2,50,false,Pending,08/10/2024,09/10/2024
+3,3,3,0,Bago City Block 3 Lot 3,70,true,Pending,11/10/2024,12/10/2024
+4,4,3,0,Bago City Block 4 Lot 4,120,true,Pending,12/10/2024,13/10/2024
+5,5,3,0,Bago City Block 5 Lot 5,80,true,Pending,05/10/2024,06/10/2024
+6,6,3,0,Bago City Block 6 Lot 6,60,true,Pending,05/10/2024,06/10/2024
+7,7,3,0,Bago City Block 7 Lot 7,140,true,Pending,06/10/2024,07/10/2024
+8,8,3,0,Bago City Block 8 Lot 8,90,true,Pending,07/10/2024,08/10/2024
+9,9,3,0,Bago City Block 9 Lot 9,110,true,Pending,07/10/2024,08/10/2024
+10,10,3,0,Bago City Block 10 Lot 10,130,true,Pending,08/10/2024,09/10/2024
+11,12,0,1,Bago City Torres St,450.0,true,Pending,10/13/2024,10/16/2024
