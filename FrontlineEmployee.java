@@ -19,7 +19,7 @@ public class FrontlineEmployee extends Employee {
             int choice = 0;
             while (true) {
                 try {
-                    choice = Integer.parseInt(Logistics.getInput("Enter your choice: "));
+                    choice = Integer.parseInt(Logistics.getInput("Enter your choice"));
                     if (choice >= 1 && choice <= 2) {
                         break;
                     } else {
@@ -57,22 +57,27 @@ public class FrontlineEmployee extends Employee {
         // Display available shipments
         ArrayList<Shipment> paidShipments = new ArrayList<Shipment>();
         System.out.println("Available Shipments:");
+        int n = 0;
         for (int i = 0; i < shipments.length; i++) {
             if (shipments[i].getStatus().equalsIgnoreCase("Paid")) {
-                System.out.println((i + 1) + ". " + shipments[i].toString());
+                System.out.printf("Shipment No. %d | ID: %d | Status: %s\n",(n + 1), shipments[i].getShipmentID(), shipments[i].getStatus()); // (i + 1) + ". " + shipments[i].toString()
                 paidShipments.add(shipments[i]);
+                n++;
             }
         }
         
         Shipment[] paidShipmentsArr = paidShipments.toArray(new Shipment[0]);
         // Ask the employee which shipment to process
-        int selectedShipmentIndex = (Logistics.getValidatedInput("Select a number to manage Shipment: ", 1, shipments.length)) - 1;
-    
+        int selectedShipmentIndex = (Logistics.getValidatedInput("Select a number to manage Shipment", 1, shipments.length)) - 1;
         // Ask to confirm the shipment
-        String confirmShipment = Logistics.getInput("Confirm shipment? (Yes/No): ");
-        if (confirmShipment.equalsIgnoreCase("Yes") && shipments[selectedShipmentIndex].getStatus().equalsIgnoreCase("Paid")) {
+        String confirmShipment = Logistics.getInput("Confirm shipment? (Yes/No)");
+        System.out.println(confirmShipment + " DB");
+        if (confirmShipment.equalsIgnoreCase("Yes") && paidShipmentsArr[selectedShipmentIndex].getStatus().equalsIgnoreCase("Paid")) {
             paidShipmentsArr[selectedShipmentIndex].confirmShip();
-            paidShipmentsArr[selectedShipmentIndex].setStatus("Pending");;
+            paidShipmentsArr[selectedShipmentIndex].setStatus("Pending");
+            paidShipmentsArr[selectedShipmentIndex].setShipTakeOff();
+            paidShipmentsArr[selectedShipmentIndex].setEtaDelivery(paidShipmentsArr[selectedShipmentIndex].calcEstTime());
+            System.out.printf("%s\n", paidShipmentsArr[selectedShipmentIndex].toString());
             
             // Update the CSV with the confirmed shipment status
             CSVParser.setFilePath("CSVFiles/shipments.csv");
@@ -90,7 +95,20 @@ public class FrontlineEmployee extends Employee {
                 7, 
                 paidShipmentsArr[selectedShipmentIndex].getShipmentHeader()
             );
-                
+            
+            // Update ShipTakeOff and ETA Delivery
+            CSVParser.updateCSV(
+                paidShipmentsArr[selectedShipmentIndex].getShipmentID(), 
+                CSVParser.dateToString(paidShipmentsArr[selectedShipmentIndex].getShipTakeOff()), 
+                8, 
+                paidShipmentsArr[selectedShipmentIndex].getShipmentHeader()
+            );
+            CSVParser.updateCSV(
+                paidShipmentsArr[selectedShipmentIndex].getShipmentID(), 
+                CSVParser.dateToString(paidShipmentsArr[selectedShipmentIndex].getEtaDelivery()), 
+                9, 
+                paidShipmentsArr[selectedShipmentIndex].getShipmentHeader()
+            );
             System.out.println("Shipment confirmed successfully.");
         } else if (confirmShipment.equalsIgnoreCase("Yes") && !(paidShipmentsArr[selectedShipmentIndex].getStatus().equalsIgnoreCase("Paid"))) {
             System.out.println("An error occured. Shipment status is not \"Paid\".");

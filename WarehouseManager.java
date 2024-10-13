@@ -23,23 +23,17 @@ public class WarehouseManager extends Employee {
             System.out.println("4. Assign / Change Warehouse");
             System.out.println("5. Exit");
 
-            int option = Logistics.getValidatedInput("Please select an option (1-5): ", 1, 5);
+            int option = Logistics.getValidatedInput("Please select an option (1-5)", 1, 5);
 
             switch (option) {
                 case 1:
-                    if (checkWarehouseAssigned()) {
-                            loadShipmentToVehicle();
-                        }
-                        break;
+                    if (checkWarehouseAssigned()) loadShipmentToVehicle();
+                    break;
                 case 2:
-                    if (checkWarehouseAssigned()) {
-                        dropOffLoadToWarehouse();
-                       }
+                    if (checkWarehouseAssigned()) dropOffLoadToWarehouse();
                     break;
                 case 3:
-                    if (checkWarehouseAssigned()) {
-                        manageVehicles();
-                    }
+                    if (checkWarehouseAssigned()) manageVehicles();
                     break;
                 case 4:
                     assignWarehouse(); // Option to change the warehouse
@@ -62,22 +56,23 @@ public class WarehouseManager extends Employee {
         Warehouse[] availableWarehouses = Warehouse.toWarehouse(warehouseData);
 
         // Display the available warehouses
-        for (int i = 0; i < availableWarehouses.length; i++) {
-            System.out.println("Number " + (i + 1) + ":\n" + availableWarehouses[i].getLocation() + "\n");
-        }
+        for (int i = 0; i < availableWarehouses.length; i++) System.out.printf("Warehouse %d: %s Hub\n", (i + 1), availableWarehouses[i].getLocation());
 
-        int choice = Logistics.getValidatedInput("Please select a warehouse (1-" + availableWarehouses.length + "): ", 1, availableWarehouses.length);
+        int choice = Logistics.getValidatedInput("Please select a warehouse (1-" + availableWarehouses.length + ")", 1, availableWarehouses.length);
 
         // Set the selected warehouse as the current warehouse
-        currentWarehouse = availableWarehouses[choice - 1];
-        System.out.println("Assigned to warehouse at: " + currentWarehouse.getLocation());
-        System.out.println(currentWarehouse.toString());
+        this.currentWarehouse = availableWarehouses[choice - 1];
+        System.out.printf("Assigned to warehouse at %s\n", currentWarehouse.getLocation());
+        // DB curr warehouse: 20 correct
+        System.out.println(currentWarehouse.getVehicles().length); 
 
         // Load shipment and vehicle data
         Vehicle[] vehicles = loadVehicles();
-        System.out.println(vehicles[1].toString()); // DB
+        System.out.println("Vehicles: " + vehicles.length);
+        // System.out.println(vehicles[1].toString()); // DB
         Shipment[] shipments = loadShipments();
-        System.out.println(shipments[1].toString()); // DB
+        System.out.println("Shipment: " + shipments.length);
+        // System.out.println(shipments[1].toString()); // DB
 
         ArrayList<Vehicle> whVehicle = new ArrayList<>();
         for (Vehicle vehicle : vehicles) { // Iterate over vehicles, not whVehicle
@@ -92,12 +87,12 @@ public class WarehouseManager extends Employee {
                 whShipments.add(shipment);
             }
         }
-        currentWarehouse.setShipments(whShipments.toArray(new Shipment[0]));
-        currentWarehouse.setVehicles(whVehicle.toArray(new Vehicle[0]));
-
-        for (Shipment shipment : currentWarehouse.getShipments()) {
-            System.out.println("test" + shipment.getShipmentID());
-        }
+        for(int i = 0; i < whShipments.size(); i++) currentWarehouse.addShipment(whShipments.get(i));
+        System.out.println("S: " + currentWarehouse.getShipments().length); 
+        for(int i = 0; i < whVehicle.size(); i++) currentWarehouse.addVehicle(whVehicle.get(i));
+        System.out.println("V: " + currentWarehouse.getVehicles().length);
+        
+        // for (Shipment shipment : currentWarehouse.getShipments()) { System.out.println("test" + shipment.getShipmentID());}
     }
 
 
@@ -111,8 +106,16 @@ public class WarehouseManager extends Employee {
     }
 
     public void loadShipmentToVehicle() {
+        Vehicle[] vehicles = loadVehicles();
+        ArrayList<Vehicle> whVehicle = new ArrayList<>();
+        for (Vehicle vehicle : vehicles) { // Iterate over vehicles, not whVehicle
+            if (vehicle.getWarehouseId() == currentWarehouse.getWarehouseID()) {
+                whVehicle.add(vehicle);
+                System.out.println(vehicle.toString());
+            }
+        }
         // Ask for destination
-        String inputtedDestination = Logistics.getInput("Enter destination to load shipments: ");
+        String inputtedDestination = Logistics.getInput("Enter destination to load shipments");
     
         // Filter shipments by warehouse ID, destination, and status "Pending"
         ArrayList<Shipment> loadToVehicleShipments = filterShipmentsForLoading(currentWarehouse.getShipments(), inputtedDestination);
@@ -125,7 +128,7 @@ public class WarehouseManager extends Employee {
         String vehicleTypeChoice = chooseVehicleType();
     
         // Filter available vehicles by type and warehouse
-        ArrayList<Vehicle> availableVehicles = filterAvailableVehicles(currentWarehouse.getVehicles(), vehicleTypeChoice);
+        ArrayList<Vehicle> availableVehicles = filterAvailableVehicles(currentWarehouse.getVehicles(), vehicleTypeChoice, true);
     
         Vehicle selectedVehicle = selectVehicle(availableVehicles, vehicleTypeChoice);
         if (selectedVehicle == null) return;
@@ -151,10 +154,18 @@ public class WarehouseManager extends Employee {
     }
     
     public void dropOffLoadToWarehouse() {
+        Vehicle[] vehicles = loadVehicles();
+        ArrayList<Vehicle> whVehicle = new ArrayList<>();
+        for (Vehicle vehicle : vehicles) { // Iterate over vehicles, not whVehicle
+            if (vehicle.getWarehouseId() == currentWarehouse.getWarehouseID()) {
+                whVehicle.add(vehicle);
+                System.out.println(vehicle.toString());
+            }
+        }
         Shipment[] shipments = loadShipments();
+        // System.out.println(shipments.toString());
         // Filter available trucks in the warehouse
-        ArrayList<Vehicle> availableTrucks = filterAvailableVehicles(currentWarehouse.getVehicles(), "truck");
-    
+        ArrayList<Vehicle> availableTrucks = filterAvailableVehicles(currentWarehouse.getVehicles(), "truck", false);
         if (availableTrucks.isEmpty()) {
             System.out.println("No trucks available for drop-off.");
             return;
@@ -208,7 +219,7 @@ public class WarehouseManager extends Employee {
 
     public void vehicleArrival() {
         System.out.println("Vehicle arriving to warehouse... ");
-        
+        System.out.println(currentWarehouse.getVehicles().length);
         Vehicle[] vehicles = loadVehicles();
         ArrayList<Vehicle> possibleArrivingVehicles = new ArrayList<>();
     
@@ -226,15 +237,15 @@ public class WarehouseManager extends Employee {
     
         displayVehicleOptions(possibleArrivingVehicles, "arriving");
     
-        int vehicleChoice = Logistics.getValidatedInput("Select a vehicle by number: ", 1, possibleArrivingVehicles.size());
+        int vehicleChoice = Logistics.getValidatedInput("Select a vehicle by number", 1, possibleArrivingVehicles.size());
         Vehicle selectedVehicle = possibleArrivingVehicles.get(vehicleChoice - 1);
     
         if (!confirmAction("marking vehicle ID: " + selectedVehicle.getVehicleID() + " as arrived")) {
             System.out.println("Arrival canceled.");
             return;
         } 
-        
-        currentWarehouse.addVehicle(selectedVehicle);
+        System.out.println(currentWarehouse.getVehicles().length);
+        // currentWarehouse.addVehicle(selectedVehicle);
         selectedVehicle.setWarehouseId(currentWarehouse.getWarehouseID());
     
         // Update vehicle warehouse ID in CSV
@@ -264,7 +275,7 @@ public class WarehouseManager extends Employee {
         }
 
         displayVehicleOptions(readyToLeaveVehicles, "leaving");
-        int vehicleChoice = Logistics.getValidatedInput("Select a vehicle by number: ", 1, readyToLeaveVehicles.size());
+        int vehicleChoice = Logistics.getValidatedInput("Select a vehicle by number", 1, readyToLeaveVehicles.size());
         Vehicle selectedVehicle = readyToLeaveVehicles.get(vehicleChoice - 1);
         if (!confirmAction("marking vehicle ID: " + selectedVehicle.getVehicleID() + " as leaving")) {
             System.out.println("Departure canceled.");
@@ -278,10 +289,7 @@ public class WarehouseManager extends Employee {
         CSVParser.setFilePath("CSVFiles/vehicles.csv");
         CSVParser.updateCSV(selectedVehicle.getVehicleID(), String.valueOf(selectedVehicle.getWarehouseId()), 1, selectedVehicle.getVehicleHeader());
         CSVParser.updateCSV(selectedVehicle.getVehicleID(), String.valueOf(selectedVehicle.isAvailable()), 9, selectedVehicle.getVehicleHeader());
-    
-        // Update warehouse CSV to reflect current vehicle count
-        CSVParser.setFilePath("CSVFiles/warehouses.csv");
-        CSVParser.updateCSV(currentWarehouse.getWarehouseID(), String.valueOf(currentWarehouse.getcurrVehicleCtr()), 8, currentWarehouse.getWarehouseHeader());
+
     
         System.out.println("Vehicle ID: " + selectedVehicle.getVehicleID() + " has left the warehouse.");
     }
@@ -330,7 +338,7 @@ public class WarehouseManager extends Employee {
     private ArrayList<Shipment> filterShipmentsForLoading(Shipment[] shipments, String destination) {
         ArrayList<Shipment> filteredShipments = new ArrayList<>();
         for (Shipment shipment : shipments) {
-            if (shipment.getWarehouseId() == currentWarehouse.getWarehouseID()
+            if (shipment != null && shipment.getWarehouseId() == currentWarehouse.getWarehouseID()
                     && shipment.getStatus().equalsIgnoreCase("Pending")
                     && shipment.getDestination().toLowerCase().contains(destination.toLowerCase())) {
                 filteredShipments.add(shipment);
@@ -342,14 +350,21 @@ public class WarehouseManager extends Employee {
     private void displayVehicleOptions(ArrayList<Vehicle> vehicles, String action) {
         System.out.println("Available vehicles for " + action + ":");
         for (int i = 0; i < vehicles.size(); i++) {
-            System.out.println("Number" + (i + 1) + ":\n" + vehicles.get(i).toString());
+            System.out.printf("Vehicle %d ID: %d | Type: %s | Warehouse ID: %d | License Plate: %s | Current Shipments: %d\n", 
+            (i + 1),
+            vehicles.get(i).getVehicleID(),
+            vehicles.get(i).getType(),
+            vehicles.get(i).getWarehouseId(),
+            vehicles.get(i).getLicensePlate(),
+            vehicles.get(i).getCurrentShipmentCount()
+            );
         }
     }
 
     private String chooseVehicleType() {
         String vehicleTypeChoice = "";
         while (!vehicleTypeChoice.equalsIgnoreCase("van") && !vehicleTypeChoice.equalsIgnoreCase("truck")) {
-            vehicleTypeChoice = Logistics.getInput("Do you want to load shipments into a van (for receiver delivery) or a truck (for warehouse delivery)? (van/truck): ");
+            vehicleTypeChoice = Logistics.getInput("Do you want to load shipments into a van (for receiver delivery) or a truck (for warehouse delivery)? (van/truck)");
             if (!vehicleTypeChoice.equalsIgnoreCase("van") && !vehicleTypeChoice.equalsIgnoreCase("truck")) {
                 System.out.println("Please choose either 'van' or 'truck'.");
             }
@@ -357,10 +372,10 @@ public class WarehouseManager extends Employee {
         return vehicleTypeChoice;
     }
 
-    private ArrayList<Vehicle> filterAvailableVehicles(Vehicle[] vehicles, String vehicleType) {
+    private ArrayList<Vehicle> filterAvailableVehicles(Vehicle[] vehicles, String vehicleType, boolean flag) {
         ArrayList<Vehicle> availableVehicles = new ArrayList<>();
         for (Vehicle vehicle : vehicles) {
-            if (vehicle.getWarehouseId() == currentWarehouse.getWarehouseID() && vehicle.isAvailable()
+            if (vehicle != null && (vehicle.getWarehouseId() == currentWarehouse.getWarehouseID()) && (vehicle.isAvailable() == flag)
                     && vehicle.getType().equalsIgnoreCase(vehicleType)) {
                 availableVehicles.add(vehicle);
             }
@@ -377,7 +392,14 @@ public class WarehouseManager extends Employee {
         System.out.println("Available " + vehicleTypeChoice + "s: ");
         int i = 0;
         for (Vehicle vehicle : availableVehicles) {
-            System.out.println("Number" + (i + 1) + ":\n" + vehicle.toString());
+            System.out.printf("Vehicle %d ID: %d | Type: %s | Warehouse ID: %d | License Plate: %s | Current Shipments: %d\n", 
+                (i + 1),
+                vehicle.getVehicleID(),
+                vehicle.getType(),
+                vehicle.getWarehouseId(),
+                vehicle.getLicensePlate(),
+                vehicle.getCurrentShipmentCount()
+            );
             i++;
         }
 
@@ -442,7 +464,7 @@ public class WarehouseManager extends Employee {
         }
         // update vehicle csv
         CSVParser.setFilePath("CSVFiles/vehicles.csv");
-        CSVParser.updateCSV(vehicle.getVehicleID(), String.valueOf(vehicle.getCurrentCapacityKG()), 6, vehicle.getVehicleHeader()); 
+        CSVParser.updateCSV(vehicle.getVehicleID(), String.format("%d", (int)vehicle.getCurrentCapacityKG()), 6, vehicle.getVehicleHeader()); 
         CSVParser.updateCSV(vehicle.getVehicleID(), String.valueOf(vehicle.getCurrentShipmentCount()), 8, vehicle.getVehicleHeader()); 
         CSVParser.updateCSV(vehicle.getVehicleID(), String.valueOf(vehicle.isAvailable()), 9,vehicle.getVehicleHeader());
     }

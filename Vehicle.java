@@ -69,12 +69,16 @@ public class Vehicle {
 
     public String[] toCSVFormat() {
         return new String[]{
-                String.valueOf(vehicleID),
-                type,
-                licensePlate,
-                driver,
-                String.valueOf(capacityKG),
-                String.valueOf(isAvailable)
+                String.valueOf(getVehicleID()),
+                String.valueOf(getWarehouseId()),
+                getType(),
+                getLicensePlate(),
+                getDriver(),
+                String.valueOf(getCapacity()),
+                String.valueOf(getCurrentCapacityKG()),
+                String.valueOf(getMaxShipmentCount()),
+                String.valueOf(getCurrentShipmentCount()),
+                String.valueOf(isAvailable())
         };
     }
 

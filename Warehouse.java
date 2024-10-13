@@ -1,10 +1,11 @@
 public class Warehouse {
-    private final String[] WAREHOUSE_H = {"wId", "sId", "vId", "location", "max_ship", "curr_ship", "curr_vehicle"};
+    private final String[] WAREHOUSE_H = {"wId", "location", "package_capacity", "vehicle_capacity"};
     private int wareHouseID;
     private String location;
     private int maxShipCount; 
     private int currShipCount;
     private int currVehicleCtr;
+    private int maxVehicleCtr;
     private Shipment[] shipments; // ShipmentID in csv
     private Vehicle[] vehicles; // vID in csv
 
@@ -15,6 +16,7 @@ public class Warehouse {
         this.maxShipCount = maxShipCount;
         this.currShipCount = 0;
         this.currVehicleCtr = 0;
+        this.maxVehicleCtr = maxVehicleCount;
         this.shipments = new Shipment[maxShipCount];
         this.vehicles = new Vehicle[maxVehicleCount]; 
     }
@@ -31,6 +33,7 @@ public class Warehouse {
     public int getmaxShipCount() { return this.maxShipCount; }
     public int getcurrShipCount() { return this.currShipCount; }
     public int getcurrVehicleCtr() { return this.currVehicleCtr; }
+    public int getmaxVehicleCtr() { return this.maxVehicleCtr; }
     public Shipment[] getShipments() { return this.shipments; }
     public Vehicle[] getVehicles() { return this.vehicles; }
     public String[] getWarehouseHeader() { return this.WAREHOUSE_H; }
@@ -62,6 +65,7 @@ public class Warehouse {
         }
         return false; 
     }
+    
 
     // Remove a Shipment from the warehouse (e.g., being loaded to the vehicle)
     public boolean removeShipment(Shipment shp) {
@@ -118,15 +122,12 @@ public class Warehouse {
         );
     }
 
-    public String[] toCSVFormat(int sId, int vId) {
+    public String[] toCSVFormat() {
         return new String[]{
             String.valueOf(getWarehouseID()),
-            String.valueOf(sId),
-            String.valueOf(vId),
             location,
             String.valueOf(getmaxShipCount()),
-            String.valueOf(getmaxShipCount()),
-                String.valueOf(getcurrVehicleCtr())
+            String.valueOf(getmaxVehicleCtr())
         };
     }
 }

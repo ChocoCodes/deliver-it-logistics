@@ -154,7 +154,7 @@ public class Driver extends Employee {
                 // Save Updates to Vehicle CSV
                 CSVParser.setFilePath("CSVFiles/vehicles.csv");
                 CSVParser.updateCSV(currentAssignedVehicle.getVehicleID(), String.valueOf(currentAssignedVehicle.getCurrentShipmentCount()), 8, currentAssignedVehicle.getVehicleHeader());
-                CSVParser.updateCSV(currentAssignedVehicle.getVehicleID(), String.valueOf(currentAssignedVehicle.getCurrentCapacityKG()), 6, currentAssignedVehicle.getVehicleHeader());
+                CSVParser.updateCSV(currentAssignedVehicle.getVehicleID(), String.format("%d",(int)currentAssignedVehicle.getCurrentCapacityKG()), 6, currentAssignedVehicle.getVehicleHeader());
 
                 System.out.println("Set to Delivered Successfully.");
             } 

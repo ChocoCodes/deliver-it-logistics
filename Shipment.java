@@ -18,7 +18,7 @@ public class Shipment {
     // Constructor for new Shipments Created
     public Shipment(int id, String destination, Package pkg) {
         this.id = id;
-        this.whId = 0;
+        this.whId = 1;
         this.destination = destination;
         this.pkg = pkg;
         this.status = "Pending";

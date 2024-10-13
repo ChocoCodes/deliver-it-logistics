@@ -88,7 +88,7 @@ public class Logistics {
         System.out.println("Program Terminated.");
     }
     
-    public static boolean checkInput(String input) { return input.length() == 0 || input == null; }
+    public static boolean checkInput(String input) { return input.trim().length() == 0 || input == null; }
 
     public static String getInput(String prompt) {
         boolean exceptionOccured = false; 
@@ -170,6 +170,7 @@ public class Logistics {
 
     private void editCustomerInfo(Customer customer) {
         String in;
+        CSVParser.setFilePath("CSVFiles/customers.csv");
         while (true) {
             System.out.println("Edit Customer Information");
             System.out.println("[1] Name\n[2] Contact Info\n[3] Address\n[4] Back");

@@ -19,8 +19,10 @@ class Admin extends Employee {
         String location = Logistics.getInput("Enter warehouse location");
         int maxPackageCount = getValidIntInput("Enter maximum package capacity");
         int maxVehicleCount = getValidIntInput("Enter maximum number of vehicles");
+        System.out.println(maxVehicleCount);
         Warehouse newWarehouse = new Warehouse(CSVParser.getLatestID() + 1, location, maxPackageCount, maxVehicleCount);
-        CSVParser.saveEntry(newWarehouse.toCSVFormat(0, 0));
+        System.out.println(newWarehouse.toString());
+        CSVParser.saveEntry(newWarehouse.toCSVFormat());
         System.out.println("Warehouse added successfully.");
     }
 
@@ -138,8 +140,8 @@ class Admin extends Employee {
         CSVParser.setFilePath("CSVFiles/warehouses.csv");
         String[][] warehousesData = CSVParser.loadCSVData(CSVParser.getFilePath());
         for (String[] warehouse : warehousesData) {
-            report.append(String.format("ID: %s, Stock ID: %s, Vehicle ID: %s, Location: %s, Max Shipments: %s, Current Shipments: %s, Current Vehicles: %s\n",
-                    warehouse[0], warehouse[1], warehouse[2], warehouse[3], warehouse[4], warehouse[5], warehouse[6]));
+            report.append(String.format("ID: %s, Location: %s, Max Shipment/s: %s, Max Vehicles: %s\n",
+                    warehouse[0], warehouse[1], warehouse[2], warehouse[3]));
         }
         report.append("\n");
 
@@ -173,9 +175,9 @@ class Admin extends Employee {
         }
 
         // Write report to file
-        try (PrintWriter writer = new PrintWriter(new FileWriter(fileReportLocation))) {
+        try (PrintWriter writer = new PrintWriter(new FileWriter("CSVFiles/" + fileReportLocation))) {
             writer.write(report.toString());
-            System.out.println("Report generated successfully: " + fileReportLocation);
+            System.out.println("Report generated successfully: CSVFiles/" + fileReportLocation);
         } catch (IOException e) {
             System.out.println("Error generating report: " + e.getMessage());
         }
@@ -282,6 +284,7 @@ class Admin extends Employee {
             printTableRow(row, columnWidths);
         }
     }
+
     private void printTableRow(String[] row, int[] columnWidths) {
         for (int i = 0; i < row.length; i++) {
             System.out.printf("| %-" + columnWidths[i] + "s ", row[i]);
@@ -295,6 +298,3 @@ class Admin extends Employee {
         System.out.println("+");
     }
 }
-
-
-

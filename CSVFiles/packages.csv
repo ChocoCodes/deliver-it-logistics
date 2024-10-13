@@ -20,3 +20,4 @@ pkgID,cID,receiverAddress,created,dimensionalWeight_kg,length_cm,width_cm,height
 22,119,Cagayan de Oro,2024-09-29,28.6,45,38,55
 6,1,Alijis Bacolod City,10/9/2024,1.472,23.0,20.0,16.0
 7,1,Bacolod City,10/10/2024,0.72,12.0,20.0,15.0
+7,6,Bago City,10/13/2024,6.969,23.0,101.0,15.0
