@@ -162,66 +162,65 @@ public class Driver extends Employee {
         }
         }
 
-        public boolean isDriverAssigned() {
-            // Load available vehicles from the CSV file
-            CSVParser.setFilePath("CSVFiles/vehicles.csv");
-            String[][] vehicleData = CSVParser.loadCSVData(CSVParser.getFilePath());
-            Vehicle[] vehicles = Vehicle.toVehicle(vehicleData); 
+    public boolean isDriverAssigned() {
+        // Load available vehicles from the CSV file
+        CSVParser.setFilePath("CSVFiles/vehicles.csv");
+        String[][] vehicleData = CSVParser.loadCSVData(CSVParser.getFilePath());
+        Vehicle[] vehicles = Vehicle.toVehicle(vehicleData); 
 
-            for (Vehicle vehicle : vehicles) {
-                if(vehicle.getDriver().equalsIgnoreCase(this.getName())) { 
-                    return true;
-                }
+        for (Vehicle vehicle : vehicles) {
+            if(vehicle.getDriver().equalsIgnoreCase(this.getName())) { 
+                return true;
             }
-            return false;
         }
-
-        public Vehicle getAssignedVehicle() {
-            // Load available vehicles from the CSV file
-            CSVParser.setFilePath("CSVFiles/vehicles.csv");
-            String[][] vehicleData = CSVParser.loadCSVData(CSVParser.getFilePath());
-            Vehicle[] vehicles = Vehicle.toVehicle(vehicleData); 
-            Vehicle vehicleAssigned = null;
-            for (Vehicle vehicle : vehicles) {
-                if(vehicle.getDriver().equalsIgnoreCase(this.getName())) { 
-                    vehicleAssigned = vehicle;
-                }
-            }
-            return vehicleAssigned;
-        }
-
-        public Shipment[] loadShipments() {
-            // Load Packages from the CSV file first
-            CSVParser.setFilePath("CSVFiles/packages.csv");
-            String[][] packageData = CSVParser.loadCSVData(CSVParser.getFilePath());
-            Package[] packages = new Package[packageData.length];
-            for (int i = 0; i < packageData.length; i++) {
-                packages[i] = Package.toPackage(packageData, i, null); // Pass null for the items
-            }
-        
-            // Load shipments from the CSV file
-            CSVParser.setFilePath("CSVFiles/shipments.csv");
-            String[][] shipmentData = CSVParser.loadCSVData(CSVParser.getFilePath());
-            Shipment[] shipments = new Shipment[shipmentData.length];
-            
-            // Assign the corresponding package directly in the toShipment method
-            for (int i = 0; i < shipmentData.length; i++) {
-                int pkgId = CSVParser.toInt(shipmentData[i][1]);  // Get the pkgID from shipment data
-                
-                // Find the corresponding package by ID
-                Package correspondingPackage = null;
-                for (Package pkg : packages) {
-                    if (pkg.getId() == pkgId) {
-                        correspondingPackage = pkg;
-                        break;  
-                    }
-                }
-                
-                // Pass the corresponding package to the Shipment constructor
-                shipments[i] = Shipment.toShipment(shipmentData, i, correspondingPackage);
-            }
-        
-            return shipments;
-        }
+        return false;
     }
+
+    public Vehicle getAssignedVehicle() {
+        // Load available vehicles from the CSV file
+        CSVParser.setFilePath("CSVFiles/vehicles.csv");
+        String[][] vehicleData = CSVParser.loadCSVData(CSVParser.getFilePath());
+        Vehicle[] vehicles = Vehicle.toVehicle(vehicleData); 
+        Vehicle vehicleAssigned = null;
+        for (Vehicle vehicle : vehicles) {
+            if(vehicle.getDriver().equalsIgnoreCase(this.getName())) { 
+                vehicleAssigned = vehicle;
+            }
+        }
+        return vehicleAssigned;
+    }
+
+    public Shipment[] loadShipments() {
+        // Load Packages from the CSV file first
+        CSVParser.setFilePath("CSVFiles/packages.csv");
+        String[][] packageData = CSVParser.loadCSVData(CSVParser.getFilePath());
+        Package[] packages = new Package[packageData.length];
+        for (int i = 0; i < packageData.length; i++) {
+            packages[i] = Package.toPackage(packageData, i, null); // Pass null for the items
+        }
+        
+        // Load shipments from the CSV file
+        CSVParser.setFilePath("CSVFiles/shipments.csv");
+        String[][] shipmentData = CSVParser.loadCSVData(CSVParser.getFilePath());
+        Shipment[] shipments = new Shipment[shipmentData.length];
+            
+        // Assign the corresponding package directly in the toShipment method
+        for (int i = 0; i < shipmentData.length; i++) {
+            int pkgId = CSVParser.toInt(shipmentData[i][1]);  // Get the pkgID from shipment data
+                
+            // Find the corresponding package by ID
+            Package correspondingPackage = null;
+            for (Package pkg : packages) {
+                if (pkg.getId() == pkgId) {
+                    correspondingPackage = pkg;
+                    break;  
+                }
+            }
+                
+            // Pass the corresponding package to the Shipment constructor
+            shipments[i] = Shipment.toShipment(shipmentData, i, correspondingPackage);
+        }
+        return shipments;
+    }
+}
 
