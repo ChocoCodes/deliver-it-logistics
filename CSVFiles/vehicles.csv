@@ -1,5 +1,5 @@
 vID,whId,type,licensePlate,driver,cap_max,cap_curr,max_ship,curr_ship,avail
-1,1,Van,ABC1234,John,1000,500,50,25,true
-2,2,Truck,DEF5678,Jane,2000,903,100,40,true
-3,2,Van,GHI9101,Mike,1000,480,50,9,true
-4,2,Truck,JKL1213,Amy,2000,900,100,45,true
+1,1,Van,ABC1234,John,1000,0,50,0,true
+2,1,Truck,DEF5678,Jane,2000,0,100,0,true
+3,2,Van,GHI9101,Mike,1000,0,50,0,true
+4,2,Truck,JKL1213,Amy,2000,0,100,0,true
