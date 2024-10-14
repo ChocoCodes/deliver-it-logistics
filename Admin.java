@@ -68,10 +68,10 @@ class Admin extends Employee {
     public void addVehicles() {
         CSVParser.setFilePath("CSVFiles/vehicles.csv");
         String type = Logistics.getInput("Enter vehicle type (Truck/Van)");
-        int whId = 0;
+        int whId = getValidIntInput("Enter warehouse id"); // FIXED ERROR 10
         String licensePlate = Logistics.getInput("Enter vehicle license plate");
         String driver = Logistics.getInput("Enter driver name");
-        int maxShipmentCount = getValidIntInput("Enter maximum shipment count: ");
+        int maxShipmentCount = getValidIntInput("Enter maximum shipment count");
         int currentShipmentCount = 0;
         boolean isAvailable = true;
 
@@ -95,7 +95,7 @@ class Admin extends Employee {
         System.out.println("Available Vehicles:");
         CSVParser.setFilePath("CSVFiles/vehicles.csv");
         String[][] vehiclesData = CSVParser.loadCSVData(CSVParser.getFilePath());
-        Vehicle vehicles = Vehicle.toVehicle(vehiclesData, 1);
+        Vehicle vehicles = Vehicle.toVehicle(vehiclesData, 0); // FIXED ERROR 11
 
         if (vehiclesData.length == 0) {
             System.out.println("No vehicles available.");

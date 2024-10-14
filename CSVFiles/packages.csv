@@ -1,23 +1,12 @@
 pkgID,cID,receiverAddress,created,dimensionalWeight_kg,length_cm,width_cm,height_cm
-3,101,Zamboanga City,2024-09-25,30.5,40,30,50
-4,102,Iligan City,2024-09-23,45.8,60,40,50
-5,103,Tagbilaran City,2024-09-26,25.0,35,25,45
-6,104,Bacolod City,2024-09-27,28.7,45,35,40
-7,105,Dumaguete,2024-09-28,32.5,50,40,55
-8,106,Iloilo City,2024-09-24,15.4,30,25,35
-9,107,Roxas City,2024-09-25,23.6,38,32,48
-10,108,Baguio City,2024-09-26,38.9,55,40,45
-11,109,Laoag City,2024-09-27,18.2,33,28,42
-12,110,Manila,2024-09-29,50.0,60,50,60
-13,111,Tuguegarao City,2024-09-28,20.4,40,35,50
-14,112,Davao City,2024-09-27,26.3,38,30,48
-15,113,Butuan City,2024-09-26,29.7,45,35,55
-16,114,Batangas City,2024-09-29,40.5,50,40,58
-17,115,Dipolog City,2024-09-24,21.1,38,30,50
-18,116,Cebu City,2024-09-30,42.2,55,45,52
-19,117,Tacloban,2024-09-28,24.0,40,30,52
-20,118,Legazpi City,2024-09-27,34.0,50,40,58
-22,119,Cagayan de Oro,2024-09-29,28.6,45,38,55
-6,1,Alijis Bacolod City,10/9/2024,1.472,23.0,20.0,16.0
-7,1,Bacolod City,10/10/2024,0.72,12.0,20.0,15.0
-7,6,Bago City,10/13/2024,6.969,23.0,101.0,15.0
+1,1,Bago City Block 1 Lot 1,04/10/2024,12,40,30,20
+2,2,Bago City Block 2 Lot 2,08/10/2024,5,20,15,10
+3,3,Bago City Block 3 Lot 3,11/10/2024,7,50,25,15
+4,4,Bago City Block 4 Lot 4,12/10/2024,12,60,40,30
+5,5,Bago City Block 5 Lot 5,05/10/2024,8,35,25,20
+6,6,Bago City Block 6 Lot 6,05/10/2024,6,25,20,15
+7,7,Bago City Block 7 Lot 7,06/10/2024,14,70,45,35
+8,8,Bago City Block 8 Lot 8,07/10/2024,9,40,30,25
+9,9,Bago City Block 9 Lot 9,07/10/2024,11,55,35,30
+10,10,Bago City Block 10 Lot 10,08/10/2024,13,60,50,40
+12,11,Bago City Torres St,10/13/2024,6.0,120.0,50.0,5.0
