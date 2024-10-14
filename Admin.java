@@ -17,8 +17,27 @@ class Admin extends Employee {
     public void addWarehouse() {
         CSVParser.setFilePath("CSVFiles/warehouses.csv");
         String location = Logistics.getInput("Enter warehouse location");
-        int maxPackageCount = getValidIntInput("Enter maximum package capacity");
-        int maxVehicleCount = getValidIntInput("Enter maximum number of vehicles");
+
+        int maxPackageCount;
+        do {
+            String input = Logistics.getInput("Enter maximum package capacity");
+            if (Logistics.checkInt(input)) {
+                maxPackageCount = Integer.parseInt(input);
+                break;
+            }
+            System.out.println("Invalid input. Please enter a positive integer.");
+        } while (true);
+
+        int maxVehicleCount;
+        do {
+            String input = Logistics.getInput("Enter maximum number of vehicles");
+            if (Logistics.checkInt(input)) {
+                maxVehicleCount = Integer.parseInt(input);
+                break;
+            }
+            System.out.println("Invalid input. Please enter a positive integer.");
+        } while (true);
+
         System.out.println(maxVehicleCount);
         Warehouse newWarehouse = new Warehouse(CSVParser.getLatestID() + 1, location, maxPackageCount, maxVehicleCount);
         System.out.println(newWarehouse.toString());
@@ -39,7 +58,16 @@ class Admin extends Employee {
 
         displayTable(warehousesData, warehouses[0].getWarehouseHeader());
 
-        int warehouseId = getValidIntInput("Enter Warehouse ID to remove");
+        int warehouseId;
+        do {
+            String input = Logistics.getInput("Enter Warehouse ID to remove");
+            if (Logistics.checkInt(input)) {
+                warehouseId = Integer.parseInt(input);
+                break;
+            }
+            System.out.println("Invalid input. Please enter a positive integer.");
+        } while (true);
+
         boolean removed = false;
 
         for (int i = 0; i < warehousesData.length; i++) {
@@ -71,16 +99,40 @@ class Admin extends Employee {
         int whId = 0;
         String licensePlate = Logistics.getInput("Enter vehicle license plate");
         String driver = Logistics.getInput("Enter driver name");
-        int maxShipmentCount = getValidIntInput("Enter maximum shipment count: ");
+        int maxShipmentCount;
+        do {
+            String input = Logistics.getInput("Enter maximum shipment count");
+            if (Logistics.checkInt(input)) {
+                maxShipmentCount = Integer.parseInt(input);
+                break;
+            }
+            System.out.println("Invalid input. Please enter a positive integer.");
+        } while (true);
         int currentShipmentCount = 0;
         boolean isAvailable = true;
 
         Vehicle newVehicle;
         if (type.equalsIgnoreCase("Truck")) {
-            int maxWarehouseRoutes = getValidIntInput("Enter maximum number of warehouse routes for the truck");
+            int maxWarehouseRoutes;
+            do {
+                String input = Logistics.getInput("Enter maximum number of warehouse routes for the truck");
+                if (Logistics.checkInt(input)) {
+                    maxWarehouseRoutes = Integer.parseInt(input);
+                    break;
+                }
+                System.out.println("Invalid input. Please enter a positive integer.");
+            } while (true);
             newVehicle = new Truck(CSVParser.getLatestID() + 1, whId, licensePlate, driver, maxShipmentCount, currentShipmentCount, isAvailable, maxWarehouseRoutes);
         } else if (type.equalsIgnoreCase("Van")) {
-            double capacityKG = getValidDoubleInput("Enter maximum capacity (KG): ");
+            double capacityKG;
+            do {
+                String input = Logistics.getInput("Enter maximum capacity (KG)");
+                if (Logistics.checkDouble(input)) {
+                    capacityKG = Double.parseDouble(input);
+                    break;
+                }
+                System.out.println("Invalid input. Please enter a positive number.");
+            } while (true);
             double currentCapacity = 0;
             newVehicle = new Vehicle(CSVParser.getLatestID() + 1, whId, type, licensePlate, driver, capacityKG, currentCapacity, maxShipmentCount, currentShipmentCount, isAvailable);
         } else {
@@ -104,7 +156,15 @@ class Admin extends Employee {
 
         displayTable(vehiclesData, vehicles.getVehicleHeader());
 
-        int vehicleId = getValidIntInput("Enter Vehicle ID to remove");
+        int vehicleId;
+        do {
+            String input = Logistics.getInput("Enter Vehicle ID to remove");
+            if (Logistics.checkInt(input)) {
+                vehicleId = Integer.parseInt(input);
+                break;
+            }
+            System.out.println("Invalid input. Please enter a positive integer.");
+        } while (true);
         boolean removed = false;
 
         for (int i = 0; i < vehiclesData.length; i++) {
@@ -228,41 +288,7 @@ class Admin extends Employee {
             }
         }
     }
-    // Helper function for validating integer input
-    private int getValidIntInput(String prompt) {
-        int result;
-        do {
-            String inputStr = Logistics.getInput(prompt);
-            try {
-                result = CSVParser.toInt(inputStr);
-                if (result <= 0) {
-                    System.out.println("Please enter a valid positive integer.");
-                }
-            } catch (NumberFormatException e) {
-                System.out.println("Invalid input. Please enter a valid integer.");
-                result = -1;
-            }
-        } while (result <= 0);
-        return result;
-    }
 
-    // Helper function for validating double input
-    private double getValidDoubleInput(String prompt) {
-        double result;
-        do {
-            String inputStr = Logistics.getInput(prompt);
-            try {
-                result = CSVParser.toDouble(inputStr);
-                if (result <= 0) {
-                    System.out.println("Please enter a valid positive number.");
-                }
-            } catch (NumberFormatException e) {
-                System.out.println("Invalid input. Please enter a valid number.");
-                result = -1;
-            }
-        } while (result <= 0);
-        return result;
-    }
     private void displayTable(String[][] data, String[] headers) {
         // Calculate column widths
         int[] columnWidths = new int[headers.length];
