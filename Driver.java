@@ -78,6 +78,11 @@ public class Driver extends Employee {
                 i++;
             }
         }
+
+        if (availableVehicles.isEmpty()) {
+            System.out.println("All vehicles are filled. There is no available vehicles at the moment. Try again later."); 
+            return;
+        } 
         // Select Vehicle to Assign to Driver and Remove their name on the previous Vehicle
         Vehicle[] availableVehiclesArr = availableVehicles.toArray(new Vehicle[0]);
         Vehicle previousAssignedVehicle = null;
@@ -123,12 +128,13 @@ public class Driver extends Employee {
         ArrayList<Shipment> pendingShipments = new ArrayList<Shipment>();
         for (Shipment s : shipments) {
             if (s != null && s.getStatus().equalsIgnoreCase("Pending") && s.getVehicleId() == currentAssignedVehicle.getVehicleID()) {
-                System.out.printf("Shipment No. %d | ID: %d | Status: %s\n",(i + 1), shipments[i].getShipmentID(), shipments[i].getStatus());
+                System.out.printf("Shipment No. %d | ID: %d | Status: %s\n",(i + 1), s.getShipmentID(), s.getStatus());
                 pendingShipments.add(s);
                 hasPendingShipments = true; // Mark that we have added a pending shipment
                 i++;
             }
         }
+
         currentAssignedVehicle.setShipments(pendingShipments.toArray(new Shipment[0]));
 
         // Check if no pending shipments were found
