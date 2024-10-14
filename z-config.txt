@@ -1,4 +1,4 @@
-/* HOW TO CUSTOM COMPILE IN VSCODE - SAVE ALL .class files in the [out] folder
+/* HOW TO CUSTOM COMPILE IN CMD/DOS/VSCODE TERMINAL - SAVE ALL .class files in the [out] folder
  * -----/ SAVE ALL CLASS FILES IN [out] folder of the directory \-----
  * command: javac -d out filename.java
  * 

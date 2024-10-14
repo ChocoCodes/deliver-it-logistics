@@ -241,8 +241,6 @@ public class Logistics {
         Item[] items = getCustomerItems();
         String receiver = getInput("Receiver Address");
         Package pkg = new Package(CSVParser.getLatestID() + 1, items, receiver);
-        pkg.displayPackageContents(); // DB
-        System.out.println(pkg.toString()); // DB
         CSVParser.setFilePath("CSVFiles/shipments.csv");
         Shipment shipment = new Shipment(CSVParser.getLatestID() + 1,receiver, pkg);
         shipment.calcShipCost();
