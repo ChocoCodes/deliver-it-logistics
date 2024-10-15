@@ -1,12 +1,12 @@
 id,pkgId,vId,wId,dest,shipCost,confirmed,status,shipDate,eta
-1,1,0,0,Bago City Block 1 Lot 1,100,true,Delivered,04/10/2024,05/10/2024
-2,2,0,2,Bago City Block 2 Lot 2,50,true,Pending,08/10/2024,08/13/2024
-3,3,3,0,Bago City Block 3 Lot 3,70,true,Pending,11/10/2024,12/10/2024
-4,4,3,0,Bago City Block 4 Lot 4,120,true,Pending,12/10/2024,13/10/2024
+1,1,0,1,Bago City Block 1 Lot 1,100,true,Delivered,04/10/2024,05/10/2024
+2,2,0,1,Bago City Block 2 Lot 2,50,false,Paid,08/10/2024,09/10/2024
+3,3,0,0,Bago City Block 3 Lot 3,70,true,Delivered,11/10/2024,12/10/2024
+4,4,0,0,Bago City Block 4 Lot 4,120,true,Delivered,12/10/2024,13/10/2024
 5,5,3,0,Bago City Block 5 Lot 5,80,true,Pending,05/10/2024,06/10/2024
 6,6,3,0,Bago City Block 6 Lot 6,60,true,Pending,05/10/2024,06/10/2024
 7,7,3,0,Bago City Block 7 Lot 7,140,true,Pending,06/10/2024,07/10/2024
 8,8,3,0,Bago City Block 8 Lot 8,90,true,Pending,07/10/2024,08/10/2024
 9,9,3,0,Bago City Block 9 Lot 9,110,true,Pending,07/10/2024,08/10/2024
 10,10,3,0,Bago City Block 10 Lot 10,130,true,Pending,08/10/2024,09/10/2024
-11,12,0,1,Bago City Torres St,450.0,true,Pending,10/13/2024,10/14/2024
+11,12,0,1,Bago City Torres St,450.0,true,Pending,10/13/2024,10/16/2024
