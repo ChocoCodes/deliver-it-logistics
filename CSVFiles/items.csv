@@ -1,12 +1,15 @@
 pkgId,name,weight_kg,length_cm,width_cm,height_cm
-1,Item1,10,40,30,20
-2,Item2,5,20,15,10
-3,Item3,7,50,25,15
-4,Item4,12,60,40,30
-5,Item5,8,35,25,20
-6,Item6,6,25,20,15
-7,Item7,14,70,45,35
-8,Item8,9,40,30,25
-9,Item9,11,55,35,30
-10,Item10,13,60,50,40
+1,Microwave,10,40,30,20
+2,Blender,5,20,15,10
+3,Trolley,7,50,25,15
+4,Office Chair,12,60,40,30
+5,Small Table,8,35,25,20
+6,Backpack,6,25,20,15
+7,Large TV,14,70,45,35
+8,Sports Bag,9,40,30,25
+9,Monitor,11,55,35,30
+10,Printer,13,60,50,40
 12,Shirt,0.01,5.0,50.0,120.0
+12,Notebook,0.5,12.0,14.0,12.0
+12,Cup,0.1,20.0,13.0,20.0
+12,Tablet,0.3,10.0,14.0,12.0

@@ -169,7 +169,7 @@ public class WarehouseManager extends Employee {
         }
     
         // Load shipments into the selected vehicle
-        loadShipmentsToVehicle(loadToVehicleShipments, selectedVehicle);
+        loadToVehicle(loadToVehicleShipments, selectedVehicle);
         // Update vehicle status to false
         selectedVehicle.setAvailability(false);
         // Update shipment and vehicle CSV files
@@ -420,7 +420,7 @@ public class WarehouseManager extends Employee {
             i++;
         }
 
-        int vehicleChoice = Logistics.getValidatedInput("Select a vehicle by number: ", 1, availableVehicles.size());
+        int vehicleChoice = Logistics.getValidatedInput("Select a vehicle by number ", 1, availableVehicles.size());
         return availableVehicles.get(vehicleChoice - 1);
     }
 
@@ -429,7 +429,7 @@ public class WarehouseManager extends Employee {
         return confirm.equalsIgnoreCase("Yes");
     }
 
-    private void loadShipmentsToVehicle(ArrayList<Shipment> shipments, Vehicle vehicle) {
+    private void loadToVehicle(ArrayList<Shipment> shipments, Vehicle vehicle) {
         for (Shipment s : shipments) {
             if (vehicle.addShipment(s)) {
                 s.setWarehouseId(0); // Indicating its not on the warehouse anymore

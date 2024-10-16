@@ -5,6 +5,9 @@ public class Truck extends Vehicle {
         this.maxWarehouseRoutes = maxWarehouseRoutes;
     }
 
+    public int getMaxWarehouseRoutes() { return this.maxWarehouseRoutes; }
+    public void setMaxWarehouseRoutes(int maxWarehouseRoutes) { this.maxWarehouseRoutes = maxWarehouseRoutes; }
+    
     @Override
     public String toString() {
         return String.format(

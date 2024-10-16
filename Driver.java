@@ -11,9 +11,9 @@ public class Driver extends Employee {
     public void showMenu() {
         boolean done = false;
 
-        while (!isDriverAssigned()) {
-            System.out.println("Driver name is not detected in any vehicle yet. Please assign a vehicle first.");
-            assignVehicle();
+        if (!isDriverAssigned()) {
+            System.out.println("Driver name is not registered.");
+            return;
         }
 
         currentAssignedVehicle = getAssignedVehicle();
@@ -27,7 +27,7 @@ public class Driver extends Employee {
             System.out.println("---------------------------------");
     
             // Getting user input and handling exceptions
-            int choice = Logistics.getValidatedInput("Select a number: ", 1, 3);
+            int choice = Logistics.getValidatedInput("Select a number", 1, 3);
     
             switch (choice) {
                 case 1:
@@ -143,7 +143,7 @@ public class Driver extends Employee {
             return;
         }
             // Ask User what Shipment to manage
-            int selectedShipmentNum = Logistics.getValidatedInput("Select a shipment to manage by number: ", 1, currentAssignedVehicle.getCurrentShipmentCount()) - 1;
+            int selectedShipmentNum = Logistics.getValidatedInput("Select a shipment to manage by number ", 1, currentAssignedVehicle.getCurrentShipmentCount()) - 1;
             
             // Verify the selected shipment exists
             Shipment selectedShipment = currentAssignedVehicle.getShipments()[selectedShipmentNum];
